@@ -87,6 +87,8 @@ for epoch in range(n_epochs):
         test_rmse = np.sqrt(loss_fn(y_pred, y_test))
         print(f"Epoch {epoch}: Train RMSE {train_rmse:.4f}, Test RMSE {test_rmse:.4f}")
 
+torch.save(model.state_dict(), 'lstm_model.pth')
+
 # Plotting
 with torch.no_grad():
     # Create arrays for plotting
@@ -115,3 +117,4 @@ plt.ylabel('Joint Positions')
 plt.legend()
 plt.title("Therapist Hip Data Prediction from Patient Data")
 plt.show()
+plt.savefig('lstm_therapist_prediction.png', dpi=300, bbox_inches='tight')
