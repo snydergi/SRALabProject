@@ -1,0 +1,7 @@
+*.csv
+*.txt
+*.odp
+*.odp#
+venv/*
+*/venv/*
+*/ws/*
