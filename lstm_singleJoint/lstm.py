@@ -22,6 +22,14 @@ therapist_part2 = pd.read_csv('X2_SRA_B_07-05-2024_10-41-46-mod-sync.csv',
                             skiprows=range(1, 454139), 
                             nrows=654139-454139)
 
+# Load the third range (696306 to 894640)
+patient_part3 = pd.read_csv('X2_SRA_A_07-05-2024_10-39-10-mod-sync.csv', 
+                          skiprows=range(1, 696306), 
+                          nrows=894640-696306)
+therapist_part3 = pd.read_csv('X2_SRA_B_07-05-2024_10-41-46-mod-sync.csv', 
+                            skiprows=range(1, 696306), 
+                            nrows=894640-696306)
+
 # Concatenate the two parts
 patient = pd.concat([patient_part1, patient_part2])
 therapist = pd.concat([therapist_part1, therapist_part2])
@@ -29,7 +37,11 @@ therapist = pd.concat([therapist_part1, therapist_part2])
 patient_data = patient[['JointPositions_1']].values.astype('float32')
 therapist_data = therapist[['JointPositions_1']].values.astype('float32')
 
+patient_test = patient_part3[['JointPositions_1']].values.astype('float32')
+therapist_test = therapist_part3[['JointPositions_1']].values.astype('float32')
+
 timeseries = np.column_stack((patient_data, therapist_data))
+timeseries_test = np.column_stack((patient_test, therapist_test))
  
 # plt.plot(timeseries)
 # plt.xlabel('Time Steps (~4ms)')
@@ -40,9 +52,9 @@ timeseries = np.column_stack((patient_data, therapist_data))
 # plt.show()
 
 # train-test split for time series
-train_size = int(len(timeseries) * 0.67)
-test_size = len(timeseries) - train_size
-train, test = timeseries[:train_size], timeseries[train_size:]
+train_size = int(len(timeseries))
+test_size = int(len(timeseries_test * 0.33))
+train, test = timeseries[:train_size], timeseries_test[train_size:]
 
 def create_dataset(dataset, lookback):
     """Transform a time series into a prediction dataset
