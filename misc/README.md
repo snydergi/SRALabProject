@@ -1,0 +1,1 @@
+This folder contains information files that lack a more appropriate place within the repository.

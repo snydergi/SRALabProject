@@ -1,0 +1,1 @@
+This folder contains code and plots relevant to an LSTM created to model only one joint.
