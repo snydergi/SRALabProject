@@ -35,10 +35,10 @@ patient = pd.concat([patient_part1, patient_part2])
 therapist = pd.concat([therapist_part1, therapist_part2])
 
 patient_data = patient[['JointPositions_1']].values.astype('float32')
-therapist_data = therapist[['JointPositions_1']].values.astype('float32')
+therapist_data = therapist[['JointPositions_3']].values.astype('float32')
 
 patient_test = patient_part3[['JointPositions_1']].values.astype('float32')
-therapist_test = therapist_part3[['JointPositions_1']].values.astype('float32')
+therapist_test = therapist_part3[['JointPositions_3']].values.astype('float32')
 
 timeseries = np.column_stack((patient_data, therapist_data))
 timeseries_test = np.column_stack((patient_test, therapist_test))
@@ -53,8 +53,8 @@ timeseries_test = np.column_stack((patient_test, therapist_test))
 
 # train-test split for time series
 train_size = int(len(timeseries))
-test_size = int(len(timeseries_test * 0.33))
-train, test = timeseries[:train_size], timeseries_test[train_size:]
+test_size = int(len(timeseries_test * 0.5))
+train, test = timeseries[:train_size], timeseries_test[:test_size]
 
 def create_dataset(dataset, lookback):
     """Transform a time series into a prediction dataset
@@ -150,25 +150,34 @@ with torch.no_grad():
     therapist_pred = np.ones_like(timeseries[:, 1]) * np.nan
     
     # Fill in the true therapist data
-    therapist_true[lookback:] = timeseries[lookback:, 1]
-    
-    # Get predictions for train and test
-    train_pred = model(X_train)[:, -1, :].numpy().flatten()
-    test_pred = model(X_test)[:, -1, :].numpy().flatten()
-    
-    # Fill in the predicted therapist data
-    therapist_pred[lookback:train_size] = train_pred
-    therapist_pred[train_size+lookback:] = test_pred
+    therapist_true[lookback:train_size] = timeseries[lookback:train_size, 1]
 
-# plot
-plt.figure(figsize=(12, 6))
-plt.plot(therapist_true, c='b', label='True Therapist Data')
-plt.plot(therapist_pred, c='r', linestyle='--', label='Predicted Therapist Data')
+    # Create arrays for test portion
+    test_true = np.ones_like(test[:, 1]) * np.nan
+    test_pred = np.ones_like(test[:, 1]) * np.nan
+    
+    # Fill in true test data
+    test_true[lookback:test_size] = test[lookback:test_size, 1]
+    
+    # Get predictions for test
+    test_predictions = model(X_test)[:, -1, :].numpy().flatten()
+    test_pred[lookback:test_size] = test_predictions
+
+# Plot training data
+plt.plot(therapist_true, c='b', label='True Therapist (Train)')
+plt.plot(therapist_pred, c='r', linestyle='--', label='Predicted Therapist (Train)')
 plt.plot(timeseries[:, 0], c='g', alpha=0.3, label='Patient Data (input)')
-plt.xlim(0, 7500)
+
+# Plot test data (offset by train_size)
+test_x = np.arange(train_size, train_size + test_size)
+plt.plot(test_x, test_true, c='blue', alpha=0.5, label='True Therapist (Test)')
+plt.plot(test_x, test_pred, c='red', linestyle=':', label='Predicted Therapist (Test)')
+
+plt.xlim(0, train_size + test_size)
 plt.xlabel('Time Steps (~4ms)')
 plt.ylabel('Joint Positions')
 plt.legend()
 plt.title("Therapist Hip Data Prediction from Patient Data")
+plt.grid(True, alpha=0.3)
 plt.show()
 plt.savefig('lstm_therapist_prediction.png', dpi=300, bbox_inches='tight')

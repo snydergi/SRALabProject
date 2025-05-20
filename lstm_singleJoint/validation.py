@@ -14,12 +14,12 @@ therapist = pd.read_csv('X2_SRA_B_07-05-2024_10-41-46-mod-sync.csv',
 
 # Prepare data
 patient_data = patient[['JointPositions_1']].values.astype('float32')
-therapist_data = therapist[['JointPositions_1']].values.astype('float32')
+therapist_data = therapist[['JointPositions_3']].values.astype('float32')
 timeseries = np.column_stack((patient_data, therapist_data))
 
 # Validation split
 valid_size = int(len(timeseries) * 0.5)
-valid = timeseries[:(len(timeseries) - valid_size)]
+valid = timeseries[(len(timeseries) - valid_size):len(timeseries)]
 
 # Create dataset function (optimized)
 def create_dataset(dataset, lookback):
@@ -44,7 +44,7 @@ class JointModel(nn.Module):
 
 # Load model
 model = JointModel()
-model.load_state_dict(torch.load('trial1/lstm_model.pth'))
+model.load_state_dict(torch.load('trial4/lstm_model.pth'))
 model.eval()
 
 # Validation
@@ -93,7 +93,7 @@ with torch.no_grad():
 plt.figure(figsize=(12, 6))
 plt.plot(therapist_true, c='b', label='True Therapist Data')
 plt.plot(therapist_pred, c='r', linestyle='--', label='Predicted Therapist Data')
-# plt.plot(valid[:, 0], c='g', alpha=0.3, label='Patient Data (input)')
+plt.plot(valid[:, 0], c='g', alpha=0.75, label='Patient Data (input)')
 plt.xlim(0, 7500)
 plt.xlabel('Time Steps (~4ms)')
 plt.ylabel('Joint Positions (Radians)')
