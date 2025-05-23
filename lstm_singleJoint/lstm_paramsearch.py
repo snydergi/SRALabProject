@@ -5,8 +5,9 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.utils.data as data
-from skorch import NeuralNetClassifier
+from skorch import NeuralNetRegressor
 from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import make_scorer
 
 def load_data():
     """Create datasets for training and testing."""
@@ -201,21 +202,28 @@ def main():
     train, test, timeseries, timeseries_test = load_data()
     X_train, y_train = create_dataset(train, lookback=50)
     # train_model(train, test, timeseries, timeseries_test)
+    X_train = X_train.numpy().squeeze(-1)
+    y_train = y_train.numpy().squeeze(-1)
     param_grid = {
         'module__hidden_size': [25, 50, 75, 100],
         'module__num_layers': [1, 2, 3],
-        'optimizer__lr': [0.00001, 0.0001, 0.001, 0.01, 0.1]
+        'optimizer__lr': [0.00001, 0.0001, 0.001, 0.01, 0.1],
+        'batch_size': [128, 256]
     }
-    model = NeuralNetClassifier(
+    model = NeuralNetRegressor(
         JointModel,
-        max_epochs=200,
+        max_epochs=100,
         criterion=nn.MSELoss,
         optimizer=optim.Adam,
         batch_size=256,
-        verbose=False
+        verbose=False,
+        device='cuda' if torch.cuda.is_available() else 'cpu'
     )
-    grid = GridSearchCV(estimator=model, param_grid=param_grid, n_jobs=-1, cv=3)
+    scorer = make_scorer(rmse, greater_is_better=False)
+    grid = GridSearchCV(estimator=model, param_grid=param_grid, scoring=scorer, n_jobs=1, cv=3, verbose=3)
     grid_result = grid.fit(X_train, y_train)
+    print("Best parameters found: ", grid_result.best_params_)
+    print("Best RMSE score: ", -grid_result.best_score_)  # Negative because greater_is_better=False
     return 0
 
 if __name__ == "__main__":
