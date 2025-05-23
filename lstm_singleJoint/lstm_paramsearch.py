@@ -193,6 +193,10 @@ def plot_predictions(model, X_test, test, lookback, timeseries, timeseries_test)
     plt.show()
     plt.savefig('lstm_therapist_prediction.png', dpi=300, bbox_inches='tight')
 
+def rmse(y_true, y_pred):
+    """Calculate RMSE"""
+    return torch.sqrt(torch.mean((y_true - y_pred) ** 2))
+
 def main():
     train, test, timeseries, timeseries_test = load_data()
     X_train, y_train = create_dataset(train, lookback=50)
