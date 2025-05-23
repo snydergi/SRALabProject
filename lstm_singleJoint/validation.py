@@ -101,3 +101,13 @@ plt.legend()
 plt.title("Validation: Therapist Knee Prediction from Patient Data")
 plt.show()
 # plt.savefig('lstm_therapist_prediction.png', dpi=300, bbox_inches='tight')
+
+# Plot error over time
+plt.figure(figsize=(12, 6))
+plt.plot(errors, c='r', label='Prediction Error')
+plt.xlim(0, 7500)
+plt.xlabel('Time Steps (~4ms)')
+plt.ylabel('Joint Positions Errors (Radians)')
+plt.legend()
+plt.title("Error over Time")
+plt.show()
