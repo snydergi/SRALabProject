@@ -66,14 +66,14 @@ with torch.no_grad():
     # Pointwise errors (signed)
     errors = (y_pred2 - y_true).numpy()  # Convert to numpy for plotting
 
-# Plot histogram of errors
-plt.figure(figsize=(12, 6))
-plt.hist(errors, bins=50, alpha=0.7, color='blue')
-plt.xlabel('Error (Radians)')
-plt.ylabel('# of Occurrences')
-plt.title(f'Distribution of Prediction Errors, RMSE: {valid_rmse:.4f}, Max: {errors.max():.4f}, Std Dev: {errors.std():.4f}, Mean: {errors.mean():.4f}')
-plt.grid(True)
-plt.show()
+# # Plot histogram of errors
+# plt.figure(figsize=(12, 6))
+# plt.hist(errors, bins=50, alpha=0.7, color='blue')
+# plt.xlabel('Error (Radians)')
+# plt.ylabel('# of Occurrences')
+# plt.title(f'Distribution of Prediction Errors, RMSE: {valid_rmse:.4f}, Max: {errors.max():.4f}, Std Dev: {errors.std():.4f}, Mean: {errors.mean():.4f}')
+# plt.grid(True)
+# plt.show()
 
 # Plotting
 with torch.no_grad():
@@ -91,51 +91,60 @@ with torch.no_grad():
     # Fill predictions (aligned with true values)
     therapist_pred[lookback:lookback+len(valid_pred)] = valid_pred
 
-# Plot only validation portion
-plt.figure(figsize=(12, 6))
-plt.plot(therapist_true, c='b', label='True Therapist Data')
-plt.plot(therapist_pred, c='r', linestyle='--', label='Predicted Therapist Data')
-# plt.plot(valid[:, 0], c='g', alpha=0.75, label='Patient Data (input)')
-plt.xlim(0, 7500)
-plt.xlabel('Time Steps (~4ms)')
-plt.ylabel('Joint Positions (Radians)')
-plt.legend()
-plt.title("Validation: Therapist Knee Prediction from Patient Data")
-plt.show()
-# plt.savefig('lstm_therapist_prediction.png', dpi=300, bbox_inches='tight')
+# # Plot only validation portion
+# plt.figure(figsize=(12, 6))
+# # plt.plot(therapist_true, c='b', label='True Therapist Data')
+# plt.plot(therapist_pred, c='r', linestyle='--', label='Predicted Therapist Data')
+# # plt.plot(valid[:, 0], c='g', alpha=0.75, label='Patient Data (input)')
+# plt.xlim(0, 7500)
+# plt.xlabel('Time Steps (~4ms)')
+# plt.ylabel('Joint Positions (Radians)')
+# plt.legend()
+# plt.title("Validation: Therapist Knee Prediction from Patient Data")
+# plt.show()
+# # plt.savefig('lstm_therapist_prediction.png', dpi=300, bbox_inches='tight')
 
-# Plot error over time
-plt.figure(figsize=(12, 6))
-plt.plot(errors, c='r', label='Prediction Error')
-plt.xlim(0, 7500)
-plt.xlabel('Time Steps (~4ms)')
-plt.ylabel('Joint Positions Errors (Radians)')
-plt.legend()
-plt.title("Error over Time")
-plt.show()
+# # Plot error over time
+# plt.figure(figsize=(12, 6))
+# plt.plot(errors, c='r', label='Prediction Error')
+# plt.xlim(0, 7500)
+# plt.xlabel('Time Steps (~4ms)')
+# plt.ylabel('Joint Positions Errors (Radians)')
+# plt.legend()
+# plt.title("Error over Time")
+# plt.show()
 
 
 # Overlay of periodic data
 # Find peaks in the therapist data and divide into periodic segments
 data_peaks, _ = find_peaks(-therapist_true, height=1.4)  # Heights: J13=?, J24=1.4, J31=?, J42=?
 periodic_data = [therapist_true[data_peaks[i]:data_peaks[i+1]] for i in range(len(data_peaks)-1)]
+pred_peaks, _ = find_peaks(-therapist_pred, height=1.4, distance=1000)  # Heights: J13=?, J24=1.4, J31=?, J42=?
+periodic_pred = [therapist_pred[pred_peaks[i]:pred_peaks[i+1]] for i in range(len(pred_peaks)-1)]
 
 # Normalize periodic data
-normalized_length = 100
+normalized_length = 101
 normalized_periodic_data = []
+normalized_periodic_pred = []
 for period in periodic_data:
     cur_time = np.linspace(0, 1, len(period))
     new_time = np.linspace(0, 1, normalized_length)
     interp = interp1d(cur_time, period, kind='linear')
     norm_period = interp(new_time)
     normalized_periodic_data.append(norm_period)
+for period in periodic_pred:
+    cur_time = np.linspace(0, 1, len(period))
+    new_time = np.linspace(0, 1, normalized_length)
+    interp = interp1d(cur_time, period, kind='linear')
+    norm_period = interp(new_time)
+    normalized_periodic_pred.append(norm_period)
 
 # Plot normalized periodic data
 plt.figure(figsize=(12, 6))
-# for period in normalized_periodic_data:
-#     plt.plot(period, c='g', alpha=0.5)  # Plot each normalized periodic segment
-for i in range(0, len(normalized_periodic_data) - 1):
-    plt.plot(normalized_periodic_data[i], c='b', alpha=0.5)  # Plot each normalized periodic segment
+for period in normalized_periodic_data:
+    plt.plot(period, c='b', alpha=0.5)
+for period in normalized_periodic_pred:
+    plt.plot(period, c='r', alpha=0.5)
 plt.legend()
 plt.title("Normalized Periodic Data")
 plt.xlabel('Normalized Time Steps')
