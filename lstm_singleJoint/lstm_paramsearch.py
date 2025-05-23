@@ -77,7 +77,9 @@ def create_dataset(dataset, lookback):
         y.append(target)
     X = np.array(X)
     y = np.array(y)
-    return torch.tensor(X).unsqueeze(-1), torch.tensor(y).unsqueeze(-1)
+    X = torch.tensor(X).reshape(-1, lookback, 1)
+    y = torch.tensor(y).reshape(-1, lookback, 1)
+    return X, y
 
 class JointModel(nn.Module):
     def __init__(self, input_size=1, hidden_size=50, num_layers=1):
@@ -85,6 +87,7 @@ class JointModel(nn.Module):
         self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True)
         self.linear = nn.Linear(hidden_size, 1)
     def forward(self, x):
+        x = x.float()
         x, _ = self.lstm(x)
         # extract only the last time step
         # x = x[:, -1, :]
@@ -202,8 +205,8 @@ def main():
     train, test, timeseries, timeseries_test = load_data()
     X_train, y_train = create_dataset(train, lookback=50)
     # train_model(train, test, timeseries, timeseries_test)
-    X_train = X_train.numpy().squeeze(-1)
-    y_train = y_train.numpy().squeeze(-1)
+    X_train_np = X_train.numpy().reshape(X_train.shape[0], -1)
+    y_train_np = y_train.numpy().reshape(y_train.shape[0], -1)
     param_grid = {
         'module__hidden_size': [25, 50, 75, 100],
         'module__num_layers': [1, 2, 3],
@@ -212,15 +215,16 @@ def main():
     }
     model = NeuralNetRegressor(
         JointModel,
-        max_epochs=100,
+        max_epochs=10,
         criterion=nn.MSELoss,
         optimizer=optim.Adam,
         batch_size=256,
-        verbose=False,
-        device='cuda' if torch.cuda.is_available() else 'cpu'
+        verbose=1,
+        device='cuda' if torch.cuda.is_available() else 'cpu',
+        train_split=None
     )
     scorer = make_scorer(rmse, greater_is_better=False)
-    grid = GridSearchCV(estimator=model, param_grid=param_grid, scoring=scorer, n_jobs=1, cv=3, verbose=3)
+    grid = GridSearchCV(estimator=model, param_grid=param_grid, scoring=scorer, n_jobs=1, cv=3, verbose=3, error_score='raise')
     grid_result = grid.fit(X_train, y_train)
     print("Best parameters found: ", grid_result.best_params_)
     print("Best RMSE score: ", -grid_result.best_score_)  # Negative because greater_is_better=False
