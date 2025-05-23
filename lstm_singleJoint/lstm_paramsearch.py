@@ -59,7 +59,7 @@ def load_data():
     train_size = int(len(timeseries))
     test_size = int(len(timeseries_test * 0.5))
     train, test = timeseries[:train_size], timeseries_test[:test_size]
-    return train, test, timeseries, timeseries_test
+    return train.copy(), test.copy(), timeseries.copy(), timeseries_test.copy()
 
 def create_dataset(dataset, lookback):
     """Transform a time series into a prediction dataset
