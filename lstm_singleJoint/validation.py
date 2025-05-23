@@ -15,8 +15,8 @@ therapist = pd.read_csv('X2_SRA_B_07-05-2024_10-41-46-mod-sync.csv',
                        nrows=894640-696306)
 
 # Prepare data
-patient_data = patient[['JointPositions_1']].values.astype('float32')
-therapist_data = therapist[['JointPositions_3']].values.astype('float32')
+patient_data = patient[['JointPositions_3']].values.astype('float32')
+therapist_data = therapist[['JointPositions_1']].values.astype('float32')
 timeseries = np.column_stack((patient_data, therapist_data))
 
 # Validation split
@@ -46,7 +46,7 @@ class JointModel(nn.Module):
 
 # Load model
 model = JointModel()
-model.load_state_dict(torch.load('trial5/j13/lstm_model_epoch144.pth'))
+model.load_state_dict(torch.load('trial5/j31/lstm_model_epoch189.pth'))
 model.eval()
 
 # Validation
@@ -91,18 +91,18 @@ with torch.no_grad():
     # Fill predictions (aligned with true values)
     therapist_pred[lookback:lookback+len(valid_pred)] = valid_pred
 
-# # Plot only validation portion
-# plt.figure(figsize=(12, 6))
-# # plt.plot(therapist_true, c='b', label='True Therapist Data')
+# Plot only validation portion
+plt.figure(figsize=(12, 6))
+plt.plot(therapist_true, c='b', label='True Therapist Data')
 # plt.plot(therapist_pred, c='r', linestyle='--', label='Predicted Therapist Data')
-# # plt.plot(valid[:, 0], c='g', alpha=0.75, label='Patient Data (input)')
+# plt.plot(valid[:, 0], c='g', alpha=0.75, label='Patient Data (input)')
 # plt.xlim(0, 7500)
-# plt.xlabel('Time Steps (~4ms)')
-# plt.ylabel('Joint Positions (Radians)')
-# plt.legend()
-# plt.title("Validation: Therapist Knee Prediction from Patient Data")
-# plt.show()
-# # plt.savefig('lstm_therapist_prediction.png', dpi=300, bbox_inches='tight')
+plt.xlabel('Time Steps (~4ms)')
+plt.ylabel('Joint Positions (Radians)')
+plt.legend()
+plt.title("Validation: Therapist Knee Prediction from Patient Data")
+plt.show()
+# plt.savefig('lstm_therapist_prediction.png', dpi=300, bbox_inches='tight')
 
 # # Plot error over time
 # plt.figure(figsize=(12, 6))
@@ -117,9 +117,9 @@ with torch.no_grad():
 
 # Overlay of periodic data
 # Find peaks in the therapist data and divide into periodic segments
-data_peaks, _ = find_peaks(therapist_true, height=1.0)  # ONLY NEGATIVE FOR KNEES, Heights: J13=1.0, J24=1.4, J31=?, J42=?
+data_peaks, _ = find_peaks(therapist_true, height=0.4, distance=1000)  # ONLY NEGATIVE FOR KNEES (2,4), Heights: J13=1.0, J24=1.4, J31=0.4, J42=?
 periodic_data = [therapist_true[data_peaks[i]:data_peaks[i+1]] for i in range(len(data_peaks)-1)]
-pred_peaks, _ = find_peaks(therapist_pred, height=1.0, distance=1000)  # ONLY NEGATIVE FOR KNEES, Heights: J13=1.0, J24=1.4, J31=?, J42=?
+pred_peaks, _ = find_peaks(therapist_pred, height=0.4, distance=1000)  # ONLY NEGATIVE FOR KNEES (2,4), Heights: J13=1.0, J24=1.4, J31=0.4, J42=?
 periodic_pred = [therapist_pred[pred_peaks[i]:pred_peaks[i+1]] for i in range(len(pred_peaks)-1)]
 
 # Normalize periodic data
