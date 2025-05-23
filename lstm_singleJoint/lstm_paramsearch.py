@@ -5,6 +5,8 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.utils.data as data
+from skorch import NeuralNetClassifier
+from sklearn.model_selection import GridSearchCV
 
 def load_data():
     """Create datasets for training and testing."""
@@ -77,10 +79,10 @@ def create_dataset(dataset, lookback):
     return torch.tensor(X).unsqueeze(-1), torch.tensor(y).unsqueeze(-1)
 
 class JointModel(nn.Module):
-    def __init__(self):
+    def __init__(self, input_size=1, hidden_size=50, num_layers=1):
         super().__init__()
-        self.lstm = nn.LSTM(input_size=1, hidden_size=50, num_layers=1, batch_first=True)
-        self.linear = nn.Linear(50, 1)
+        self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True)
+        self.linear = nn.Linear(hidden_size, 1)
     def forward(self, x):
         x, _ = self.lstm(x)
         # extract only the last time step
@@ -193,7 +195,23 @@ def plot_predictions(model, X_test, test, lookback, timeseries, timeseries_test)
 
 def main():
     train, test, timeseries, timeseries_test = load_data()
-    train_model(train, test, timeseries, timeseries_test)
+    X_train, y_train = create_dataset(train, lookback=50)
+    # train_model(train, test, timeseries, timeseries_test)
+    param_grid = {
+        'module__hidden_size': [25, 50, 75, 100],
+        'module__num_layers': [1, 2, 3],
+        'optimizer__lr': [0.00001, 0.0001, 0.001, 0.01, 0.1]
+    }
+    model = NeuralNetClassifier(
+        JointModel,
+        max_epochs=200,
+        criterion=nn.MSELoss,
+        optimizer=optim.Adam,
+        batch_size=256,
+        verbose=False
+    )
+    grid = GridSearchCV(estimator=model, param_grid=param_grid, n_jobs=-1, cv=3)
+    grid_result = grid.fit(X_train, y_train)
     return 0
 
 if __name__ == "__main__":
