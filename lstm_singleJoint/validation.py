@@ -139,12 +139,30 @@ for period in periodic_pred:
     norm_period = interp(new_time)
     normalized_periodic_pred.append(norm_period)
 
+# Get mean and std dev of normalized data and pred
+stacked_data = np.vstack(normalized_periodic_data)
+stacked_pred = np.vstack(normalized_periodic_pred)
+mean_data = np.mean(stacked_data, axis=0)
+mean_pred = np.mean(stacked_pred, axis=0)
+std_data = np.std(stacked_data, axis=0)
+std_pred = np.std(stacked_pred, axis=0)
+
 # Plot normalized periodic data
 plt.figure(figsize=(12, 6))
-for period in normalized_periodic_data:
-    plt.plot(period, c='b', alpha=0.5)
-for period in normalized_periodic_pred:
-    plt.plot(period, c='r', alpha=0.5)
+# for period in normalized_periodic_data:
+#     plt.plot(period, c='b', alpha=0.5)
+# for period in normalized_periodic_pred:
+#     plt.plot(period, c='r', alpha=0.5)
+plt.plot(mean_data, c='b', label='Mean Therapist Data')
+plt.fill_between(range(normalized_length), 
+                 mean_data - std_data, 
+                 mean_data + std_data, 
+                 color='b', alpha=0.2)
+plt.plot(mean_pred, c='r', label='Mean Predicted Therapist Data')
+plt.fill_between(range(normalized_length), 
+                 mean_pred - std_pred, 
+                 mean_pred + std_pred, 
+                 color='r', alpha=0.2)
 plt.legend()
 plt.title("Normalized Periodic Data")
 plt.xlabel('Normalized Time Steps')
