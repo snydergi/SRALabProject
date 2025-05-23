@@ -215,7 +215,7 @@ def main():
     }
     model = NeuralNetRegressor(
         JointModel,
-        max_epochs=10,
+        max_epochs=150,
         criterion=nn.MSELoss,
         optimizer=optim.Adam,
         batch_size=256,
