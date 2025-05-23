@@ -164,7 +164,7 @@ plt.fill_between(range(normalized_length),
                  mean_pred + std_pred, 
                  color='r', alpha=0.2)
 plt.legend()
-plt.title("Normalized Periodic Data")
+plt.title("Average Periodic Data and Prediction")
 plt.xlabel('Normalized Time Steps')
 plt.ylabel('Joint Positions (Radians)')
 plt.show()
