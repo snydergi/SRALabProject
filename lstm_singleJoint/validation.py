@@ -117,7 +117,7 @@ plt.show()
 
 # Overlay of periodic data
 # Find peaks in the therapist data and divide into periodic segments
-data_peaks, _ = find_peaks(-therapist_true, height=1.4)
+data_peaks, _ = find_peaks(-therapist_true, height=1.4)  # Heights: J13=?, J24=1.4, J31=?, J42=?
 periodic_data = [therapist_true[data_peaks[i]:data_peaks[i+1]] for i in range(len(data_peaks)-1)]
 
 # Normalize periodic data
