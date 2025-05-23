@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import torch
 import torch.nn as nn
+from scipy.signal import find_peaks
+from scipy.interpolate import interp1d
 
 # Load data
 patient = pd.read_csv('X2_SRA_A_07-05-2024_10-39-10-mod-sync.csv', 
@@ -110,4 +112,32 @@ plt.xlabel('Time Steps (~4ms)')
 plt.ylabel('Joint Positions Errors (Radians)')
 plt.legend()
 plt.title("Error over Time")
+plt.show()
+
+
+# Overlay of periodic data
+# Find peaks in the therapist data and divide into periodic segments
+data_peaks, _ = find_peaks(-therapist_true, height=1.4)
+periodic_data = [therapist_true[data_peaks[i]:data_peaks[i+1]] for i in range(len(data_peaks)-1)]
+
+# Normalize periodic data
+normalized_length = 100
+normalized_periodic_data = []
+for period in periodic_data:
+    cur_time = np.linspace(0, 1, len(period))
+    new_time = np.linspace(0, 1, normalized_length)
+    interp = interp1d(cur_time, period, kind='linear')
+    norm_period = interp(new_time)
+    normalized_periodic_data.append(norm_period)
+
+# Plot normalized periodic data
+plt.figure(figsize=(12, 6))
+# for period in normalized_periodic_data:
+#     plt.plot(period, c='g', alpha=0.5)  # Plot each normalized periodic segment
+for i in range(0, len(normalized_periodic_data) - 1):
+    plt.plot(normalized_periodic_data[i], c='b', alpha=0.5)  # Plot each normalized periodic segment
+plt.legend()
+plt.title("Normalized Periodic Data")
+plt.xlabel('Normalized Time Steps')
+plt.ylabel('Joint Positions (Radians)')
 plt.show()
