@@ -7,26 +7,26 @@ import torch.optim as optim
 import torch.utils.data as data
 
 # Load the first range (164041 to 367374)
-patient_part1 = pd.read_csv('X2_SRA_A_07-05-2024_10-39-10-mod-sync.csv', 
+patient_part1 = pd.read_csv('../X2_SRA_A_07-05-2024_10-39-10-mod-sync.csv', 
                           skiprows=range(1, 164041), 
                           nrows=367374-164041)
-therapist_part1 = pd.read_csv('X2_SRA_B_07-05-2024_10-41-46-mod-sync.csv', 
+therapist_part1 = pd.read_csv('../X2_SRA_B_07-05-2024_10-41-46-mod-sync.csv', 
                             skiprows=range(1, 164041), 
                             nrows=367374-164041)
 
 # Load the second range (454139 to 654139)
-patient_part2 = pd.read_csv('X2_SRA_A_07-05-2024_10-39-10-mod-sync.csv', 
+patient_part2 = pd.read_csv('../X2_SRA_A_07-05-2024_10-39-10-mod-sync.csv', 
                           skiprows=range(1, 454139), 
                           nrows=654139-454139)
-therapist_part2 = pd.read_csv('X2_SRA_B_07-05-2024_10-41-46-mod-sync.csv', 
+therapist_part2 = pd.read_csv('../X2_SRA_B_07-05-2024_10-41-46-mod-sync.csv', 
                             skiprows=range(1, 454139), 
                             nrows=654139-454139)
 
 # Load the third range (696306 to 894640)
-patient_part3 = pd.read_csv('X2_SRA_A_07-05-2024_10-39-10-mod-sync.csv', 
+patient_part3 = pd.read_csv('../X2_SRA_A_07-05-2024_10-39-10-mod-sync.csv', 
                           skiprows=range(1, 696306), 
                           nrows=894640-696306)
-therapist_part3 = pd.read_csv('X2_SRA_B_07-05-2024_10-41-46-mod-sync.csv', 
+therapist_part3 = pd.read_csv('../X2_SRA_B_07-05-2024_10-41-46-mod-sync.csv', 
                             skiprows=range(1, 696306), 
                             nrows=894640-696306)
 
@@ -34,14 +34,17 @@ therapist_part3 = pd.read_csv('X2_SRA_B_07-05-2024_10-41-46-mod-sync.csv',
 patient = pd.concat([patient_part1, patient_part2])
 therapist = pd.concat([therapist_part1, therapist_part2])
 
-patient_data = patient[['JointPositions_1']].values.astype('float32')
-therapist_data = therapist[['JointPositions_3']].values.astype('float32')
+patient_data = patient[['JointPositions_4']].values.astype('float32')
+therapist_data = therapist[['JointPositions_2']].values.astype('float32')
 
-patient_test = patient_part3[['JointPositions_1']].values.astype('float32')
-therapist_test = therapist_part3[['JointPositions_3']].values.astype('float32')
+patient_test = patient_part3[['JointPositions_4']].values.astype('float32')
+therapist_test = therapist_part3[['JointPositions_2']].values.astype('float32')
 
 timeseries = np.column_stack((patient_data, therapist_data))
 timeseries_test = np.column_stack((patient_test, therapist_test))
+
+print('Patient J4')
+print('Therapist J2')
  
 # plt.plot(timeseries)
 # plt.xlabel('Time Steps (~4ms)')
@@ -99,7 +102,7 @@ loader = data.DataLoader(data.TensorDataset(X_train, y_train), shuffle=True, bat
 
 train_loss_list = []
 test_loss_list = []
-n_epochs = 500
+n_epochs = 200
 for epoch in range(n_epochs):
     model.train()
     epoch_losses = []
@@ -122,6 +125,7 @@ for epoch in range(n_epochs):
         test_rmse = np.sqrt(loss_fn(y_pred, y_test))
         test_loss_list.append(loss_fn(y_pred, y_test))
         print(f"Epoch {epoch}: Train RMSE {train_rmse:.4f}, Test RMSE {test_rmse:.4f}")
+    torch.save(model.state_dict(), f'lstm_model_epoch{epoch}.pth')
 
 # Plotting the losses
 plt.figure(figsize=(12, 6))
@@ -163,21 +167,24 @@ with torch.no_grad():
     test_predictions = model(X_test)[:, -1, :].numpy().flatten()
     test_pred[lookback:test_size] = test_predictions
 
-# Plot training data
-plt.plot(therapist_true, c='b', label='True Therapist (Train)')
-plt.plot(therapist_pred, c='r', linestyle='--', label='Predicted Therapist (Train)')
-plt.plot(timeseries[:, 0], c='g', alpha=0.3, label='Patient Data (input)')
+# # Plot training data
+# plt.plot(therapist_true, c='b', label='True Therapist (Train)')
+# plt.plot(therapist_pred, c='r', linestyle='--', label='Predicted Therapist (Train)')
+# plt.plot(timeseries[:, 0], c='g', alpha=0.3, label='Patient Data (input)')
 
 # Plot test data (offset by train_size)
-test_x = np.arange(train_size, train_size + test_size)
-plt.plot(test_x, test_true, c='blue', alpha=0.5, label='True Therapist (Test)')
-plt.plot(test_x, test_pred, c='red', linestyle=':', label='Predicted Therapist (Test)')
+# test_x = np.arange(train_size, train_size + test_size)
+# plt.plot(test_x, test_true, c='blue', alpha=0.5, label='True Therapist (Test)')
+# plt.plot(test_x, test_pred, c='red', linestyle=':', label='Predicted Therapist (Test)')
 
-plt.xlim(0, train_size + test_size)
+plt.plot(test_true, c='blue', alpha=0.5, label='True Therapist (Test)')
+plt.plot(test_pred, c='red', linestyle=':', label='Predicted Therapist (Test)')
+
+plt.xlim(0, test_size * 0.25)
 plt.xlabel('Time Steps (~4ms)')
-plt.ylabel('Joint Positions')
+plt.ylabel('Joint Positions (radians)')
 plt.legend()
-plt.title("Therapist Hip Data Prediction from Patient Data")
+plt.title("Therapist L Knee Data Prediction from Patient R Knee Data")
 plt.grid(True, alpha=0.3)
 plt.show()
 plt.savefig('lstm_therapist_prediction.png', dpi=300, bbox_inches='tight')
