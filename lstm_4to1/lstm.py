@@ -34,17 +34,14 @@ therapist_part3 = pd.read_csv('../X2_SRA_B_07-05-2024_10-41-46-mod-sync.csv',
 patient = pd.concat([patient_part1, patient_part2])
 therapist = pd.concat([therapist_part1, therapist_part2])
 
-patient_data = patient[['JointPositions_4']].values.astype('float32')
-therapist_data = therapist[['JointPositions_2']].values.astype('float32')
+patient_data = patient[['JointPositions_1', 'JointPositions_2', 'JointPositions_3', 'JointPositions_4']].values.astype('float32')
+therapist_data = therapist[['JointPositions_3']].values.astype('float32')
 
-patient_test = patient_part3[['JointPositions_4']].values.astype('float32')
-therapist_test = therapist_part3[['JointPositions_2']].values.astype('float32')
+patient_test = patient_part3[['JointPositions_1', 'JointPositions_2', 'JointPositions_3', 'JointPositions_4']].values.astype('float32')
+therapist_test = therapist_part3[['JointPositions_3']].values.astype('float32')
 
 timeseries = np.column_stack((patient_data, therapist_data))
 timeseries_test = np.column_stack((patient_test, therapist_test))
-
-print('Patient J4')
-print('Therapist J2')
  
 # plt.plot(timeseries)
 # plt.xlabel('Time Steps (~4ms)')
@@ -68,8 +65,8 @@ def create_dataset(dataset, lookback):
     """
     X, y = [], []
     for i in range(len(dataset)-lookback):
-        feature = dataset[i:i+lookback, 0]  # Feature is patient data
-        target = dataset[i+1:i+lookback+1, 1]  # Target is therapist data
+        feature = dataset[i:i+lookback, :4]  # Feature is patient data
+        target = dataset[i+1:i+lookback+1, -1]  # Target is therapist data
         X.append(feature)
         y.append(target)
     X = np.array(X)
@@ -98,7 +95,7 @@ class JointModel(nn.Module):
 model = JointModel()
 optimizer = optim.Adam(model.parameters())
 loss_fn = nn.MSELoss()
-loader = data.DataLoader(data.TensorDataset(X_train, y_train), shuffle=True, batch_size=256)
+loader = data.DataLoader(data.TensorDataset(X_train, y_train), shuffle=True, batch_size=128)
 
 train_loss_list = []
 test_loss_list = []
