@@ -177,6 +177,7 @@ with torch.no_grad():
 # plt.plot(test_x, test_true, c='blue', alpha=0.5, label='True Therapist (Test)')
 # plt.plot(test_x, test_pred, c='red', linestyle=':', label='Predicted Therapist (Test)')
 
+plt.figure(figsize=(12, 6))
 plt.plot(test_true, c='blue', alpha=0.5, label='True Therapist (Test)')
 plt.plot(test_pred, c='red', linestyle=':', label='Predicted Therapist (Test)')
 
