@@ -66,14 +66,14 @@ with torch.no_grad():
     # Pointwise errors (signed)
     errors = (y_pred2 - y_true).numpy()  # Convert to numpy for plotting
 
-# # Plot histogram of errors
-# plt.figure(figsize=(12, 6))
-# plt.hist(errors, bins=50, alpha=0.7, color='blue')
-# plt.xlabel('Error (Radians)')
-# plt.ylabel('# of Occurrences')
-# plt.title(f'Distribution of Prediction Errors, RMSE: {valid_rmse:.4f}, Max: {errors.max():.4f}, Std Dev: {errors.std():.4f}, Mean: {errors.mean():.4f}')
-# plt.grid(True)
-# plt.show()
+# Plot histogram of errors
+plt.figure(figsize=(12, 6))
+plt.hist(errors, bins=50, alpha=0.7, color='blue')
+plt.xlabel('Error (Radians)')
+plt.ylabel('# of Occurrences')
+plt.title(f'Distribution of Prediction Errors, RMSE: {valid_rmse:.4f}, Max: {errors.max():.4f}, Std Dev: {errors.std():.4f}, Mean: {errors.mean():.4f}')
+plt.grid(True)
+plt.show()
 
 # Plotting
 with torch.no_grad():
