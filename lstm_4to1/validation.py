@@ -15,7 +15,7 @@ therapist = pd.read_csv('X2_SRA_B_07-05-2024_10-41-46-mod-sync.csv',
                        nrows=894640-696306)
 
 # Prepare data
-patient_data = patient[['JointPositions_1']].values.astype('float32')
+patient_data = patient[['JointPositions_1', 'JointPositions_2', 'JointPositions_3', 'JointPositions_4']].values.astype('float32')
 therapist_data = therapist[['JointPositions_3']].values.astype('float32')
 timeseries = np.column_stack((patient_data, therapist_data))
 
@@ -23,13 +23,22 @@ timeseries = np.column_stack((patient_data, therapist_data))
 valid_size = int(len(timeseries) * 0.5)
 valid = timeseries[(len(timeseries) - valid_size):len(timeseries)]
 
-# Create dataset function (optimized)
 def create_dataset(dataset, lookback):
-    """Transform a time series into a prediction dataset"""
-    X = np.array([dataset[i:i+lookback, 0] for i in range(len(dataset)-lookback)])
-    y = np.array([dataset[i+1:i+lookback+1, 1] for i in range(len(dataset)-lookback)])
-    return (torch.tensor(X).unsqueeze(-1), 
-            torch.tensor(y).unsqueeze(-1))
+    """Transform a time series into a prediction dataset
+    
+    Args:
+        dataset: A numpy array of time series, first dimension is the time steps
+        lookback: Size of window for prediction
+    """
+    X, y = [], []
+    for i in range(len(dataset)-lookback):
+        feature = dataset[i:i+lookback, :4]  # Feature is patient data
+        target = dataset[i+1:i+lookback+1, -1]  # Target is therapist data
+        X.append(feature)
+        y.append(target)
+    X = np.array(X)
+    y = np.array(y)
+    return torch.tensor(X), torch.tensor(y).unsqueeze(-1)
 
 lookback = 50
 X_valid, y_valid = create_dataset(valid, lookback=lookback)
@@ -38,7 +47,7 @@ X_valid, y_valid = create_dataset(valid, lookback=lookback)
 class JointModel(nn.Module):
     def __init__(self):
         super().__init__()
-        self.lstm = nn.LSTM(input_size=1, hidden_size=50, num_layers=1, batch_first=True)
+        self.lstm = nn.LSTM(input_size=4, hidden_size=50, num_layers=1, batch_first=True)
         self.linear = nn.Linear(50, 1)
     def forward(self, x):
         x, _ = self.lstm(x)
@@ -46,7 +55,7 @@ class JointModel(nn.Module):
 
 # Load model
 model = JointModel()
-model.load_state_dict(torch.load('trial6/lstm_model_epoch70.pth'))
+model.load_state_dict(torch.load('trial1/lstm_model_epoch12.pth'))
 model.eval()
 
 # Validation
@@ -83,7 +92,7 @@ with torch.no_grad():
     therapist_pred = np.full(plot_length, np.nan)
     
     # Fill true values (offset by lookback)
-    therapist_true[lookback:] = valid[lookback:, 1]
+    therapist_true[lookback:] = valid[lookback:, -1]
     
     # Get predictions (last timestep of each sequence)
     valid_pred = model(X_valid)[:, -1, :].numpy().flatten()
@@ -94,9 +103,9 @@ with torch.no_grad():
 # Plot only validation portion
 plt.figure(figsize=(12, 6))
 plt.plot(therapist_true, c='b', label='True Therapist Data')
-# plt.plot(therapist_pred, c='r', linestyle='--', label='Predicted Therapist Data')
+plt.plot(therapist_pred, c='r', linestyle='--', label='Predicted Therapist Data')
 # plt.plot(valid[:, 0], c='g', alpha=0.75, label='Patient Data (input)')
-# plt.xlim(0, 7500)
+plt.xlim(0, 7500)
 plt.xlabel('Time Steps (~4ms)')
 plt.ylabel('Joint Positions (Radians)')
 plt.legend()
