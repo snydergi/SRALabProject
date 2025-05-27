@@ -46,7 +46,7 @@ class JointModel(nn.Module):
 
 # Load model
 model = JointModel()
-model.load_state_dict(torch.load('trial6/lstm_model_epoch70.pth'))
+model.load_state_dict(torch.load('trial5/j13/lstm_model_epoch144.pth'))
 model.eval()
 
 # Validation
@@ -92,16 +92,16 @@ with torch.no_grad():
     therapist_pred[lookback:lookback+len(valid_pred)] = valid_pred
 
 # Plot only validation portion
-plt.figure(figsize=(12, 6))
-plt.plot(therapist_true, c='b', label='True Therapist Data')
-# plt.plot(therapist_pred, c='r', linestyle='--', label='Predicted Therapist Data')
-# plt.plot(valid[:, 0], c='g', alpha=0.75, label='Patient Data (input)')
+# plt.figure(figsize=(12, 6))
+# plt.plot(therapist_true, c='b', label='True Therapist Data')
+# # plt.plot(therapist_pred, c='r', linestyle='--', label='Predicted Therapist Data')
+# # plt.plot(valid[:, 0], c='g', alpha=0.75, label='Patient Data (input)')
 # plt.xlim(0, 7500)
-plt.xlabel('Time Steps (~4ms)')
-plt.ylabel('Joint Positions (Radians)')
-plt.legend()
-plt.title("Validation: Therapist Hip Prediction from Patient Data")
-plt.show()
+# plt.xlabel('Time Steps (~4ms)')
+# plt.ylabel('Joint Positions (Radians)')
+# plt.legend()
+# plt.title("Validation: Therapist Hip Prediction from Patient Data")
+# plt.show()
 # plt.savefig('lstm_therapist_prediction.png', dpi=300, bbox_inches='tight')
 
 # # Plot error over time
@@ -164,7 +164,7 @@ plt.fill_between(range(normalized_length),
                  mean_pred + std_pred, 
                  color='r', alpha=0.2)
 plt.legend()
-plt.title("Average Periodic Data and Prediction")
+plt.title("Average Periodic Data and Prediction, Therapist Right Hip")
 plt.xlabel('Normalized Time Steps')
 plt.ylabel('Joint Positions (Radians)')
 plt.show()
