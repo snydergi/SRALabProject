@@ -5,6 +5,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.utils.data as data
+from torchrl.modules import NoisyLinear
 
 # Load the first range (164041 to 367374)
 patient_part1 = pd.read_csv('../X2_SRA_A_07-05-2024_10-39-10-mod-sync.csv', 
@@ -83,7 +84,8 @@ class JointModel(nn.Module):
     def __init__(self):
         super().__init__()
         self.lstm = nn.LSTM(input_size=4, hidden_size=50, num_layers=1, batch_first=True)
-        self.linear = nn.Linear(50, 1)
+        # self.linear = nn.Linear(50, 1)
+        self.linear = NoisyLinear(50, 1)
     def forward(self, x):
         x, _ = self.lstm(x)
         # extract only the last time step
@@ -145,24 +147,24 @@ plt.savefig('training_loss_curves.png', dpi=300, bbox_inches='tight')
 torch.save(model.state_dict(), 'lstm_model.pth')
 
 # Plotting
-with torch.no_grad():
-    # Create arrays for plotting
-    therapist_true = np.ones_like(timeseries[:, 1]) * np.nan
-    therapist_pred = np.ones_like(timeseries[:, 1]) * np.nan
+# with torch.no_grad():
+#     # Create arrays for plotting
+#     therapist_true = np.ones_like(timeseries[:, 1]) * np.nan
+#     therapist_pred = np.ones_like(timeseries[:, 1]) * np.nan
     
-    # Fill in the true therapist data
-    therapist_true[lookback:train_size] = timeseries[lookback:train_size, 1]
+#     # Fill in the true therapist data
+#     therapist_true[lookback:train_size] = timeseries[lookback:train_size, 1]
 
-    # Create arrays for test portion
-    test_true = np.ones_like(test[:, 1]) * np.nan
-    test_pred = np.ones_like(test[:, 1]) * np.nan
+#     # Create arrays for test portion
+#     test_true = np.ones_like(test[:, 1]) * np.nan
+#     test_pred = np.ones_like(test[:, 1]) * np.nan
     
-    # Fill in true test data
-    test_true[lookback:test_size] = test[lookback:test_size, 1]
+#     # Fill in true test data
+#     test_true[lookback:test_size] = test[lookback:test_size, 1]
     
-    # Get predictions for test
-    test_predictions = model(X_test)[:, -1, :].numpy().flatten()
-    test_pred[lookback:test_size] = test_predictions
+#     # Get predictions for test
+#     test_predictions = model(X_test)[:, -1, :].numpy().flatten()
+#     test_pred[lookback:test_size] = test_predictions
 
 # # Plot training data
 # plt.plot(therapist_true, c='b', label='True Therapist (Train)')
@@ -174,15 +176,15 @@ with torch.no_grad():
 # plt.plot(test_x, test_true, c='blue', alpha=0.5, label='True Therapist (Test)')
 # plt.plot(test_x, test_pred, c='red', linestyle=':', label='Predicted Therapist (Test)')
 
-plt.figure(figsize=(12, 6))
-plt.plot(test_true, c='blue', alpha=0.5, label='True Therapist (Test)')
-plt.plot(test_pred, c='red', linestyle=':', label='Predicted Therapist (Test)')
+# plt.figure(figsize=(12, 6))
+# plt.plot(test_true, c='blue', alpha=0.5, label='True Therapist (Test)')
+# plt.plot(test_pred, c='red', linestyle=':', label='Predicted Therapist (Test)')
 
-plt.xlim(0, test_size * 0.25)
-plt.xlabel('Time Steps (~4ms)')
-plt.ylabel('Joint Positions (radians)')
-plt.legend()
-plt.title("Therapist L Knee Data Prediction from Patient R Knee Data")
-plt.grid(True, alpha=0.3)
-plt.show()
-plt.savefig('lstm_therapist_prediction.png', dpi=300, bbox_inches='tight')
+# plt.xlim(0, test_size * 0.25)
+# plt.xlabel('Time Steps (~4ms)')
+# plt.ylabel('Joint Positions (radians)')
+# plt.legend()
+# plt.title("Therapist L Knee Data Prediction from Patient R Knee Data")
+# plt.grid(True, alpha=0.3)
+# plt.show()
+# plt.savefig('lstm_therapist_prediction.png', dpi=300, bbox_inches='tight')
