@@ -133,7 +133,7 @@ std_err = std_data - std_pred
 # plt.hist(errors, bins=50, alpha=0.7, color='blue')
 # plt.xlabel('Error (Radians)')
 # plt.ylabel('# of Occurrences')
-# plt.title(f'Distribution of Prediction Errors, RMSE: {valid_rmse:.4f}, Max: {errors.max():.4f}, Std Dev: {errors.std():.4f}, Mean: {errors.mean():.4f}')
+# plt.title(f'4-to-1 (L Hip) Distribution of Prediction Errors, RMSE: {valid_rmse:.4f}, Max: {errors.max():.4f}, Std Dev: {errors.std():.4f}, Mean: {errors.mean():.4f}')
 # plt.grid(True)
 # plt.show()
 
@@ -142,13 +142,13 @@ std_err = std_data - std_pred
 # Limit to 7500 time steps (~30 seconds) EXCEPT when determining amplitude for periodic plots
 # plt.figure(figsize=(12, 6))
 # plt.plot(therapist_true, c='b', label='True Therapist Data')
-# # plt.plot(therapist_pred, c='r', linestyle='--', label='Predicted Therapist Data')
+# plt.plot(therapist_pred, c='r', linestyle='--', label='Predicted Therapist Data')
 # # plt.plot(valid[:, 0], c='g', alpha=0.75, label='Patient Data (input)')
 # plt.xlim(0, 7500)
 # plt.xlabel('Time Steps (~4ms)')
 # plt.ylabel('Joint Positions (Radians)')
 # plt.legend()
-# plt.title("Validation: Therapist Hip Prediction from Patient Data")
+# plt.title("Validation: Therapist L Hip Prediction from Patient Data")
 # plt.show()
 # # plt.savefig('lstm_therapist_prediction.png', dpi=300, bbox_inches='tight')
 
@@ -174,26 +174,28 @@ plt.figure(figsize=(12, 6))
 
 # Plot mean and std dev of periodic data and predictions
 # Use after height is set correctly in 'find peaks' above
-plt.plot(mean_data, c='b', label='Mean Therapist Data')
-plt.fill_between(range(normalized_length), 
-                 mean_data - std_data, 
-                 mean_data + std_data, 
-                 color='b', alpha=0.2)
-plt.plot(mean_pred, c='r', label='Mean Predicted Therapist Data')
-plt.fill_between(range(normalized_length), 
-                 mean_pred - std_pred, 
-                 mean_pred + std_pred, 
-                 color='r', alpha=0.2)
+# plt.plot(mean_data, c='b', label='Mean Therapist Data')
+# plt.fill_between(range(normalized_length), 
+#                  mean_data - std_data, 
+#                  mean_data + std_data, 
+#                  color='b', alpha=0.2)
+# plt.plot(mean_pred, c='r', label='Mean Predicted Therapist Data')
+# plt.fill_between(range(normalized_length), 
+#                  mean_pred - std_pred, 
+#                  mean_pred + std_pred, 
+#                  color='r', alpha=0.2)
+# plt.title("4-to-1 (L Hip) Periodic Mean and Std Dev, True and Predicted")
+# plt.ylabel('Joint Positions (Radians)')
 
 # Plot period plot of error using mean and std dev
-# plt.plot(mean_err, c='r', label='Mean Error')
-# plt.fill_between(range(normalized_length), 
-#                  mean_err - std_err, 
-#                  mean_err + std_err, 
-#                  color='r', alpha=0.2)
+plt.plot(mean_err, c='r', label='Mean Error')
+plt.fill_between(range(normalized_length), 
+                 mean_err - std_err, 
+                 mean_err + std_err, 
+                 color='r', alpha=0.2)
+plt.title("4-to-1 (L Hip) Periodic Error")
+plt.ylabel('Joint Error (Radians)')
 
 plt.legend()
-plt.title("Average Periodic Data and Prediction")
 plt.xlabel('Normalized Time Steps')
-plt.ylabel('Joint Positions (Radians)')
 plt.show()
