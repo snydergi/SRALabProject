@@ -5,6 +5,7 @@ import torch
 import torch.nn as nn
 from scipy.signal import find_peaks
 from scipy.interpolate import interp1d
+from torchrl.modules import NoisyLinear
 
 # Load data
 patient = pd.read_csv('X2_SRA_A_07-05-2024_10-39-10-mod-sync.csv', 
@@ -16,7 +17,7 @@ therapist = pd.read_csv('X2_SRA_B_07-05-2024_10-41-46-mod-sync.csv',
 
 # Prepare data
 patient_data = patient[['JointPositions_1', 'JointPositions_2', 'JointPositions_3', 'JointPositions_4']].values.astype('float32')
-therapist_data = therapist[['JointPositions_1']].values.astype('float32')
+therapist_data = therapist[['JointPositions_4']].values.astype('float32')
 timeseries = np.column_stack((patient_data, therapist_data))
 
 # Validation split
@@ -48,14 +49,15 @@ class JointModel(nn.Module):
     def __init__(self):
         super().__init__()
         self.lstm = nn.LSTM(input_size=4, hidden_size=50, num_layers=1, batch_first=True)
-        self.linear = nn.Linear(50, 1)
+        # self.linear = nn.Linear(50, 1)
+        self.linear = NoisyLinear(50, 1)
     def forward(self, x):
         x, _ = self.lstm(x)
         return self.linear(x)
 
 # Load model
 model = JointModel()
-model.load_state_dict(torch.load('trial2/j1/lstm_model_epoch32.pth'))
+model.load_state_dict(torch.load('trial3/j4/lstm_model_epoch0.pth'))
 model.eval()
 
 # Validation
@@ -93,9 +95,9 @@ with torch.no_grad():
 
 # Overlay of periodic data
 # Find peaks in the therapist data and divide into periodic segments
-data_peaks, _ = find_peaks(therapist_true, height=0.6, distance=1000)  # ONLY NEGATIVE FOR KNEES (2,4), Heights: J13=1.0, J24=1.4, J31=0.4, J42=1.0
+data_peaks, _ = find_peaks(-therapist_true, height=0.5, distance=1000)  # ONLY NEGATIVE FOR KNEES (2,4), Heights: J13=1.0, J24=1.4, J31=0.4, J42=1.0
 periodic_data = [therapist_true[data_peaks[i]:data_peaks[i+1]] for i in range(len(data_peaks)-1)]
-pred_peaks, _ = find_peaks(therapist_pred, height=0.6, distance=1000)  # ONLY NEGATIVE FOR KNEES (2,4), Heights: J13=1.0, J24=1.4, J31=0.4, J42=1.0
+pred_peaks, _ = find_peaks(-therapist_pred, height=0.5, distance=1000)  # ONLY NEGATIVE FOR KNEES (2,4), Heights: J13=1.0, J24=1.4, J31=0.4, J42=1.0
 periodic_pred = [therapist_pred[pred_peaks[i]:pred_peaks[i+1]] for i in range(len(pred_peaks)-1)]
 
 # Normalize periodic data
@@ -125,8 +127,8 @@ std_pred = np.std(stacked_pred, axis=0)
 print(f'Stacked Data Size: {stacked_data.shape}')
 print(f'Stacked Pred Size: {stacked_pred.shape}')
 
-# # Get errors for periodic data
-# # Must stay commented out until periodic data is set correctly
+# Get errors for periodic data
+# Must stay commented out until periodic data is set correctly
 mean_err = np.mean(abs(stacked_data - stacked_pred), axis=0)
 std_err = np.std(abs(stacked_data - stacked_pred), axis=0)
 
@@ -136,24 +138,24 @@ std_err = np.std(abs(stacked_data - stacked_pred), axis=0)
 # plt.hist(errors, bins=50, alpha=0.7, color='blue')
 # plt.xlabel('Error (Radians)')
 # plt.ylabel('# of Occurrences')
-# plt.title(f'4-to-1 (L Hip) Distribution of Prediction Errors, RMSE: {valid_rmse:.4f}, Max (abs): {abs(errors).max():.4f}, Std Dev: {errors.std():.4f}, Mean: {errors.mean():.4f}')
+# plt.title(f'4-to-1 (R Knee) Distribution of Prediction Errors, RMSE: {valid_rmse:.4f}, Max (abs): {abs(errors).max():.4f}, Std Dev: {errors.std():.4f}, Mean: {errors.mean():.4f}')
 # plt.grid(True)
 # plt.show()
 
 # Plot only validation data with prediction overlay
 # Change xlim for desired time steps
 # Limit to 7500 time steps (~30 seconds) EXCEPT when determining amplitude for periodic plots
-# plt.figure(figsize=(12, 6))
-# plt.plot(therapist_true, c='b', label='True Therapist Data')
-# plt.plot(therapist_pred, c='r', linestyle='--', label='Predicted Therapist Data')
-# # plt.plot(valid[:, 0], c='g', alpha=0.75, label='Patient Data (input)')
-# # plt.xlim(0, 7500)
-# plt.xlabel('Time Steps (~4ms)')
-# plt.ylabel('Joint Positions (Radians)')
-# plt.legend()
-# plt.title("Validation: Therapist L Knee Prediction from Patient Data")
-# plt.show()
-# # plt.savefig('lstm_therapist_prediction.png', dpi=300, bbox_inches='tight')
+plt.figure(figsize=(12, 6))
+plt.plot(therapist_true, c='b', label='True Therapist Data')
+plt.plot(therapist_pred, c='r', linestyle='--', label='Predicted Therapist Data')
+# plt.plot(valid[:, 0], c='g', alpha=0.75, label='Patient Data (input)')
+plt.xlim(0, 7500)
+plt.xlabel('Time Steps (~4ms)')
+plt.ylabel('Joint Positions (Radians)')
+plt.legend()
+plt.title("Validation: Therapist R Knee Prediction from Patient Data")
+plt.show()
+# plt.savefig('lstm_therapist_prediction.png', dpi=300, bbox_inches='tight')
 
 # # Plot error over time
 # plt.figure(figsize=(12, 6))
@@ -187,7 +189,7 @@ plt.figure(figsize=(12, 6))
 #                  mean_pred - std_pred, 
 #                  mean_pred + std_pred, 
 #                  color='r', alpha=0.2)
-# plt.title("4-to-1 (L Knee) Periodic Mean and Std Dev, True and Predicted")
+# plt.title("4-to-1 (R Knee) Periodic Mean and Std Dev, True and Predicted")
 # plt.ylabel('Joint Positions (Radians)')
 
 # Plot period plot of error using mean and std dev
@@ -196,7 +198,7 @@ plt.fill_between(range(normalized_length),
                  mean_err - std_err, 
                  mean_err + std_err, 
                  color='r', alpha=0.2)
-plt.title("4-to-1 (L Hip) Periodic Absolute Error")
+plt.title("4-to-1 (R Knee) Periodic Absolute Error")
 plt.ylabel('Joint Error (Radians)')
 
 plt.legend()
