@@ -92,39 +92,126 @@ with torch.no_grad():
     therapist_pred = np.full_like(therapist_true, np.nan)
     therapist_pred[lookback:] = valid_pred
 
-# # Overlay of periodic data
-# # Find peaks in the therapist data and divide into periodic segments
-# data_peaks, _ = find_peaks(-therapist_true, height=0.5, distance=1000)  # ONLY NEGATIVE FOR KNEES (2,4), Heights: J13=1.0, J24=1.4, J31=0.4, J42=1.0
-# periodic_data = [therapist_true[data_peaks[i]:data_peaks[i+1]] for i in range(len(data_peaks)-1)]
-# pred_peaks, _ = find_peaks(-therapist_pred, height=0.5, distance=1000)  # ONLY NEGATIVE FOR KNEES (2,4), Heights: J13=1.0, J24=1.4, J31=0.4, J42=1.0
-# periodic_pred = [therapist_pred[pred_peaks[i]:pred_peaks[i+1]] for i in range(len(pred_peaks)-1)]
+# Overlay of periodic data
+# Find peaks in the therapist data and divide into periodic segments
+data_peaks0, _ = find_peaks(therapist_true[:,0], height=0.4, distance=1000)
+periodic_data0 = [therapist_true[data_peaks0[i]:data_peaks0[i+1],0] for i in range(len(data_peaks0)-1)]
+pred_peaks0, _ = find_peaks(therapist_pred[:,2], height=0.4, distance=1000)
+periodic_pred0 = [therapist_pred[pred_peaks0[i]:pred_peaks0[i+1],2] for i in range(len(pred_peaks0)-1)]
 
-# # Normalize periodic data
-# normalized_length = 101
-# normalized_periodic_data = []
-# normalized_periodic_pred = []
-# for period in periodic_data:
-#     cur_time = np.linspace(0, 1, len(period))
-#     new_time = np.linspace(0, 1, normalized_length)
-#     interp = interp1d(cur_time, period, kind='linear')
-#     norm_period = interp(new_time)
-#     normalized_periodic_data.append(norm_period)
-# for period in periodic_pred:
-#     cur_time = np.linspace(0, 1, len(period))
-#     new_time = np.linspace(0, 1, normalized_length)
-#     interp = interp1d(cur_time, period, kind='linear')
-#     norm_period = interp(new_time)
-#     normalized_periodic_pred.append(norm_period)
+data_peaks1, _ = find_peaks(-therapist_true[:,1], height=0.4, distance=1000)
+periodic_data1 = [therapist_true[data_peaks1[i]:data_peaks1[i+1],1] for i in range(len(data_peaks1)-1)]
+pred_peaks1, _ = find_peaks(-therapist_pred[:,3], height=0.3, distance=1000)
+periodic_pred1 = [therapist_pred[pred_peaks1[i]:pred_peaks1[i+1],3] for i in range(len(pred_peaks1)-1)]
 
-# # Get mean and std dev of normalized data and pred
-# stacked_data = np.vstack(normalized_periodic_data)
-# stacked_pred = np.vstack(normalized_periodic_pred)
-# mean_data = np.mean(stacked_data, axis=0)
-# mean_pred = np.mean(stacked_pred, axis=0)
-# std_data = np.std(stacked_data, axis=0)
-# std_pred = np.std(stacked_pred, axis=0)
-# print(f'Stacked Data Size: {stacked_data.shape}')
-# print(f'Stacked Pred Size: {stacked_pred.shape}')
+data_peaks2, _ = find_peaks(therapist_true[:,2], height=0.4, distance=1000)
+periodic_data2 = [therapist_true[data_peaks2[i]:data_peaks2[i+1],2] for i in range(len(data_peaks2)-1)]
+pred_peaks2, _ = find_peaks(therapist_pred[:,0], height=0.4, distance=1000)
+periodic_pred2 = [therapist_pred[pred_peaks2[i]:pred_peaks2[i+1],0] for i in range(len(pred_peaks2)-1)]
+
+data_peaks3, _ = find_peaks(-therapist_true[:,3], height=0.4, distance=1000)
+periodic_data3 = [therapist_true[data_peaks3[i]:data_peaks3[i+1],3] for i in range(len(data_peaks3)-1)]
+pred_peaks3, _ = find_peaks(-therapist_pred[:,1], height=0.3, distance=1000)
+periodic_pred3 = [therapist_pred[pred_peaks3[i]:pred_peaks3[i+1],1] for i in range(len(pred_peaks3)-1)]
+
+# Normalize periodic data
+normalized_length = 101
+normalized_periodic_data0 = []
+normalized_periodic_pred0 = []
+for period in periodic_data0:
+    cur_time = np.linspace(0, 1, len(period))
+    new_time = np.linspace(0, 1, normalized_length)
+    interp = interp1d(cur_time, period, kind='linear')
+    norm_period = interp(new_time)
+    normalized_periodic_data0.append(norm_period)
+for period in periodic_pred0:
+    cur_time = np.linspace(0, 1, len(period))
+    new_time = np.linspace(0, 1, normalized_length)
+    interp = interp1d(cur_time, period, kind='linear')
+    norm_period = interp(new_time)
+    normalized_periodic_pred0.append(norm_period)
+
+normalized_periodic_data1 = []
+normalized_periodic_pred1 = []
+for period in periodic_data1:
+    cur_time = np.linspace(0, 1, len(period))
+    new_time = np.linspace(0, 1, normalized_length)
+    interp = interp1d(cur_time, period, kind='linear')
+    norm_period = interp(new_time)
+    normalized_periodic_data1.append(norm_period)
+for period in periodic_pred1:
+    cur_time = np.linspace(0, 1, len(period))
+    new_time = np.linspace(0, 1, normalized_length)
+    interp = interp1d(cur_time, period, kind='linear')
+    norm_period = interp(new_time)
+    normalized_periodic_pred1.append(norm_period)
+
+normalized_periodic_data2 = []
+normalized_periodic_pred2 = []
+for period in periodic_data2:
+    cur_time = np.linspace(0, 1, len(period))
+    new_time = np.linspace(0, 1, normalized_length)
+    interp = interp1d(cur_time, period, kind='linear')
+    norm_period = interp(new_time)
+    normalized_periodic_data2.append(norm_period)
+for period in periodic_pred2:
+    cur_time = np.linspace(0, 1, len(period))
+    new_time = np.linspace(0, 1, normalized_length)
+    interp = interp1d(cur_time, period, kind='linear')
+    norm_period = interp(new_time)
+    normalized_periodic_pred2.append(norm_period)
+
+normalized_periodic_data3 = []
+normalized_periodic_pred3 = []
+for period in periodic_data3:
+    cur_time = np.linspace(0, 1, len(period))
+    new_time = np.linspace(0, 1, normalized_length)
+    interp = interp1d(cur_time, period, kind='linear')
+    norm_period = interp(new_time)
+    normalized_periodic_data3.append(norm_period)
+for period in periodic_pred3:
+    cur_time = np.linspace(0, 1, len(period))
+    new_time = np.linspace(0, 1, normalized_length)
+    interp = interp1d(cur_time, period, kind='linear')
+    norm_period = interp(new_time)
+    normalized_periodic_pred3.append(norm_period)
+
+# Get mean and std dev of normalized data and pred
+stacked_data0 = np.vstack(normalized_periodic_data0)
+stacked_pred0 = np.vstack(normalized_periodic_pred0)
+mean_data0 = np.mean(stacked_data0, axis=0)
+mean_pred0 = np.mean(stacked_pred0, axis=0)
+std_data0 = np.std(stacked_data0, axis=0)
+std_pred0 = np.std(stacked_pred0, axis=0)
+print(f'Stacked Data0 Size: {stacked_data0.shape}')
+print(f'Stacked Pred0 Size: {stacked_pred0.shape}')
+
+stacked_data1 = np.vstack(normalized_periodic_data1)
+stacked_pred1 = np.vstack(normalized_periodic_pred1)
+mean_data1 = np.mean(stacked_data1, axis=0)
+mean_pred1 = np.mean(stacked_pred1, axis=0)
+std_data1 = np.std(stacked_data1, axis=0)
+std_pred1 = np.std(stacked_pred1, axis=0)
+print(f'Stacked Data1 Size: {stacked_data1.shape}')
+print(f'Stacked Pred1 Size: {stacked_pred1.shape}')
+
+stacked_data2 = np.vstack(normalized_periodic_data2)
+stacked_pred2 = np.vstack(normalized_periodic_pred2)
+mean_data2 = np.mean(stacked_data2, axis=0)
+mean_pred2 = np.mean(stacked_pred2, axis=0)
+std_data2 = np.std(stacked_data2, axis=0)
+std_pred2 = np.std(stacked_pred2, axis=0)
+print(f'Stacked Data2 Size: {stacked_data2.shape}')
+print(f'Stacked Pred2 Size: {stacked_pred2.shape}')
+
+stacked_data3 = np.vstack(normalized_periodic_data3)
+stacked_pred3 = np.vstack(normalized_periodic_pred3)
+mean_data3 = np.mean(stacked_data3, axis=0)
+mean_pred3 = np.mean(stacked_pred3, axis=0)
+std_data3 = np.std(stacked_data3, axis=0)
+std_pred3 = np.std(stacked_pred3, axis=0)
+print(f'Stacked Data3 Size: {stacked_data3.shape}')
+print(f'Stacked Pred3 Size: {stacked_pred3.shape}')
 
 # # Get errors for periodic data
 # # Must stay commented out until periodic data is set correctly
@@ -132,35 +219,45 @@ with torch.no_grad():
 # std_err = np.std(abs(stacked_data - stacked_pred), axis=0)
 
 # ALL PLOTTING HAPPENS BELOW HERE. READ INSTRUCTIONS FOR CREATING BEST PLOTS
-# Plot histogram of errors
-fig = plt.figure(figsize=(12, 6), )
-fig.suptitle("4-to-4 Joint Prediction Error Histograms")
-for i in range(4):
-    plt.subplot(2, 2, i+1)
-    plt.hist(errors[:, i], bins=50, alpha=0.7, color='blue')
-    plt.xlabel('Error (Radians)')
-    plt.ylabel('# of Occurrences')
-    plt.title(f'Joint {i+1}, RMSE: {valid_rmse:.4f}, Max (abs): {abs(errors).max():.4f}, Std Dev: {errors.std():.4f}, Mean: {errors.mean():.4f}')
-    plt.grid(True)
+# # Plot histogram of errors
+# fig = plt.figure(figsize=(12, 6), )
+# fig.suptitle("4-to-4 Joint Prediction Error Histograms")
+# for i in range(4):
+#     plt.subplot(2, 2, i+1)
+#     plt.hist(errors[:, i], bins=50, alpha=0.7, color='blue')
+#     plt.xlabel('Error (Radians)')
+#     plt.ylabel('# of Occurrences')
+#     plt.title(f'Joint {i+1}, RMSE: {valid_rmse:.4f}, Max (abs): {abs(errors).max():.4f}, Std Dev: {errors.std():.4f}, Mean: {errors.mean():.4f}')
+#     plt.grid(True)
+# plt.show()
+
+# use to determining amplitude for periodic plots
+fig = plt.figure(figsize=(12, 6))
+joint_pairs = [[0, 2], [1, 3], [3, 1], [2, 0]]  # Pairs of joints to plot together
+plt.plot(therapist_true[:, 1], c='b', label=f'True Therapist Data')
+plt.plot(therapist_pred[:, 3], c='r', linestyle='--', label=f'Predicted Therapist Data')
+plt.xlabel('Time Steps (~4ms)')
+plt.ylabel('Joint Positions (Radians)')
+plt.legend()
 plt.show()
 
-# Plot only validation data with prediction overlay
-# Change xlim for desired time steps
-# Limit to 7500 time steps (~30 seconds) EXCEPT when determining amplitude for periodic plots
-fig = plt.figure(figsize=(12, 6))
-fig.suptitle("Validation: Therapist Predictions from Patient Data")
-joint_pairs = [[0, 2], [1, 3], [3, 1], [2, 0]]  # Pairs of joints to plot together
-for i in range(4):
-    plt.subplot(2, 2, i+1)
-    plt.plot(therapist_true[:, joint_pairs[i][0]], c='b', label=f'True Therapist Data')
-    plt.plot(therapist_pred[:, joint_pairs[i][1]], c='r', linestyle='--', label=f'Predicted Therapist Data')
-    plt.xlim(0, 7500)
-    plt.xlabel('Time Steps (~4ms)')
-    plt.ylabel('Joint Positions (Radians)')
-    plt.legend()
-    plt.title(f"Joint {i + 1}")
-plt.show()
-# plt.savefig('lstm_therapist_prediction.png', dpi=300, bbox_inches='tight')
+# # Plot only validation data with prediction overlay
+# # Change xlim for desired time steps
+# # Limit to 7500 time steps (~30 seconds) EXCEPT when determining amplitude for periodic plots
+# fig = plt.figure(figsize=(12, 6))
+# fig.suptitle("Validation: Therapist Predictions from Patient Data")
+# joint_pairs = [[0, 2], [1, 3], [3, 1], [2, 0]]  # Pairs of joints to plot together
+# for i in range(4):
+#     plt.subplot(2, 2, i+1)
+#     plt.plot(therapist_true[:, joint_pairs[i][0]], c='b', label=f'True Therapist Data')
+#     plt.plot(therapist_pred[:, joint_pairs[i][1]], c='r', linestyle='--', label=f'Predicted Therapist Data')
+#     plt.xlim(0, 7500)
+#     plt.xlabel('Time Steps (~4ms)')
+#     plt.ylabel('Joint Positions (Radians)')
+#     plt.legend()
+#     plt.title(f"Joint {i + 1}")
+# plt.show()
+# # plt.savefig('lstm_therapist_prediction.png', dpi=300, bbox_inches='tight')
 
 # # Plot error over time
 # plt.figure(figsize=(12, 6))
@@ -177,22 +274,22 @@ plt.figure(figsize=(12, 6))
 
 # Plots each period as a separate line. Use to look for outliers in amplitude
 # Missteps can cause outliers where multiple periods will be combined into one. Need to fix height in 'find peaks' above
-# for period in normalized_periodic_data:
-#     plt.plot(period, c='b', alpha=0.5)
-# for period in normalized_periodic_pred:
-#     plt.plot(period, c='r', alpha=0.5)
+for period in normalized_periodic_data1:
+    plt.plot(period, c='b', alpha=0.5)
+for period in normalized_periodic_pred1:
+    plt.plot(period, c='r', alpha=0.5)
 
 # Plot mean and std dev of periodic data and predictions
 # Use after height is set correctly in 'find peaks' above
-# plt.plot(mean_data, c='b', label='Mean Therapist Data')
+# plt.plot(mean_data0, c='b', label='Mean Therapist Data')
 # plt.fill_between(range(normalized_length), 
-#                  mean_data - std_data, 
-#                  mean_data + std_data, 
+#                  mean_data0 - std_data0, 
+#                  mean_data0 + std_data0, 
 #                  color='b', alpha=0.2)
-# plt.plot(mean_pred, c='r', label='Mean Predicted Therapist Data')
+# plt.plot(mean_pred0, c='r', label='Mean Predicted Therapist Data')
 # plt.fill_between(range(normalized_length), 
-#                  mean_pred - std_pred, 
-#                  mean_pred + std_pred, 
+#                  mean_pred0 - std_pred0, 
+#                  mean_pred0 + std_pred0, 
 #                  color='r', alpha=0.2)
 # plt.title("4-to-1 (R Knee) Periodic Mean and Std Dev, True and Predicted")
 # plt.ylabel('Joint Positions (Radians)')
