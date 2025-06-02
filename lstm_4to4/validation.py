@@ -75,24 +75,21 @@ with torch.no_grad():
     # errors = torch.abs(y_pred2 - y_true).numpy()  # Convert to numpy for plotting
     # Pointwise errors (signed)
     errors = (y_pred2 - y_true).numpy()  # Convert to numpy for plotting
+    print(f'Shape of Errors: {errors.shape}')
 
 # Plotting Prep
 with torch.no_grad():
     # Create plotting arrays
     plot_length = len(valid)  # Only plot validation portion
-    # therapist_true = np.full(plot_length, np.nan)
-    # therapist_pred = np.full(plot_length, np.nan)
     
-    # # Fill true values (offset by lookback)
-    # therapist_true[lookback:] = valid[lookback:, -1]
+    # Fill true values (offset by lookback)
     therapist_true = valid[:, 4:]
     
     # Get predictions (last timestep of each sequence)
     valid_pred = model(X_valid)[:, -1, :].numpy()
-    
-    therapist_pred = np.full_like(therapist_true, np.nan)
 
     # Fill predictions (aligned with true values)
+    therapist_pred = np.full_like(therapist_true, np.nan)
     therapist_pred[lookback:] = valid_pred
 
 # # Overlay of periodic data
@@ -136,29 +133,32 @@ with torch.no_grad():
 
 # ALL PLOTTING HAPPENS BELOW HERE. READ INSTRUCTIONS FOR CREATING BEST PLOTS
 # Plot histogram of errors
-# plt.figure(figsize=(12, 6))
-# plt.hist(errors, bins=50, alpha=0.7, color='blue')
-# plt.xlabel('Error (Radians)')
-# plt.ylabel('# of Occurrences')
-# plt.title(f'4-to-1 (R Knee) Distribution of Prediction Errors, RMSE: {valid_rmse:.4f}, Max (abs): {abs(errors).max():.4f}, Std Dev: {errors.std():.4f}, Mean: {errors.mean():.4f}')
-# plt.grid(True)
-# plt.show()
+fig = plt.figure(figsize=(12, 6), )
+fig.suptitle("4-to-4 Joint Prediction Error Histograms")
+for i in range(4):
+    plt.subplot(2, 2, i+1)
+    plt.hist(errors[:, i], bins=50, alpha=0.7, color='blue')
+    plt.xlabel('Error (Radians)')
+    plt.ylabel('# of Occurrences')
+    plt.title(f'Joint {i+1}, RMSE: {valid_rmse:.4f}, Max (abs): {abs(errors).max():.4f}, Std Dev: {errors.std():.4f}, Mean: {errors.mean():.4f}')
+    plt.grid(True)
+plt.show()
 
 # Plot only validation data with prediction overlay
 # Change xlim for desired time steps
 # Limit to 7500 time steps (~30 seconds) EXCEPT when determining amplitude for periodic plots
-plt.figure(figsize=(12, 6))
-# plt.plot(therapist_true, c='b', label='True Therapist Data')
-# plt.plot(therapist_pred, c='r', linestyle='--', label='Predicted Therapist Data')
-# plt.plot(valid[:, 0], c='g', alpha=0.75, label='Patient Data (input)')
+fig = plt.figure(figsize=(12, 6))
+fig.suptitle("Validation: Therapist Predictions from Patient Data")
+joint_pairs = [[0, 2], [1, 3], [3, 1], [2, 0]]  # Pairs of joints to plot together
 for i in range(4):
-    plt.plot(therapist_true[:, i], label=f'True Therapist Data, Joint {i+1}')
-    plt.plot(therapist_pred[:, i], linestyle='--', label=f'Predicted Therapist Data, Joint {i+1}')
-plt.xlim(0, 7500)
-plt.xlabel('Time Steps (~4ms)')
-plt.ylabel('Joint Positions (Radians)')
-plt.legend()
-plt.title("Validation: Therapist R Knee Prediction from Patient Data")
+    plt.subplot(2, 2, i+1)
+    plt.plot(therapist_true[:, joint_pairs[i][0]], c='b', label=f'True Therapist Data')
+    plt.plot(therapist_pred[:, joint_pairs[i][1]], c='r', linestyle='--', label=f'Predicted Therapist Data')
+    plt.xlim(0, 7500)
+    plt.xlabel('Time Steps (~4ms)')
+    plt.ylabel('Joint Positions (Radians)')
+    plt.legend()
+    plt.title(f"Joint {i + 1}")
 plt.show()
 # plt.savefig('lstm_therapist_prediction.png', dpi=300, bbox_inches='tight')
 
