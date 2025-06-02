@@ -17,7 +17,7 @@ therapist = pd.read_csv('X2_SRA_B_07-05-2024_10-41-46-mod-sync.csv',
 
 # Prepare data
 patient_data = patient[['JointPositions_1', 'JointPositions_2', 'JointPositions_3', 'JointPositions_4']].values.astype('float32')
-therapist_data = therapist[['JointPositions_4']].values.astype('float32')
+therapist_data = therapist[['JointPositions_1', 'JointPositions_2', 'JointPositions_3', 'JointPositions_4']].values.astype('float32')
 timeseries = np.column_stack((patient_data, therapist_data))
 
 # Validation split
@@ -34,12 +34,12 @@ def create_dataset(dataset, lookback):
     X, y = [], []
     for i in range(len(dataset)-lookback):
         feature = dataset[i:i+lookback, :4]  # Feature is patient data
-        target = dataset[i+1:i+lookback+1, -1]  # Target is therapist data
+        target = dataset[i+1:i+lookback+1, :4]  # Target is therapist data
         X.append(feature)
         y.append(target)
     X = np.array(X)
     y = np.array(y)
-    return torch.tensor(X), torch.tensor(y).unsqueeze(-1)
+    return torch.tensor(X), torch.tensor(y)
 
 lookback = 50
 X_valid, y_valid = create_dataset(valid, lookback=lookback)
@@ -49,15 +49,14 @@ class JointModel(nn.Module):
     def __init__(self):
         super().__init__()
         self.lstm = nn.LSTM(input_size=4, hidden_size=50, num_layers=1, batch_first=True)
-        # self.linear = nn.Linear(50, 1)
-        self.linear = NoisyLinear(50, 1)
+        self.linear = nn.Linear(50, 4)
     def forward(self, x):
         x, _ = self.lstm(x)
         return self.linear(x)
 
 # Load model
 model = JointModel()
-model.load_state_dict(torch.load('trial3/j4/lstm_model_epoch0.pth'))
+model.load_state_dict(torch.load('trial1/lstm_model_epoch149.pth'))
 model.eval()
 
 # Validation
@@ -81,56 +80,59 @@ with torch.no_grad():
 with torch.no_grad():
     # Create plotting arrays
     plot_length = len(valid)  # Only plot validation portion
-    therapist_true = np.full(plot_length, np.nan)
-    therapist_pred = np.full(plot_length, np.nan)
+    # therapist_true = np.full(plot_length, np.nan)
+    # therapist_pred = np.full(plot_length, np.nan)
     
-    # Fill true values (offset by lookback)
-    therapist_true[lookback:] = valid[lookback:, -1]
+    # # Fill true values (offset by lookback)
+    # therapist_true[lookback:] = valid[lookback:, -1]
+    therapist_true = valid[:, 4:]
     
     # Get predictions (last timestep of each sequence)
-    valid_pred = model(X_valid)[:, -1, :].numpy().flatten()
+    valid_pred = model(X_valid)[:, -1, :].numpy()
     
+    therapist_pred = np.full_like(therapist_true, np.nan)
+
     # Fill predictions (aligned with true values)
-    therapist_pred[lookback:lookback+len(valid_pred)] = valid_pred
+    therapist_pred[lookback:] = valid_pred
 
-# Overlay of periodic data
-# Find peaks in the therapist data and divide into periodic segments
-data_peaks, _ = find_peaks(-therapist_true, height=0.5, distance=1000)  # ONLY NEGATIVE FOR KNEES (2,4), Heights: J13=1.0, J24=1.4, J31=0.4, J42=1.0
-periodic_data = [therapist_true[data_peaks[i]:data_peaks[i+1]] for i in range(len(data_peaks)-1)]
-pred_peaks, _ = find_peaks(-therapist_pred, height=0.5, distance=1000)  # ONLY NEGATIVE FOR KNEES (2,4), Heights: J13=1.0, J24=1.4, J31=0.4, J42=1.0
-periodic_pred = [therapist_pred[pred_peaks[i]:pred_peaks[i+1]] for i in range(len(pred_peaks)-1)]
+# # Overlay of periodic data
+# # Find peaks in the therapist data and divide into periodic segments
+# data_peaks, _ = find_peaks(-therapist_true, height=0.5, distance=1000)  # ONLY NEGATIVE FOR KNEES (2,4), Heights: J13=1.0, J24=1.4, J31=0.4, J42=1.0
+# periodic_data = [therapist_true[data_peaks[i]:data_peaks[i+1]] for i in range(len(data_peaks)-1)]
+# pred_peaks, _ = find_peaks(-therapist_pred, height=0.5, distance=1000)  # ONLY NEGATIVE FOR KNEES (2,4), Heights: J13=1.0, J24=1.4, J31=0.4, J42=1.0
+# periodic_pred = [therapist_pred[pred_peaks[i]:pred_peaks[i+1]] for i in range(len(pred_peaks)-1)]
 
-# Normalize periodic data
-normalized_length = 101
-normalized_periodic_data = []
-normalized_periodic_pred = []
-for period in periodic_data:
-    cur_time = np.linspace(0, 1, len(period))
-    new_time = np.linspace(0, 1, normalized_length)
-    interp = interp1d(cur_time, period, kind='linear')
-    norm_period = interp(new_time)
-    normalized_periodic_data.append(norm_period)
-for period in periodic_pred:
-    cur_time = np.linspace(0, 1, len(period))
-    new_time = np.linspace(0, 1, normalized_length)
-    interp = interp1d(cur_time, period, kind='linear')
-    norm_period = interp(new_time)
-    normalized_periodic_pred.append(norm_period)
+# # Normalize periodic data
+# normalized_length = 101
+# normalized_periodic_data = []
+# normalized_periodic_pred = []
+# for period in periodic_data:
+#     cur_time = np.linspace(0, 1, len(period))
+#     new_time = np.linspace(0, 1, normalized_length)
+#     interp = interp1d(cur_time, period, kind='linear')
+#     norm_period = interp(new_time)
+#     normalized_periodic_data.append(norm_period)
+# for period in periodic_pred:
+#     cur_time = np.linspace(0, 1, len(period))
+#     new_time = np.linspace(0, 1, normalized_length)
+#     interp = interp1d(cur_time, period, kind='linear')
+#     norm_period = interp(new_time)
+#     normalized_periodic_pred.append(norm_period)
 
-# Get mean and std dev of normalized data and pred
-stacked_data = np.vstack(normalized_periodic_data)
-stacked_pred = np.vstack(normalized_periodic_pred)
-mean_data = np.mean(stacked_data, axis=0)
-mean_pred = np.mean(stacked_pred, axis=0)
-std_data = np.std(stacked_data, axis=0)
-std_pred = np.std(stacked_pred, axis=0)
-print(f'Stacked Data Size: {stacked_data.shape}')
-print(f'Stacked Pred Size: {stacked_pred.shape}')
+# # Get mean and std dev of normalized data and pred
+# stacked_data = np.vstack(normalized_periodic_data)
+# stacked_pred = np.vstack(normalized_periodic_pred)
+# mean_data = np.mean(stacked_data, axis=0)
+# mean_pred = np.mean(stacked_pred, axis=0)
+# std_data = np.std(stacked_data, axis=0)
+# std_pred = np.std(stacked_pred, axis=0)
+# print(f'Stacked Data Size: {stacked_data.shape}')
+# print(f'Stacked Pred Size: {stacked_pred.shape}')
 
-# Get errors for periodic data
-# Must stay commented out until periodic data is set correctly
-mean_err = np.mean(abs(stacked_data - stacked_pred), axis=0)
-std_err = np.std(abs(stacked_data - stacked_pred), axis=0)
+# # Get errors for periodic data
+# # Must stay commented out until periodic data is set correctly
+# mean_err = np.mean(abs(stacked_data - stacked_pred), axis=0)
+# std_err = np.std(abs(stacked_data - stacked_pred), axis=0)
 
 # ALL PLOTTING HAPPENS BELOW HERE. READ INSTRUCTIONS FOR CREATING BEST PLOTS
 # Plot histogram of errors
@@ -146,9 +148,12 @@ std_err = np.std(abs(stacked_data - stacked_pred), axis=0)
 # Change xlim for desired time steps
 # Limit to 7500 time steps (~30 seconds) EXCEPT when determining amplitude for periodic plots
 plt.figure(figsize=(12, 6))
-plt.plot(therapist_true, c='b', label='True Therapist Data')
-plt.plot(therapist_pred, c='r', linestyle='--', label='Predicted Therapist Data')
+# plt.plot(therapist_true, c='b', label='True Therapist Data')
+# plt.plot(therapist_pred, c='r', linestyle='--', label='Predicted Therapist Data')
 # plt.plot(valid[:, 0], c='g', alpha=0.75, label='Patient Data (input)')
+for i in range(4):
+    plt.plot(therapist_true[:, i], label=f'True Therapist Data, Joint {i+1}')
+    plt.plot(therapist_pred[:, i], linestyle='--', label=f'Predicted Therapist Data, Joint {i+1}')
 plt.xlim(0, 7500)
 plt.xlabel('Time Steps (~4ms)')
 plt.ylabel('Joint Positions (Radians)')
@@ -193,13 +198,13 @@ plt.figure(figsize=(12, 6))
 # plt.ylabel('Joint Positions (Radians)')
 
 # Plot period plot of error using mean and std dev
-plt.plot(mean_err, c='r', label='Mean Error')
-plt.fill_between(range(normalized_length), 
-                 mean_err - std_err, 
-                 mean_err + std_err, 
-                 color='r', alpha=0.2)
-plt.title("4-to-1 (R Knee) Periodic Absolute Error")
-plt.ylabel('Joint Error (Radians)')
+# plt.plot(mean_err, c='r', label='Mean Error')
+# plt.fill_between(range(normalized_length), 
+#                  mean_err - std_err, 
+#                  mean_err + std_err, 
+#                  color='r', alpha=0.2)
+# plt.title("4-to-1 (R Knee) Periodic Absolute Error")
+# plt.ylabel('Joint Error (Radians)')
 
 plt.legend()
 plt.xlabel('Normalized Time Steps')
