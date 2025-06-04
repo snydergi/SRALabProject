@@ -219,17 +219,17 @@ print(f'Stacked Pred3 Size: {stacked_pred3.shape}')
 # std_err = np.std(abs(stacked_data - stacked_pred), axis=0)
 
 # ALL PLOTTING HAPPENS BELOW HERE. READ INSTRUCTIONS FOR CREATING BEST PLOTS
-# # Plot histogram of errors
-# fig = plt.figure(figsize=(12, 6), )
-# fig.suptitle("4-to-4 Joint Prediction Error Histograms")
-# for i in range(4):
-#     plt.subplot(2, 2, i+1)
-#     plt.hist(errors[:, i], bins=50, alpha=0.7, color='blue')
-#     plt.xlabel('Error (Radians)')
-#     plt.ylabel('# of Occurrences')
-#     plt.title(f'Joint {i+1}, RMSE: {valid_rmse:.4f}, Max (abs): {abs(errors).max():.4f}, Std Dev: {errors.std():.4f}, Mean: {errors.mean():.4f}')
-#     plt.grid(True)
-# plt.show()
+# Plot histogram of errors
+fig = plt.figure(figsize=(12, 6), )
+fig.suptitle("4-to-4 Joint Prediction Error Histograms")
+for i in range(4):
+    plt.subplot(2, 2, i+1)
+    plt.hist(errors[:, i], bins=50, alpha=0.7, color='blue')
+    plt.xlabel('Error (Radians)')
+    plt.ylabel('# of Occurrences')
+    plt.title(f'Joint {i+1}, RMSE: {valid_rmse:.4f}, Max (abs): {abs(errors).max():.4f}, Std Dev: {errors.std():.4f}, Mean: {errors.mean():.4f}')
+    plt.grid(True)
+plt.show()
 
 # use to determining amplitude for periodic plots
 fig = plt.figure(figsize=(12, 6))
@@ -241,23 +241,23 @@ plt.ylabel('Joint Positions (Radians)')
 plt.legend()
 plt.show()
 
-# # Plot only validation data with prediction overlay
-# # Change xlim for desired time steps
-# # Limit to 7500 time steps (~30 seconds) EXCEPT when determining amplitude for periodic plots
-# fig = plt.figure(figsize=(12, 6))
-# fig.suptitle("Validation: Therapist Predictions from Patient Data")
-# joint_pairs = [[0, 2], [1, 3], [3, 1], [2, 0]]  # Pairs of joints to plot together
-# for i in range(4):
-#     plt.subplot(2, 2, i+1)
-#     plt.plot(therapist_true[:, joint_pairs[i][0]], c='b', label=f'True Therapist Data')
-#     plt.plot(therapist_pred[:, joint_pairs[i][1]], c='r', linestyle='--', label=f'Predicted Therapist Data')
-#     plt.xlim(0, 7500)
-#     plt.xlabel('Time Steps (~4ms)')
-#     plt.ylabel('Joint Positions (Radians)')
-#     plt.legend()
-#     plt.title(f"Joint {i + 1}")
-# plt.show()
-# # plt.savefig('lstm_therapist_prediction.png', dpi=300, bbox_inches='tight')
+# Plot only validation data with prediction overlay
+# Change xlim for desired time steps
+# Limit to 7500 time steps (~30 seconds) EXCEPT when determining amplitude for periodic plots
+fig = plt.figure(figsize=(12, 6))
+fig.suptitle("Validation: Therapist Predictions from Patient Data")
+joint_pairs = [[0, 2], [1, 3], [3, 1], [2, 0]]  # Pairs of joints to plot together
+for i in range(4):
+    plt.subplot(2, 2, i+1)
+    plt.plot(therapist_true[:, joint_pairs[i][0]], c='b', label=f'True Therapist Data')
+    plt.plot(therapist_pred[:, joint_pairs[i][1]], c='r', linestyle='--', label=f'Predicted Therapist Data')
+    plt.xlim(0, 7500)
+    plt.xlabel('Time Steps (~4ms)')
+    plt.ylabel('Joint Positions (Radians)')
+    plt.legend()
+    plt.title(f"Joint {i + 1}")
+plt.show()
+# plt.savefig('lstm_therapist_prediction.png', dpi=300, bbox_inches='tight')
 
 # # Plot error over time
 # plt.figure(figsize=(12, 6))
