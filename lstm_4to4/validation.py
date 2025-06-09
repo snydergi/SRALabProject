@@ -65,6 +65,10 @@ with torch.no_grad():
     loss_fn = nn.MSELoss()
     valid_rmse = torch.sqrt(loss_fn(y_pred, y_valid))
     print(f"Validation RMSE: {valid_rmse:.4f}")
+    joint_rmses = []
+    for joint_idx in range(4):
+        joint_rmse = torch.sqrt(loss_fn(y_pred[:, :, joint_idx], y_valid[:, :, joint_idx]))
+        joint_rmses.append(joint_rmse.item())
 
 with torch.no_grad():
     # Get all predictions (taking last timestep from each sequence)
@@ -229,20 +233,20 @@ std_err3 = np.std(abs(stacked_data3 - stacked_pred3), axis=0)
 
 # ALL PLOTTING HAPPENS BELOW HERE. READ INSTRUCTIONS FOR CREATING BEST PLOTS
 # Plot histogram of errors
-# fig = plt.figure(figsize=(12, 6), )
-# fig.suptitle("4-to-4 Joint Prediction Error Histograms")
-# for i in range(4):
-#     plt.subplot(2, 2, i+1)
-#     plt.hist(errors[:, i], bins=50, alpha=0.7, color='blue')
-#     plt.xlabel('Error (Radians)')
-#     plt.ylabel('# of Occurrences')
-#     plt.title(f'Joint {i+1}, RMSE: {valid_rmse:.4f}, Max (abs): {abs(errors).max():.4f}, Std Dev: {errors.std():.4f}, Mean: {errors.mean():.4f}')
-#     plt.grid(True)
-# plt.show()
+fig = plt.figure(figsize=(12, 6), )
+fig.suptitle("4-to-4 Joint Prediction Error Histograms")
+for i in range(4):
+    plt.subplot(2, 2, i+1)
+    plt.hist(errors[:, i], bins=50, alpha=0.7, color='blue')
+    plt.xlabel('Error (Radians)')
+    plt.ylabel('# of Occurrences')
+    plt.title(f'Joint {i+1}, RMSE: {joint_rmses[i]:.4f}, Max (abs): {abs(errors[:,i]).max():.4f}, Std Dev: {errors[:,i].std():.4f}, Mean: {errors[:,i].mean():.4f}')
+    plt.grid(True)
+plt.show()
 
 # use to determining amplitude for periodic plots
 # fig = plt.figure(figsize=(12, 6))
-# joint_pairs = [[0, 2], [1, 3], [3, 1], [2, 0]]  # Pairs of joints to plot together
+# joint_pairs = [[0, 2], [1, 3], [2, 0], [3, 1]]  # Pairs of joints to plot together
 # plt.plot(therapist_true[:, 1], c='b', label=f'True Therapist Data')
 # plt.plot(therapist_pred[:, 3], c='r', linestyle='--', label=f'Predicted Therapist Data')
 # plt.xlabel('Time Steps (~4ms)')
@@ -255,7 +259,7 @@ std_err3 = np.std(abs(stacked_data3 - stacked_pred3), axis=0)
 # Limit to 7500 time steps (~30 seconds) EXCEPT when determining amplitude for periodic plots
 # fig = plt.figure(figsize=(12, 6))
 # fig.suptitle("Validation: Therapist Predictions from Patient Data")
-# joint_pairs = [[0, 2], [1, 3], [3, 1], [2, 0]]  # Pairs of joints to plot together
+# joint_pairs = [[0, 2], [1, 3], [2, 0], [3, 1]]  # Pairs of joints to plot together
 # for i in range(4):
 #     plt.subplot(2, 2, i+1)
 #     plt.plot(therapist_true[:, joint_pairs[i][0]], c='b', label=f'True Therapist Data')
@@ -353,46 +357,46 @@ fig = plt.figure(figsize=(12, 6))
 # plt.legend()
 
 # Plot period plot of error using mean and std dev
-plt.suptitle("4-to-4 Joint Periodic Absolute Error")
-plt.subplot(2, 2, 1)
-plt.plot(mean_err0, c='r', label='Mean Error')
-plt.fill_between(range(normalized_length), 
-                 mean_err0 - std_err0, 
-                 mean_err0 + std_err0, 
-                 color='r', alpha=0.2)
-plt.title("Left Hip")
-plt.ylabel('Joint Error (Radians)')
-plt.xlabel('Gait Phase %')
-plt.legend()
-plt.subplot(2, 2, 2)
-plt.plot(mean_err1, c='r', label='Mean Error')
-plt.fill_between(range(normalized_length), 
-                 mean_err1 - std_err1, 
-                 mean_err1 + std_err1, 
-                 color='r', alpha=0.2)
-plt.title("Left Knee")
-plt.ylabel('Joint Error (Radians)')
-plt.xlabel('Gait Phase %')
-plt.legend()
-plt.subplot(2, 2, 3)
-plt.plot(mean_err2, c='r', label='Mean Error')
-plt.fill_between(range(normalized_length), 
-                 mean_err2 - std_err2, 
-                 mean_err2 + std_err2, 
-                 color='r', alpha=0.2)
-plt.title("Right Hip")
-plt.ylabel('Joint Error (Radians)')
-plt.xlabel('Gait Phase %')
-plt.legend()
-plt.subplot(2, 2, 4)
-plt.plot(mean_err3, c='r', label='Mean Error')
-plt.fill_between(range(normalized_length), 
-                 mean_err3 - std_err3, 
-                 mean_err3 + std_err3, 
-                 color='r', alpha=0.2)
-plt.title("Right Knee")
-plt.ylabel('Joint Error (Radians)')
-plt.xlabel('Gait Phase %')
-plt.legend()
+# plt.suptitle("4-to-4 Joint Periodic Absolute Error")
+# plt.subplot(2, 2, 1)
+# plt.plot(mean_err0, c='r', label='Mean Error')
+# plt.fill_between(range(normalized_length), 
+#                  mean_err0 - std_err0, 
+#                  mean_err0 + std_err0, 
+#                  color='r', alpha=0.2)
+# plt.title("Left Hip")
+# plt.ylabel('Joint Error (Radians)')
+# plt.xlabel('Gait Phase %')
+# plt.legend()
+# plt.subplot(2, 2, 2)
+# plt.plot(mean_err1, c='r', label='Mean Error')
+# plt.fill_between(range(normalized_length), 
+#                  mean_err1 - std_err1, 
+#                  mean_err1 + std_err1, 
+#                  color='r', alpha=0.2)
+# plt.title("Left Knee")
+# plt.ylabel('Joint Error (Radians)')
+# plt.xlabel('Gait Phase %')
+# plt.legend()
+# plt.subplot(2, 2, 3)
+# plt.plot(mean_err2, c='r', label='Mean Error')
+# plt.fill_between(range(normalized_length), 
+#                  mean_err2 - std_err2, 
+#                  mean_err2 + std_err2, 
+#                  color='r', alpha=0.2)
+# plt.title("Right Hip")
+# plt.ylabel('Joint Error (Radians)')
+# plt.xlabel('Gait Phase %')
+# plt.legend()
+# plt.subplot(2, 2, 4)
+# plt.plot(mean_err3, c='r', label='Mean Error')
+# plt.fill_between(range(normalized_length), 
+#                  mean_err3 - std_err3, 
+#                  mean_err3 + std_err3, 
+#                  color='r', alpha=0.2)
+# plt.title("Right Knee")
+# plt.ylabel('Joint Error (Radians)')
+# plt.xlabel('Gait Phase %')
+# plt.legend()
 
 plt.show()
