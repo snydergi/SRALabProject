@@ -290,76 +290,109 @@ fig = plt.figure(figsize=(12, 6))
 
 # Plot mean and std dev of periodic data and predictions
 # Use after height is set correctly in 'find peaks' above
-fig.suptitle("4-to-4 Joint Periodic Data and Predictions")
+# fig.suptitle("4-to-4 Joint Periodic Data and Predictions")
+# plt.subplot(2, 2, 1)
+# plt.plot(mean_data0, c='b', label='Mean Therapist Data')
+# plt.fill_between(range(normalized_length), 
+#                  mean_data0 - std_data0, 
+#                  mean_data0 + std_data0, 
+#                  color='b', alpha=0.2)
+# plt.plot(mean_pred0, c='r', label='Mean Predicted Therapist Data')
+# plt.fill_between(range(normalized_length), 
+#                  mean_pred0 - std_pred0, 
+#                  mean_pred0 + std_pred0, 
+#                  color='r', alpha=0.2)
+# plt.title("Left Hip")
+# plt.ylabel('Joint Positions (Radians)')
+# plt.xlabel('Gait Phase %')
+# plt.legend()
+# plt.subplot(2, 2, 2)
+# plt.plot(mean_data1, c='b', label='Mean Therapist Data')
+# plt.fill_between(range(normalized_length), 
+#                  mean_data1 - std_data1, 
+#                  mean_data1 + std_data1, 
+#                  color='b', alpha=0.2)
+# plt.plot(mean_pred1, c='r', label='Mean Predicted Therapist Data')
+# plt.fill_between(range(normalized_length), 
+#                  mean_pred1 - std_pred1, 
+#                  mean_pred1 + std_pred1, 
+#                  color='r', alpha=0.2)
+# plt.title("Left Knee")
+# plt.ylabel('Joint Positions (Radians)')
+# plt.xlabel('Gait Phase %')
+# plt.legend()
+# plt.subplot(2, 2, 3)
+# plt.plot(mean_data2, c='b', label='Mean Therapist Data')
+# plt.fill_between(range(normalized_length), 
+#                  mean_data2 - std_data2, 
+#                  mean_data2 + std_data2, 
+#                  color='b', alpha=0.2)
+# plt.plot(mean_pred2, c='r', label='Mean Predicted Therapist Data')
+# plt.fill_between(range(normalized_length), 
+#                  mean_pred2 - std_pred2, 
+#                  mean_pred2 + std_pred2, 
+#                  color='r', alpha=0.2)
+# plt.title("Right Hip")
+# plt.ylabel('Joint Positions (Radians)')
+# plt.xlabel('Gait Phase %')
+# plt.legend()
+# plt.subplot(2, 2, 4)
+# plt.plot(mean_data3, c='b', label='Mean Therapist Data')
+# plt.fill_between(range(normalized_length), 
+#                  mean_data3 - std_data3, 
+#                  mean_data3 + std_data3, 
+#                  color='b', alpha=0.2)
+# plt.plot(mean_pred3, c='r', label='Mean Predicted Therapist Data')
+# plt.fill_between(range(normalized_length), 
+#                  mean_pred3 - std_pred3, 
+#                  mean_pred3 + std_pred3, 
+#                  color='r', alpha=0.2)
+# plt.title("Right Knee")
+# plt.ylabel('Joint Positions (Radians)')
+# plt.xlabel('Gait Phase %')
+# plt.legend()
+
+# Plot period plot of error using mean and std dev
+plt.suptitle("4-to-4 Joint Periodic Absolute Error")
 plt.subplot(2, 2, 1)
-plt.plot(mean_data0, c='b', label='Mean Therapist Data')
+plt.plot(mean_err0, c='r', label='Mean Error')
 plt.fill_between(range(normalized_length), 
-                 mean_data0 - std_data0, 
-                 mean_data0 + std_data0, 
-                 color='b', alpha=0.2)
-plt.plot(mean_pred0, c='r', label='Mean Predicted Therapist Data')
-plt.fill_between(range(normalized_length), 
-                 mean_pred0 - std_pred0, 
-                 mean_pred0 + std_pred0, 
+                 mean_err0 - std_err0, 
+                 mean_err0 + std_err0, 
                  color='r', alpha=0.2)
 plt.title("Left Hip")
-plt.ylabel('Joint Positions (Radians)')
+plt.ylabel('Joint Error (Radians)')
 plt.xlabel('Gait Phase %')
 plt.legend()
 plt.subplot(2, 2, 2)
-plt.plot(mean_data1, c='b', label='Mean Therapist Data')
+plt.plot(mean_err1, c='r', label='Mean Error')
 plt.fill_between(range(normalized_length), 
-                 mean_data1 - std_data1, 
-                 mean_data1 + std_data1, 
-                 color='b', alpha=0.2)
-plt.plot(mean_pred1, c='r', label='Mean Predicted Therapist Data')
-plt.fill_between(range(normalized_length), 
-                 mean_pred1 - std_pred1, 
-                 mean_pred1 + std_pred1, 
+                 mean_err1 - std_err1, 
+                 mean_err1 + std_err1, 
                  color='r', alpha=0.2)
 plt.title("Left Knee")
-plt.ylabel('Joint Positions (Radians)')
+plt.ylabel('Joint Error (Radians)')
 plt.xlabel('Gait Phase %')
 plt.legend()
 plt.subplot(2, 2, 3)
-plt.plot(mean_data2, c='b', label='Mean Therapist Data')
+plt.plot(mean_err2, c='r', label='Mean Error')
 plt.fill_between(range(normalized_length), 
-                 mean_data2 - std_data2, 
-                 mean_data2 + std_data2, 
-                 color='b', alpha=0.2)
-plt.plot(mean_pred2, c='r', label='Mean Predicted Therapist Data')
-plt.fill_between(range(normalized_length), 
-                 mean_pred2 - std_pred2, 
-                 mean_pred2 + std_pred2, 
+                 mean_err2 - std_err2, 
+                 mean_err2 + std_err2, 
                  color='r', alpha=0.2)
 plt.title("Right Hip")
-plt.ylabel('Joint Positions (Radians)')
+plt.ylabel('Joint Error (Radians)')
 plt.xlabel('Gait Phase %')
 plt.legend()
 plt.subplot(2, 2, 4)
-plt.plot(mean_data3, c='b', label='Mean Therapist Data')
+plt.plot(mean_err3, c='r', label='Mean Error')
 plt.fill_between(range(normalized_length), 
-                 mean_data3 - std_data3, 
-                 mean_data3 + std_data3, 
-                 color='b', alpha=0.2)
-plt.plot(mean_pred3, c='r', label='Mean Predicted Therapist Data')
-plt.fill_between(range(normalized_length), 
-                 mean_pred3 - std_pred3, 
-                 mean_pred3 + std_pred3, 
+                 mean_err3 - std_err3, 
+                 mean_err3 + std_err3, 
                  color='r', alpha=0.2)
 plt.title("Right Knee")
-plt.ylabel('Joint Positions (Radians)')
+plt.ylabel('Joint Error (Radians)')
 plt.xlabel('Gait Phase %')
 plt.legend()
-
-# Plot period plot of error using mean and std dev
-# plt.plot(mean_err, c='r', label='Mean Error')
-# plt.fill_between(range(normalized_length), 
-#                  mean_err - std_err, 
-#                  mean_err + std_err, 
-#                  color='r', alpha=0.2)
-# plt.title("4-to-1 (R Knee) Periodic Absolute Error")
-# plt.ylabel('Joint Error (Radians)')
-
 
 plt.show()
