@@ -22,3 +22,8 @@ As I was new to the world of Machine Learning, I did not yet quite have a grasp 
 The chunks of plotting code are labeled for what they will produce. There is capacity to create plots for the histogram of errors, true data and predicted data, error over time, and plotting the data normalized into one period or gait phase with the mean and standard deviation. Include or comment out any of these chunks as you desire.
 
 With that, you may run the program with `python3 validation.py`.
+
+# Parameter Search
+The file `lstm_paramsearch.py` contains code to perform a grid search to try to find optimal parameters for training future iterations of the single joint LSTM. It requires the installation of `skorch` to the `venv`. In `main`, change the values of each parameter in `param_grid` to change how the search will be conducted.
+
+Run the same as the standard `lstm.py` aside from those differences.
