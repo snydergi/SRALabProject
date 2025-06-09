@@ -215,49 +215,58 @@ print(f'Stacked Pred3 Size: {stacked_pred3.shape}')
 
 # # Get errors for periodic data
 # # Must stay commented out until periodic data is set correctly
-# mean_err = np.mean(abs(stacked_data - stacked_pred), axis=0)
-# std_err = np.std(abs(stacked_data - stacked_pred), axis=0)
+mean_err0 = np.mean(abs(stacked_data0 - stacked_pred0), axis=0)
+std_err0 = np.std(abs(stacked_data0 - stacked_pred0), axis=0)
+
+mean_err1 = np.mean(abs(stacked_data1 - stacked_pred1), axis=0)
+std_err1 = np.std(abs(stacked_data1 - stacked_pred1), axis=0)
+
+mean_err2 = np.mean(abs(stacked_data2 - stacked_pred2), axis=0)
+std_err2 = np.std(abs(stacked_data2 - stacked_pred2), axis=0)
+
+mean_err3 = np.mean(abs(stacked_data3 - stacked_pred3), axis=0)
+std_err3 = np.std(abs(stacked_data3 - stacked_pred3), axis=0)
 
 # ALL PLOTTING HAPPENS BELOW HERE. READ INSTRUCTIONS FOR CREATING BEST PLOTS
 # Plot histogram of errors
-fig = plt.figure(figsize=(12, 6), )
-fig.suptitle("4-to-4 Joint Prediction Error Histograms")
-for i in range(4):
-    plt.subplot(2, 2, i+1)
-    plt.hist(errors[:, i], bins=50, alpha=0.7, color='blue')
-    plt.xlabel('Error (Radians)')
-    plt.ylabel('# of Occurrences')
-    plt.title(f'Joint {i+1}, RMSE: {valid_rmse:.4f}, Max (abs): {abs(errors).max():.4f}, Std Dev: {errors.std():.4f}, Mean: {errors.mean():.4f}')
-    plt.grid(True)
-plt.show()
+# fig = plt.figure(figsize=(12, 6), )
+# fig.suptitle("4-to-4 Joint Prediction Error Histograms")
+# for i in range(4):
+#     plt.subplot(2, 2, i+1)
+#     plt.hist(errors[:, i], bins=50, alpha=0.7, color='blue')
+#     plt.xlabel('Error (Radians)')
+#     plt.ylabel('# of Occurrences')
+#     plt.title(f'Joint {i+1}, RMSE: {valid_rmse:.4f}, Max (abs): {abs(errors).max():.4f}, Std Dev: {errors.std():.4f}, Mean: {errors.mean():.4f}')
+#     plt.grid(True)
+# plt.show()
 
 # use to determining amplitude for periodic plots
-fig = plt.figure(figsize=(12, 6))
-joint_pairs = [[0, 2], [1, 3], [3, 1], [2, 0]]  # Pairs of joints to plot together
-plt.plot(therapist_true[:, 1], c='b', label=f'True Therapist Data')
-plt.plot(therapist_pred[:, 3], c='r', linestyle='--', label=f'Predicted Therapist Data')
-plt.xlabel('Time Steps (~4ms)')
-plt.ylabel('Joint Positions (Radians)')
-plt.legend()
-plt.show()
+# fig = plt.figure(figsize=(12, 6))
+# joint_pairs = [[0, 2], [1, 3], [3, 1], [2, 0]]  # Pairs of joints to plot together
+# plt.plot(therapist_true[:, 1], c='b', label=f'True Therapist Data')
+# plt.plot(therapist_pred[:, 3], c='r', linestyle='--', label=f'Predicted Therapist Data')
+# plt.xlabel('Time Steps (~4ms)')
+# plt.ylabel('Joint Positions (Radians)')
+# plt.legend()
+# plt.show()
 
 # Plot only validation data with prediction overlay
 # Change xlim for desired time steps
 # Limit to 7500 time steps (~30 seconds) EXCEPT when determining amplitude for periodic plots
-fig = plt.figure(figsize=(12, 6))
-fig.suptitle("Validation: Therapist Predictions from Patient Data")
-joint_pairs = [[0, 2], [1, 3], [3, 1], [2, 0]]  # Pairs of joints to plot together
-for i in range(4):
-    plt.subplot(2, 2, i+1)
-    plt.plot(therapist_true[:, joint_pairs[i][0]], c='b', label=f'True Therapist Data')
-    plt.plot(therapist_pred[:, joint_pairs[i][1]], c='r', linestyle='--', label=f'Predicted Therapist Data')
-    plt.xlim(0, 7500)
-    plt.xlabel('Time Steps (~4ms)')
-    plt.ylabel('Joint Positions (Radians)')
-    plt.legend()
-    plt.title(f"Joint {i + 1}")
-plt.show()
-# plt.savefig('lstm_therapist_prediction.png', dpi=300, bbox_inches='tight')
+# fig = plt.figure(figsize=(12, 6))
+# fig.suptitle("Validation: Therapist Predictions from Patient Data")
+# joint_pairs = [[0, 2], [1, 3], [3, 1], [2, 0]]  # Pairs of joints to plot together
+# for i in range(4):
+#     plt.subplot(2, 2, i+1)
+#     plt.plot(therapist_true[:, joint_pairs[i][0]], c='b', label=f'True Therapist Data')
+#     plt.plot(therapist_pred[:, joint_pairs[i][1]], c='r', linestyle='--', label=f'Predicted Therapist Data')
+#     plt.xlim(0, 7500)
+#     plt.xlabel('Time Steps (~4ms)')
+#     plt.ylabel('Joint Positions (Radians)')
+#     plt.legend()
+#     plt.title(f"Joint {i + 1}")
+# plt.show()
+# # plt.savefig('lstm_therapist_prediction.png', dpi=300, bbox_inches='tight')
 
 # # Plot error over time
 # plt.figure(figsize=(12, 6))
@@ -270,29 +279,78 @@ plt.show()
 # plt.show()
 
 # Plot normalized periodic data
-plt.figure(figsize=(12, 6))
+fig = plt.figure(figsize=(12, 6))
 
 # Plots each period as a separate line. Use to look for outliers in amplitude
 # Missteps can cause outliers where multiple periods will be combined into one. Need to fix height in 'find peaks' above
-for period in normalized_periodic_data1:
-    plt.plot(period, c='b', alpha=0.5)
-for period in normalized_periodic_pred1:
-    plt.plot(period, c='r', alpha=0.5)
+# for period in normalized_periodic_data1:
+#     plt.plot(period, c='b', alpha=0.5)
+# for period in normalized_periodic_pred1:
+#     plt.plot(period, c='r', alpha=0.5)
 
 # Plot mean and std dev of periodic data and predictions
 # Use after height is set correctly in 'find peaks' above
-# plt.plot(mean_data0, c='b', label='Mean Therapist Data')
-# plt.fill_between(range(normalized_length), 
-#                  mean_data0 - std_data0, 
-#                  mean_data0 + std_data0, 
-#                  color='b', alpha=0.2)
-# plt.plot(mean_pred0, c='r', label='Mean Predicted Therapist Data')
-# plt.fill_between(range(normalized_length), 
-#                  mean_pred0 - std_pred0, 
-#                  mean_pred0 + std_pred0, 
-#                  color='r', alpha=0.2)
-# plt.title("4-to-1 (R Knee) Periodic Mean and Std Dev, True and Predicted")
-# plt.ylabel('Joint Positions (Radians)')
+fig.suptitle("4-to-4 Joint Periodic Data and Predictions")
+plt.subplot(2, 2, 1)
+plt.plot(mean_data0, c='b', label='Mean Therapist Data')
+plt.fill_between(range(normalized_length), 
+                 mean_data0 - std_data0, 
+                 mean_data0 + std_data0, 
+                 color='b', alpha=0.2)
+plt.plot(mean_pred0, c='r', label='Mean Predicted Therapist Data')
+plt.fill_between(range(normalized_length), 
+                 mean_pred0 - std_pred0, 
+                 mean_pred0 + std_pred0, 
+                 color='r', alpha=0.2)
+plt.title("Left Hip")
+plt.ylabel('Joint Positions (Radians)')
+plt.xlabel('Gait Phase %')
+plt.legend()
+plt.subplot(2, 2, 2)
+plt.plot(mean_data1, c='b', label='Mean Therapist Data')
+plt.fill_between(range(normalized_length), 
+                 mean_data1 - std_data1, 
+                 mean_data1 + std_data1, 
+                 color='b', alpha=0.2)
+plt.plot(mean_pred1, c='r', label='Mean Predicted Therapist Data')
+plt.fill_between(range(normalized_length), 
+                 mean_pred1 - std_pred1, 
+                 mean_pred1 + std_pred1, 
+                 color='r', alpha=0.2)
+plt.title("Left Knee")
+plt.ylabel('Joint Positions (Radians)')
+plt.xlabel('Gait Phase %')
+plt.legend()
+plt.subplot(2, 2, 3)
+plt.plot(mean_data2, c='b', label='Mean Therapist Data')
+plt.fill_between(range(normalized_length), 
+                 mean_data2 - std_data2, 
+                 mean_data2 + std_data2, 
+                 color='b', alpha=0.2)
+plt.plot(mean_pred2, c='r', label='Mean Predicted Therapist Data')
+plt.fill_between(range(normalized_length), 
+                 mean_pred2 - std_pred2, 
+                 mean_pred2 + std_pred2, 
+                 color='r', alpha=0.2)
+plt.title("Right Hip")
+plt.ylabel('Joint Positions (Radians)')
+plt.xlabel('Gait Phase %')
+plt.legend()
+plt.subplot(2, 2, 4)
+plt.plot(mean_data3, c='b', label='Mean Therapist Data')
+plt.fill_between(range(normalized_length), 
+                 mean_data3 - std_data3, 
+                 mean_data3 + std_data3, 
+                 color='b', alpha=0.2)
+plt.plot(mean_pred3, c='r', label='Mean Predicted Therapist Data')
+plt.fill_between(range(normalized_length), 
+                 mean_pred3 - std_pred3, 
+                 mean_pred3 + std_pred3, 
+                 color='r', alpha=0.2)
+plt.title("Right Knee")
+plt.ylabel('Joint Positions (Radians)')
+plt.xlabel('Gait Phase %')
+plt.legend()
 
 # Plot period plot of error using mean and std dev
 # plt.plot(mean_err, c='r', label='Mean Error')
@@ -303,6 +361,5 @@ for period in normalized_periodic_pred1:
 # plt.title("4-to-1 (R Knee) Periodic Absolute Error")
 # plt.ylabel('Joint Error (Radians)')
 
-plt.legend()
-plt.xlabel('Normalized Time Steps')
+
 plt.show()
