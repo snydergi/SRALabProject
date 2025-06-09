@@ -12,7 +12,7 @@ Then, you may run the program with `python3 lstm.py`.
 
 An alternative to this, how I typically ran the training routine, is to call `nohup python3 lstm.py >> output.log 2>&1 &`. This runs the program, puts all terminal printouts into a file it creates next to it in the directory called `output.log` and then runs the program in the background so that you can disconnect from the remote machine without worrying about your code quitting when you disconnect.
 
-<!-- # Testing (Validation)
+# Testing (Validation)
 As I was new to the world of Machine Learning, I did not yet quite have a grasp on all the terminology at this point in the project, and when I learned of the difference, decided to continue making progress rather than being concerned with diction. Because of this, `validation.py` is what is used to test the model after it has been trained.
 
 `validation.py` contains code to plot a variety of graphs for interpreting the results of the model training. As with above, ensure the path to the CSV files is input accordingly, and the Joints that were read for training the model are the same as they were in `lstm.py`. 
@@ -21,4 +21,6 @@ The chunks of plotting code are labeled for what they will produce. There is cap
 
 Within `validation.py` are additional instructions and hints throughout the file as comments to help clarify different portions of the code to ensure the best plotting possible.
 
-With that, you may run the program with `python3 validation.py`. -->
+It is important to note, in it's current iteration, this code is not written modularly. Preforming testing on this model requires potentially updating many variables to achieve proper plotting, as the plots display a 2x2 grid of all four joints simultaneously.
+
+With that, you may run the program with `python3 validation.py`.
