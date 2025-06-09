@@ -4,7 +4,7 @@ The models in this folder are LSTMs modeling one joint based on four joints. Due
 # Quickstart
 I recommend creating a copy of the core `lstm.py` file to put into the folder of any trial you plan to run. With how the code is currently set up, this method makes the most sense for changing parameters and keeping track of alterations made to the model before training.
 
-Within `lstm.py`, the paths to the dataset are currently set up for my CSVs, which I store in the root folder of this experiment (in this case `lstm_singleJoint`). These can be seen in the code as `'../X2_SRA_A_07-05-2024_10-39-10-mod-sync.csv'`. Be sure to update the path accordingly relative to where you store the CSV and how you have set up the file structure.
+Within `lstm.py`, the paths to the dataset are currently set up for my CSVs, which I store in the root folder of this experiment (in this case `lstm_4to1`). These can be seen in the code as `'../X2_SRA_A_07-05-2024_10-39-10-mod-sync.csv'`. Be sure to update the path accordingly relative to where you store the CSV and how you have set up the file structure.
 
 Next, ensure that all references to Joints are set to the desired Joints to study. In the code, these are under where the CSV is read in and the values are being turned into arrays to feed the data to the model. The patient will have all four joints listed, and the therapist will have the desired output joint listed. This accomplishes the mapping of four to one.
 
