@@ -101,46 +101,46 @@ pred_peaks, _ = find_peaks(-therapist_pred, height=0.5, distance=1000)  # ONLY N
 periodic_pred = [therapist_pred[pred_peaks[i]:pred_peaks[i+1]] for i in range(len(pred_peaks)-1)]
 
 # Normalize periodic data
-normalized_length = 101
-normalized_periodic_data = []
-normalized_periodic_pred = []
-for period in periodic_data:
-    cur_time = np.linspace(0, 1, len(period))
-    new_time = np.linspace(0, 1, normalized_length)
-    interp = interp1d(cur_time, period, kind='linear')
-    norm_period = interp(new_time)
-    normalized_periodic_data.append(norm_period)
-for period in periodic_pred:
-    cur_time = np.linspace(0, 1, len(period))
-    new_time = np.linspace(0, 1, normalized_length)
-    interp = interp1d(cur_time, period, kind='linear')
-    norm_period = interp(new_time)
-    normalized_periodic_pred.append(norm_period)
+# normalized_length = 101
+# normalized_periodic_data = []
+# normalized_periodic_pred = []
+# for period in periodic_data:
+#     cur_time = np.linspace(0, 1, len(period))
+#     new_time = np.linspace(0, 1, normalized_length)
+#     interp = interp1d(cur_time, period, kind='linear')
+#     norm_period = interp(new_time)
+#     normalized_periodic_data.append(norm_period)
+# for period in periodic_pred:
+#     cur_time = np.linspace(0, 1, len(period))
+#     new_time = np.linspace(0, 1, normalized_length)
+#     interp = interp1d(cur_time, period, kind='linear')
+#     norm_period = interp(new_time)
+#     normalized_periodic_pred.append(norm_period)
 
-# Get mean and std dev of normalized data and pred
-stacked_data = np.vstack(normalized_periodic_data)
-stacked_pred = np.vstack(normalized_periodic_pred)
-mean_data = np.mean(stacked_data, axis=0)
-mean_pred = np.mean(stacked_pred, axis=0)
-std_data = np.std(stacked_data, axis=0)
-std_pred = np.std(stacked_pred, axis=0)
-print(f'Stacked Data Size: {stacked_data.shape}')
-print(f'Stacked Pred Size: {stacked_pred.shape}')
+# # Get mean and std dev of normalized data and pred
+# stacked_data = np.vstack(normalized_periodic_data)
+# stacked_pred = np.vstack(normalized_periodic_pred)
+# mean_data = np.mean(stacked_data, axis=0)
+# mean_pred = np.mean(stacked_pred, axis=0)
+# std_data = np.std(stacked_data, axis=0)
+# std_pred = np.std(stacked_pred, axis=0)
+# print(f'Stacked Data Size: {stacked_data.shape}')
+# print(f'Stacked Pred Size: {stacked_pred.shape}')
 
-# Get errors for periodic data
-# Must stay commented out until periodic data is set correctly
-mean_err = np.mean(abs(stacked_data - stacked_pred), axis=0)
-std_err = np.std(abs(stacked_data - stacked_pred), axis=0)
+# # Get errors for periodic data
+# # Must stay commented out until periodic data is set correctly
+# mean_err = np.mean(abs(stacked_data - stacked_pred), axis=0)
+# std_err = np.std(abs(stacked_data - stacked_pred), axis=0)
 
 # ALL PLOTTING HAPPENS BELOW HERE. READ INSTRUCTIONS FOR CREATING BEST PLOTS
 # Plot histogram of errors
-# plt.figure(figsize=(12, 6))
-# plt.hist(errors, bins=50, alpha=0.7, color='blue')
-# plt.xlabel('Error (Radians)')
-# plt.ylabel('# of Occurrences')
-# plt.title(f'4-to-1 (R Knee) Distribution of Prediction Errors, RMSE: {valid_rmse:.4f}, Max (abs): {abs(errors).max():.4f}, Std Dev: {errors.std():.4f}, Mean: {errors.mean():.4f}')
-# plt.grid(True)
-# plt.show()
+plt.figure(figsize=(12, 6))
+plt.hist(errors, bins=50, alpha=0.7, color='blue')
+plt.xlabel('Error (Radians)')
+plt.ylabel('# of Occurrences')
+plt.title(f'4-to-1 (R Knee) Distribution of Prediction Errors, RMSE: {valid_rmse:.4f}, Max (abs): {abs(errors).max():.4f}, Std Dev (abs): {abs(errors).std():.4f}, Mean (abs): {abs(errors).mean():.4f}')
+plt.grid(True)
+plt.show()
 
 # Plot only validation data with prediction overlay
 # Change xlim for desired time steps

@@ -240,7 +240,7 @@ for i in range(4):
     plt.hist(errors[:, i], bins=50, alpha=0.7, color='blue')
     plt.xlabel('Error (Radians)')
     plt.ylabel('# of Occurrences')
-    plt.title(f'Joint {i+1}, RMSE: {joint_rmses[i]:.4f}, Max (abs): {abs(errors[:,i]).max():.4f}, Std Dev: {errors[:,i].std():.4f}, Mean: {errors[:,i].mean():.4f}')
+    plt.title(f'Joint {i+1}, RMSE: {joint_rmses[i]:.4f}, Max (abs): {abs(errors[:,i]).max():.4f}, Std Dev (abs): {abs(errors[:,i]).std():.4f}, Mean (abs): {abs(errors[:,i]).mean():.4f}')
     plt.grid(True)
 plt.show()
 
