@@ -46,7 +46,7 @@ class JointModel(nn.Module):
 
 # Load model
 model = JointModel()
-model.load_state_dict(torch.load('trial5/j13/lstm_model_epoch144.pth'))
+model.load_state_dict(torch.load('trial6/lstm_model_epoch70.pth'))
 model.eval()
 
 # Validation
@@ -71,7 +71,7 @@ plt.figure(figsize=(12, 6))
 plt.hist(errors, bins=50, alpha=0.7, color='blue')
 plt.xlabel('Error (Radians)')
 plt.ylabel('# of Occurrences')
-plt.title(f'Distribution of Prediction Errors, RMSE: {valid_rmse:.4f}, Max: {errors.max():.4f}, Std Dev: {errors.std():.4f}, Mean: {errors.mean():.4f}')
+plt.title(f'1-to-1 (R Hip) Distribution of Prediction Errors, RMSE: {valid_rmse:.4f}, Max (abs): {abs(errors).max():.4f}, Std Dev (abs): {abs(errors).std():.4f}, Mean (abs): {abs(errors).mean():.4f}')
 plt.grid(True)
 plt.show()
 
