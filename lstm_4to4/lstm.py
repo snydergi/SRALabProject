@@ -66,7 +66,7 @@ def create_dataset(dataset, lookback):
     X, y = [], []
     for i in range(len(dataset)-lookback):
         feature = dataset[i:i+lookback, :4]  # Feature is patient data
-        target = dataset[i+1:i+lookback+1, :4]  # Target is therapist data
+        target = dataset[i+1:i+lookback+1, 4:]  # Target is therapist data
         X.append(feature)
         y.append(target)
     X = np.array(X)

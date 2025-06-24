@@ -1,0 +1,2 @@
+This version of lstm.py contains a create_dataset() method that does not work correctly.
+It uses the same columns to set the data for feature and target.
