@@ -56,7 +56,7 @@ class JointModel(nn.Module):
 
 # Load model
 model = JointModel()
-model.load_state_dict(torch.load('trial1/lstm_model_epoch149.pth'))
+model.load_state_dict(torch.load('trial2/lstm_model_epoch6.pth'))
 model.eval()
 
 # Validation
@@ -100,23 +100,23 @@ with torch.no_grad():
 # Find peaks in the therapist data and divide into periodic segments
 data_peaks0, _ = find_peaks(therapist_true[:,0], height=0.4, distance=1000)
 periodic_data0 = [therapist_true[data_peaks0[i]:data_peaks0[i+1],0] for i in range(len(data_peaks0)-1)]
-pred_peaks0, _ = find_peaks(therapist_pred[:,2], height=0.4, distance=1000)
-periodic_pred0 = [therapist_pred[pred_peaks0[i]:pred_peaks0[i+1],2] for i in range(len(pred_peaks0)-1)]
+pred_peaks0, _ = find_peaks(therapist_pred[:,0], height=0.4, distance=1000)
+periodic_pred0 = [therapist_pred[pred_peaks0[i]:pred_peaks0[i+1],0] for i in range(len(pred_peaks0)-1)]
 
 data_peaks1, _ = find_peaks(-therapist_true[:,1], height=0.4, distance=1000)
 periodic_data1 = [therapist_true[data_peaks1[i]:data_peaks1[i+1],1] for i in range(len(data_peaks1)-1)]
-pred_peaks1, _ = find_peaks(-therapist_pred[:,3], height=0.3, distance=1000)
-periodic_pred1 = [therapist_pred[pred_peaks1[i]:pred_peaks1[i+1],3] for i in range(len(pred_peaks1)-1)]
+pred_peaks1, _ = find_peaks(-therapist_pred[:,1], height=0.3, distance=1000)
+periodic_pred1 = [therapist_pred[pred_peaks1[i]:pred_peaks1[i+1],1] for i in range(len(pred_peaks1)-1)]
 
 data_peaks2, _ = find_peaks(therapist_true[:,2], height=0.4, distance=1000)
 periodic_data2 = [therapist_true[data_peaks2[i]:data_peaks2[i+1],2] for i in range(len(data_peaks2)-1)]
-pred_peaks2, _ = find_peaks(therapist_pred[:,0], height=0.4, distance=1000)
-periodic_pred2 = [therapist_pred[pred_peaks2[i]:pred_peaks2[i+1],0] for i in range(len(pred_peaks2)-1)]
+pred_peaks2, _ = find_peaks(therapist_pred[:,2], height=0.4, distance=1000)
+periodic_pred2 = [therapist_pred[pred_peaks2[i]:pred_peaks2[i+1],2] for i in range(len(pred_peaks2)-1)]
 
 data_peaks3, _ = find_peaks(-therapist_true[:,3], height=0.4, distance=1000)
 periodic_data3 = [therapist_true[data_peaks3[i]:data_peaks3[i+1],3] for i in range(len(data_peaks3)-1)]
-pred_peaks3, _ = find_peaks(-therapist_pred[:,1], height=0.3, distance=1000)
-periodic_pred3 = [therapist_pred[pred_peaks3[i]:pred_peaks3[i+1],1] for i in range(len(pred_peaks3)-1)]
+pred_peaks3, _ = find_peaks(-therapist_pred[:,3], height=0.3, distance=1000)
+periodic_pred3 = [therapist_pred[pred_peaks3[i]:pred_peaks3[i+1],3] for i in range(len(pred_peaks3)-1)]
 
 # Normalize periodic data
 normalized_length = 101
@@ -233,22 +233,22 @@ std_err3 = np.std(abs(stacked_data3 - stacked_pred3), axis=0)
 
 # ALL PLOTTING HAPPENS BELOW HERE. READ INSTRUCTIONS FOR CREATING BEST PLOTS
 # Plot histogram of errors
-fig = plt.figure(figsize=(12, 6), )
-fig.suptitle("4-to-4 Joint Prediction Error Histograms")
-for i in range(4):
-    plt.subplot(2, 2, i+1)
-    plt.hist(errors[:, i], bins=50, alpha=0.7, color='blue')
-    plt.xlabel('Error (Radians)')
-    plt.ylabel('# of Occurrences')
-    plt.title(f'Joint {i+1}, RMSE: {joint_rmses[i]:.4f}, Max (abs): {abs(errors[:,i]).max():.4f}, Std Dev (abs): {abs(errors[:,i]).std():.4f}, Mean (abs): {abs(errors[:,i]).mean():.4f}')
-    plt.grid(True)
-plt.show()
+# fig = plt.figure(figsize=(12, 6), )
+# fig.suptitle("4-to-4 Joint Prediction Error Histograms")
+# for i in range(4):
+#     plt.subplot(2, 2, i+1)
+#     plt.hist(errors[:, i], bins=50, alpha=0.7, color='blue')
+#     plt.xlabel('Error (Radians)')
+#     plt.ylabel('# of Occurrences')
+#     plt.title(f'Joint {i+1}, RMSE: {joint_rmses[i]:.4f}, Max (abs): {abs(errors[:,i]).max():.4f}, Std Dev (abs): {abs(errors[:,i]).std():.4f}, Mean (abs): {abs(errors[:,i]).mean():.4f}')
+#     plt.grid(True)
+# plt.show()
 
 # use to determining amplitude for periodic plots
 # fig = plt.figure(figsize=(12, 6))
 # joint_pairs = [[0, 2], [1, 3], [2, 0], [3, 1]]  # Pairs of joints to plot together
 # plt.plot(therapist_true[:, 1], c='b', label=f'True Therapist Data')
-# plt.plot(therapist_pred[:, 3], c='r', linestyle='--', label=f'Predicted Therapist Data')
+# plt.plot(therapist_pred[:, 1], c='r', linestyle='--', label=f'Predicted Therapist Data')
 # plt.xlabel('Time Steps (~4ms)')
 # plt.ylabel('Joint Positions (Radians)')
 # plt.legend()
@@ -259,11 +259,10 @@ plt.show()
 # Limit to 7500 time steps (~30 seconds) EXCEPT when determining amplitude for periodic plots
 # fig = plt.figure(figsize=(12, 6))
 # fig.suptitle("Validation: Therapist Predictions from Patient Data")
-# joint_pairs = [[0, 2], [1, 3], [2, 0], [3, 1]]  # Pairs of joints to plot together
 # for i in range(4):
 #     plt.subplot(2, 2, i+1)
-#     plt.plot(therapist_true[:, joint_pairs[i][0]], c='b', label=f'True Therapist Data')
-#     plt.plot(therapist_pred[:, joint_pairs[i][1]], c='r', linestyle='--', label=f'Predicted Therapist Data')
+#     plt.plot(therapist_true[:, i], c='b', label=f'True Therapist Data')
+#     plt.plot(therapist_pred[:, i], c='r', linestyle='--', label=f'Predicted Therapist Data')
 #     plt.xlim(0, 7500)
 #     plt.xlabel('Time Steps (~4ms)')
 #     plt.ylabel('Joint Positions (Radians)')
