@@ -4,3 +4,5 @@
 venv/*
 */venv/*
 */ws/*
+*.ods
+*.ods#
