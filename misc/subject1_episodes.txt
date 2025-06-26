@@ -1,0 +1,21 @@
+Patient: 
+Episode 1: Patient releases button first. Determines end of episode.
+    Start Row: 229605 done
+    End Row: 433019, time 1410.0269775390625 done
+Episode 2: 
+    Start Row: 516253 done
+    End Row: 718475 done
+Episode 3: 
+    Start Row: 753308 -> trim ~30 seconds (7692 indices) -> 761000, time 2882.174072265625 done
+    End Row: 960354, time 3480.23388671875
+
+Therapist:
+Episode 1: Therapist is second to hit button. Episode will start ~30 seconds after therapist button press.
+    Start Row: 157942, time 776.7020263671875 -> trim ~30 seconds (7692 indices) -> 165634, time 799.7839965820312 done
+    End Row: 369048 done
+Episode 2: Therapist is second to hit button. Episode will start ~30 seconds after therapist button press. Therapist also releases button first. Determines end of episode.
+    Start Row: 444590, time 1766.3480224609375 -> trim ~30 seconds (7692 indices) -> 452282, time 1789.4300537109375 done
+    End Row: 654506, time 2396.10205078125 done
+Episode 3: Therpist releases button first. Determines the end of episode.
+    Start Row: 697030 done
+    End Row: 896383, time 3480.23193359375

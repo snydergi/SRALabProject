@@ -21,7 +21,7 @@ therapist_button_data = therapist_data_raw[' greenButton'].values.astype('float3
 patient_button_data = patient_data_raw[' greenButton'].values.astype('float32')
 
 ####################### FOR SYNCHING DATA #########################
-index_to_match = 165634
+index_to_match = 896383
 
 # If therapist determines
 print(f'Time to match: {therapist_data[index_to_match, 1]}')
@@ -33,6 +33,7 @@ for k in range(len(patient_data[:,1])):
 # print(f'Time to match: {patient_data[index_to_match, 1]}')
 # for k in range(len(therapist_data[:,1])):
 #     if np.round(therapist_data[k, 1], 1) == np.round(patient_data[index_to_match, 1], 1):
+#         print(f'Possible index found at {k}, time {therapist_data[k, 1]}')
 ################################################################
 
 
