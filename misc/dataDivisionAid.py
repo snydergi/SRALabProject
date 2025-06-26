@@ -2,8 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
-patient_file = '/home/gis/SRALab_Data/Subject1/X2_SRA_A_07-05-2024_10-39-10.csv'
-therapist_file = '/home/gis/SRALab_Data/Subject1/X2_SRA_B_07-05-2024_10-41-46.csv'
+patient_file = '/home/gis/SRALab_Data/Subject3/X2_SRA_A_29-05-2024_13-36-40.csv'
+therapist_file = '/home/gis/SRALab_Data/Subject3/X2_SRA_B_29-05-2024_13-41-19.csv'
 
 patient_data_raw = pd.read_csv(patient_file, low_memory=False)
 therapist_data_raw = pd.read_csv(therapist_file, low_memory=False)
@@ -21,19 +21,19 @@ therapist_button_data = therapist_data_raw[' greenButton'].values.astype('float3
 patient_button_data = patient_data_raw[' greenButton'].values.astype('float32')
 
 ####################### FOR SYNCHING DATA #########################
-index_to_match = 896383
+index_to_match = 606459
 
-# If therapist determines
-print(f'Time to match: {therapist_data[index_to_match, 1]}')
-for k in range(len(patient_data[:,1])):
-    if np.round(patient_data[k, 1], 1) == np.round(therapist_data[index_to_match, 1], 1):
-        print(f'Possible index found at {k}, time {patient_data[k, 1]}')
+# # If therapist determines
+# print(f'Time to match: {therapist_data[index_to_match, 1]}')
+# for k in range(len(patient_data[:,1])):
+#     if np.round(patient_data[k, 1], 1) == np.round(therapist_data[index_to_match, 1], 1):
+#         print(f'Possible index found at {k}, time {patient_data[k, 1]}')
 
 # If patient determines
-# print(f'Time to match: {patient_data[index_to_match, 1]}')
-# for k in range(len(therapist_data[:,1])):
-#     if np.round(therapist_data[k, 1], 1) == np.round(patient_data[index_to_match, 1], 1):
-#         print(f'Possible index found at {k}, time {therapist_data[k, 1]}')
+print(f'Time to match: {patient_data[index_to_match, 1]}')
+for k in range(len(therapist_data[:,1])):
+    if np.round(therapist_data[k, 1], 1) == np.round(patient_data[index_to_match, 1], 1):
+        print(f'Possible index found at {k}, time {therapist_data[k, 1]}')
 ################################################################
 
 
