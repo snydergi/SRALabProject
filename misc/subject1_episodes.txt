@@ -17,7 +17,7 @@ Episode 1: Therapist is second to hit button. Episode will start ~30 seconds aft
     End Index: 369048 done
 Episode 2: Therapist is second to hit button. Episode will start ~30 seconds after therapist button press. Therapist also releases button first. Determines end of episode.
     Start Index: 444590, time 1766.3480224609375 -> trim ~30 seconds (7692 indices) -> 452282, time 1789.4300537109375 done
-    End Index: 654506, time 2396.10205078125 done
+    End Index: 654506, time 2396.10205078125 done ----> 654604 to make episode same length as patient episode 2
 Episode 3: Therpist releases button first. Determines the end of episode.
     Start Index: 697030 done
-    End Index: 896383, time 3480.23193359375 done
+    End Index: 896383, time 3480.23193359375 done ----> 896384 to make episode same length as petient episode 3

@@ -11,7 +11,7 @@ Episode 2:
 Therapist:
 Episode 1: Therapist determined start and end.
     Start Index: 108534 -> trim ~30 seconds (7692 indices) -> 116226, time 616.6259765625 done
-    End Index: 272300, time 1084.844970703125 done
+    End Index: 272300, time 1084.844970703125 done ----> 272299 to make episode same length as patient episode 1
 Episode 2: Therapist determined start and end.
     Start Index: 441722 -> trim ~30 seconds (7692 indices) -> 449414, time 1920.68896484375 done
     End Index: 595191, time 2358.02001953125 done
