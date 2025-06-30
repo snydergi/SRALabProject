@@ -20,7 +20,7 @@ patient1_part2 = pd.read_csv(patient1_datapath,
                           nrows=718477-516255)
 therapist1_part2 = pd.read_csv(therapist1_datapath, 
                             skiprows=range(1, 452284), 
-                            nrows=654606-452284)
+                            nrows=654506-452284)
 patient1_part3 = pd.read_csv(patient1_datapath, 
                           skiprows=range(1, 761002), 
                           nrows=960356-761002)
@@ -67,8 +67,8 @@ therapist = pd.concat([therapist1_part1, therapist1_part2, therapist1_part3, the
 patient_data = patient[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4']].values.astype('float32')
 therapist_data = therapist[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4']].values.astype('float32')
 
-patient_valid = patient2_part1[[' JointPositions_1', ' JointPositions_2', 'JointPositions_3', ' JointPositions_4']].values.astype('float32')
-therapist_valid = therapist1_part1[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4']].values.astype('float32')
+patient_valid = patient2_part1[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4']].values.astype('float32')
+therapist_valid = therapist2_part1[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4']].values.astype('float32')
 
 timeseries = np.column_stack((patient_data, therapist_data))
 timeseries_valid = np.column_stack((patient_valid, therapist_valid))
