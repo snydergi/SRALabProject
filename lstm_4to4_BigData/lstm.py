@@ -64,11 +64,11 @@ therapist3_part3 = pd.read_csv(therapist3_datapath,
 patient = pd.concat([patient1_part1, patient1_part2, patient1_part3, patient3_part1, patient3_part2, patient3_part3])
 therapist = pd.concat([therapist1_part1, therapist1_part2, therapist1_part3, therapist3_part1, therapist3_part2, therapist3_part3])
 
-patient_data = patient[['JointPositions_1', 'JointPositions_2', 'JointPositions_3', 'JointPositions_4']].values.astype('float32')
-therapist_data = therapist[['JointPositions_1', 'JointPositions_2', 'JointPositions_3', 'JointPositions_4']].values.astype('float32')
+patient_data = patient[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4']].values.astype('float32')
+therapist_data = therapist[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4']].values.astype('float32')
 
-patient_valid = patient2_part1[['JointPositions_1', 'JointPositions_2', 'JointPositions_3', 'JointPositions_4']].values.astype('float32')
-therapist_valid = therapist1_part1[['JointPositions_1', 'JointPositions_2', 'JointPositions_3', 'JointPositions_4']].values.astype('float32')
+patient_valid = patient2_part1[[' JointPositions_1', ' JointPositions_2', 'JointPositions_3', ' JointPositions_4']].values.astype('float32')
+therapist_valid = therapist1_part1[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4']].values.astype('float32')
 
 timeseries = np.column_stack((patient_data, therapist_data))
 timeseries_valid = np.column_stack((patient_valid, therapist_valid))
