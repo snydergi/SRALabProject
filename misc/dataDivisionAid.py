@@ -2,8 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
-patient_file = '/home/gis/SRALab_Data/Subject3/X2_SRA_A_29-05-2024_13-36-40.csv'
-therapist_file = '/home/gis/SRALab_Data/Subject3/X2_SRA_B_29-05-2024_13-41-19.csv'
+patient_file = '/home/gis/Documents/SRALabProject/lstm_4to4_BigData/data/Patient2_X2_SRA_A_08-05-2024_14-33-44.csv'
+therapist_file = '/home/gis/Documents/SRALabProject/lstm_4to4_BigData/data/Therapist2_X2_SRA_B_08-05-2024_14-33-51.csv'
 
 patient_data_raw = pd.read_csv(patient_file, low_memory=False)
 therapist_data_raw = pd.read_csv(therapist_file, low_memory=False)
@@ -21,19 +21,19 @@ therapist_button_data = therapist_data_raw[' greenButton'].values.astype('float3
 patient_button_data = patient_data_raw[' greenButton'].values.astype('float32')
 
 ####################### FOR SYNCHING DATA #########################
-index_to_match = 606459
+# index_to_match = 606459
 
-# # If therapist determines
-# print(f'Time to match: {therapist_data[index_to_match, 1]}')
-# for k in range(len(patient_data[:,1])):
-#     if np.round(patient_data[k, 1], 1) == np.round(therapist_data[index_to_match, 1], 1):
-#         print(f'Possible index found at {k}, time {patient_data[k, 1]}')
+# # # If therapist determines
+# # print(f'Time to match: {therapist_data[index_to_match, 1]}')
+# # for k in range(len(patient_data[:,1])):
+# #     if np.round(patient_data[k, 1], 1) == np.round(therapist_data[index_to_match, 1], 1):
+# #         print(f'Possible index found at {k}, time {patient_data[k, 1]}')
 
-# If patient determines
-print(f'Time to match: {patient_data[index_to_match, 1]}')
-for k in range(len(therapist_data[:,1])):
-    if np.round(therapist_data[k, 1], 1) == np.round(patient_data[index_to_match, 1], 1):
-        print(f'Possible index found at {k}, time {therapist_data[k, 1]}')
+# # If patient determines
+# print(f'Time to match: {patient_data[index_to_match, 1]}')
+# for k in range(len(therapist_data[:,1])):
+#     if np.round(therapist_data[k, 1], 1) == np.round(patient_data[index_to_match, 1], 1):
+#         print(f'Possible index found at {k}, time {therapist_data[k, 1]}')
 ################################################################
 
 
@@ -70,13 +70,16 @@ for k in range(len(therapist_data[:,1])):
 #         # if patient_button_data[i] == 0 and patient_button_data[i-1] == 1:
 #         #     print(f"Button unpressed at index {i}, time {patient_time[i]}")
 
-# fig = plt.figure(figsize=(12, 6))
-# plt.plot(therapist_data[:,1], therapist_data[:,0], label='Therapist Joint Positions', c='r')
-# plt.plot(patient_data[:,1], patient_data[:,0], label='Patient Joint Positions', c='b')
-# plt.plot(therapist_data[:,1], therapist_data_raw[' greenButton'].values.astype('float32'), label='Green Button Value T', c='green')
-# plt.plot(patient_data[:,1], patient_data_raw[' greenButton'].values.astype('float32'), label='Green Button Value P', c='yellow')
-# plt.legend()
-# plt.show()
+fig = plt.figure(figsize=(12, 6))
+plt.plot(therapist_data[:,1], therapist_data[:,0], label='Therapist Joint Positions', c='r')
+plt.plot(patient_data[:,1], patient_data[:,0], label='Patient Joint Positions', c='b')
+plt.plot(therapist_data[:,1], therapist_data_raw[' greenButton'].values.astype('float32'), label='Green Button Value T', c='green')
+plt.plot(patient_data[:,1], patient_data_raw[' greenButton'].values.astype('float32'), label='Green Button Value P', c='yellow')
+plt.xlabel('Time (s)')
+plt.ylabel('Joint Positions, Button Values')
+plt.title('Patient and Therapist Joint Positions (J13) with Button Values')
+plt.legend()
+plt.show()
 ###############################################################
 
 # print(therapist_data[0, 1])

@@ -7,22 +7,25 @@ from scipy.signal import find_peaks
 from scipy.interpolate import interp1d
 from torchrl.modules import NoisyLinear
 
-# Load data
-patient = pd.read_csv('X2_SRA_A_07-05-2024_10-39-10-mod-sync.csv', 
-                     skiprows=range(1, 696306), 
-                     nrows=894640-696306)
-therapist = pd.read_csv('X2_SRA_B_07-05-2024_10-41-46-mod-sync.csv', 
-                       skiprows=range(1, 696306), 
-                       nrows=894640-696306)
+# Load data from patient 2, episode 2
+patient2_datapath = 'data/Patient2_X2_SRA_A_08-05-2024_14-33-44.csv'
+therapist2_datapath = 'data/Therapist2_X2_SRA_B_08-05-2024_14-33-51.csv'
+patient2_part2 = pd.read_csv(patient2_datapath, 
+                     skiprows=range(1, 449416), 
+                     nrows=595193-449416)
+therapist2_part2 = pd.read_csv(therapist2_datapath, 
+                       skiprows=range(1, 449416), 
+                       nrows=595193-449416)
 
 # Prepare data
-patient_data = patient[['JointPositions_1', 'JointPositions_2', 'JointPositions_3', 'JointPositions_4']].values.astype('float32')
-therapist_data = therapist[['JointPositions_1', 'JointPositions_2', 'JointPositions_3', 'JointPositions_4']].values.astype('float32')
+patient_data = patient2_part2[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4']].values.astype('float32')
+therapist_data = therapist2_part2[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4']].values.astype('float32')
 timeseries = np.column_stack((patient_data, therapist_data))
 
 # Testing Split
-test_size = int(len(timeseries) * 0.5)
-test = timeseries[(len(timeseries) - test_size):len(timeseries)]
+# test_size = int(len(timeseries) * 0.5)
+# test = timeseries[(len(timeseries) - test_size):len(timeseries)]
+test = timeseries
 
 def create_dataset(dataset, lookback):
     """Transform a time series into a prediction dataset
@@ -56,7 +59,7 @@ class JointModel(nn.Module):
 
 # Load model
 model = JointModel()
-model.load_state_dict(torch.load('trial2/lstm_model_epoch6.pth'))
+model.load_state_dict(torch.load('trial1/lstm_model_epoch25.pth'))
 model.eval()
 
 # Testing
@@ -233,16 +236,16 @@ std_err3 = np.std(abs(stacked_data3 - stacked_pred3), axis=0)
 
 # ALL PLOTTING HAPPENS BELOW HERE. READ INSTRUCTIONS FOR CREATING BEST PLOTS
 # Plot histogram of errors
-# fig = plt.figure(figsize=(12, 6), )
-# fig.suptitle("4-to-4 Joint Prediction Error Histograms")
-# for i in range(4):
-#     plt.subplot(2, 2, i+1)
-#     plt.hist(errors[:, i], bins=50, alpha=0.7, color='blue')
-#     plt.xlabel('Error (Radians)')
-#     plt.ylabel('# of Occurrences')
-#     plt.title(f'Joint {i+1}, RMSE: {joint_rmses[i]:.4f}, Max (abs): {abs(errors[:,i]).max():.4f}, Std Dev (abs): {abs(errors[:,i]).std():.4f}, Mean (abs): {abs(errors[:,i]).mean():.4f}')
-#     plt.grid(True)
-# plt.show()
+fig = plt.figure(figsize=(12, 6), )
+fig.suptitle("4-to-4 Joint Prediction Error Histograms")
+for i in range(4):
+    plt.subplot(2, 2, i+1)
+    plt.hist(errors[:, i], bins=50, alpha=0.7, color='blue')
+    plt.xlabel('Error (Radians)')
+    plt.ylabel('# of Occurrences')
+    plt.title(f'Joint {i+1}, RMSE: {joint_rmses[i]:.4f}, Max (abs): {abs(errors[:,i]).max():.4f}, Std Dev (abs): {abs(errors[:,i]).std():.4f}, Mean (abs): {abs(errors[:,i]).mean():.4f}')
+    plt.grid(True)
+plt.show()
 
 # use to determining amplitude for periodic plots
 # fig = plt.figure(figsize=(12, 6))
@@ -257,18 +260,18 @@ std_err3 = np.std(abs(stacked_data3 - stacked_pred3), axis=0)
 # Plot only testing data with prediction overlay
 # Change xlim for desired time steps
 # Limit to 7500 time steps (~30 seconds) EXCEPT when determining amplitude for periodic plots
-# fig = plt.figure(figsize=(12, 6))
-# fig.suptitle("Testing: Therapist Predictions from Patient Data")
-# for i in range(4):
-#     plt.subplot(2, 2, i+1)
-#     plt.plot(therapist_true[:, i], c='b', label=f'True Therapist Data')
-#     plt.plot(therapist_pred[:, i], c='r', linestyle='--', label=f'Predicted Therapist Data')
-#     plt.xlim(0, 7500)
-#     plt.xlabel('Time Steps (~4ms)')
-#     plt.ylabel('Joint Positions (Radians)')
-#     plt.legend()
-#     plt.title(f"Joint {i + 1}")
-# plt.show()
+fig = plt.figure(figsize=(12, 6))
+fig.suptitle("Testing: Therapist Predictions from Patient Data")
+for i in range(4):
+    plt.subplot(2, 2, i+1)
+    plt.plot(therapist_true[:, i], c='b', label=f'True Therapist Data')
+    plt.plot(therapist_pred[:, i], c='r', linestyle='--', label=f'Predicted Therapist Data')
+    plt.xlim(0, 7500)
+    plt.xlabel('Time Steps (~4ms)')
+    plt.ylabel('Joint Positions (Radians)')
+    plt.legend()
+    plt.title(f"Joint {i + 1}")
+plt.show()
 # # plt.savefig('lstm_therapist_prediction.png', dpi=300, bbox_inches='tight')
 
 # # Plot error over time
