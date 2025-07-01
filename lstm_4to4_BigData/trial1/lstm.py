@@ -55,7 +55,7 @@ therapist3_part2 = pd.read_csv(therapist3_datapath,
                             nrows=388280-232681)
 patient3_part3 = pd.read_csv(patient3_datapath, 
                           skiprows=range(1, 417061), 
-                          nrows=606461-417059)
+                          nrows=606461-417061)
 therapist3_part3 = pd.read_csv(therapist3_datapath, 
                             skiprows=range(1, 417062), 
                             nrows=606462-417062)
@@ -151,16 +151,16 @@ for epoch in range(n_epochs):
         y_pred = model(X_valid)
         valid_rmse = np.sqrt(loss_fn(y_pred, y_valid))
         valid_loss_list.append(loss_fn(y_pred, y_valid))
-        print(f"Epoch {epoch}: Train RMSE {train_rmse:.4f}, Validation RMSE {valid_rmse:.4f}")
+        print(f"Epoch {epoch}: Train RMSE {train_rmse:.4f}, valid RMSE {valid_rmse:.4f}")
     torch.save(model.state_dict(), f'lstm_model_epoch{epoch}.pth')
 
 # Plotting the losses
 plt.figure(figsize=(12, 6))
 plt.plot(train_loss_list, label='Training Loss', alpha=0.8)
-plt.plot(valid_loss_list, label='Validation Loss', alpha=0.8)
+plt.plot(valid_loss_list, label='valid Loss', alpha=0.8)
 plt.xlabel('Epoch')
 plt.ylabel('Loss (RMSE)')
-plt.title('Training and Validation Loss Over Epochs')
+plt.title('Training and valid Loss Over Epochs')
 plt.legend()
 plt.grid(True, alpha=0.3)
 
@@ -193,3 +193,61 @@ with torch.no_grad():
     # Get predictions for valid
     valid_predictions = model(X_valid)[:, -1, :].numpy().flatten()
     valid_pred[lookback:valid_size] = valid_predictions
+
+# # Plot training data
+# plt.plot(therapist_true, c='b', label='True Therapist (Train)')
+# plt.plot(therapist_pred, c='r', linestyle='--', label='Predicted Therapist (Train)')
+# plt.plot(timeseries[:, 0], c='g', alpha=0.3, label='Patient Data (input)')
+
+# Plot valid data (offset by train_size)
+# valid_x = np.arange(train_size, train_size + valid_size)
+# plt.plot(valid_x, valid_true, c='blue', alpha=0.5, label='True Therapist (valid)')
+# plt.plot(valid_x, valid_pred, c='red', linestyle=':', label='Predicted Therapist (valid)')
+
+plt.figure(figsize=(12, 6))
+plt.plot(valid_true[0], c='blue', alpha=0.5, label='True Therapist (valid)')
+plt.plot(valid_pred[0], c='red', linestyle=':', label='Predicted Therapist (valid)')
+plt.xlim(0, valid_size * 0.1)
+plt.xlabel('Time Steps (~4ms)')
+plt.ylabel('Joint Positions (radians)')
+plt.legend()
+plt.title("Therapist L Knee Data Prediction from Patient R Knee Data")
+plt.grid(True, alpha=0.3)
+plt.show()
+plt.savefig('lstm_therapist_prediction0.png', dpi=300, bbox_inches='tight')
+
+plt.figure(figsize=(12, 6))
+plt.plot(valid_true[1], c='blue', alpha=0.5, label='True Therapist (valid)')
+plt.plot(valid_pred[1], c='red', linestyle=':', label='Predicted Therapist (valid)')
+plt.xlim(0, valid_size * 0.1)
+plt.xlabel('Time Steps (~4ms)')
+plt.ylabel('Joint Positions (radians)')
+plt.legend()
+plt.title("Therapist L Knee Data Prediction from Patient R Knee Data")
+plt.grid(True, alpha=0.3)
+plt.show()
+plt.savefig('lstm_therapist_prediction1.png', dpi=300, bbox_inches='tight')
+
+plt.figure(figsize=(12, 6))
+plt.plot(valid_true[2], c='blue', alpha=0.5, label='True Therapist (valid)')
+plt.plot(valid_pred[2], c='red', linestyle=':', label='Predicted Therapist (valid)')
+plt.xlim(0, valid_size * 0.1)
+plt.xlabel('Time Steps (~4ms)')
+plt.ylabel('Joint Positions (radians)')
+plt.legend()
+plt.title("Therapist L Knee Data Prediction from Patient R Knee Data")
+plt.grid(True, alpha=0.3)
+plt.show()
+plt.savefig('lstm_therapist_prediction2.png', dpi=300, bbox_inches='tight')
+
+plt.figure(figsize=(12, 6))
+plt.plot(valid_true[3], c='blue', alpha=0.5, label='True Therapist (valid)')
+plt.plot(valid_pred[3], c='red', linestyle=':', label='Predicted Therapist (valid)')
+plt.xlim(0, valid_size * 0.1)
+plt.xlabel('Time Steps (~4ms)')
+plt.ylabel('Joint Positions (radians)')
+plt.legend()
+plt.title("Therapist L Knee Data Prediction from Patient R Knee Data")
+plt.grid(True, alpha=0.3)
+plt.show()
+plt.savefig('lstm_therapist_prediction1.png', dpi=300, bbox_inches='tight')
