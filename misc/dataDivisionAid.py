@@ -2,8 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
-patient_file = '/home/gis/Documents/SRALabProject/lstm_4to4_BigData/data/Patient2_X2_SRA_A_08-05-2024_14-33-44.csv'
-therapist_file = '/home/gis/Documents/SRALabProject/lstm_4to4_BigData/data/Therapist2_X2_SRA_B_08-05-2024_14-33-51.csv'
+patient_file = '/home/gis/Documents/SRALabProject/lstm_BigData/data/Patient2_X2_SRA_A_08-05-2024_14-33-44.csv'
+therapist_file = '/home/gis/Documents/SRALabProject/lstm_BigData/data/Therapist2_X2_SRA_B_08-05-2024_14-33-51.csv'
 
 patient_data_raw = pd.read_csv(patient_file, low_memory=False)
 therapist_data_raw = pd.read_csv(therapist_file, low_memory=False)

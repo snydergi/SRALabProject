@@ -11,14 +11,16 @@ from torchrl.modules import NoisyLinear
 patient2_datapath = 'data/Patient2_X2_SRA_A_08-05-2024_14-33-44.csv'
 therapist2_datapath = 'data/Therapist2_X2_SRA_B_08-05-2024_14-33-51.csv'
 patient2_part2 = pd.read_csv(patient2_datapath, 
-                     skiprows=range(1, 449416), 
-                     nrows=595193-449416)
+                     skiprows=range(1, 457108), 
+                     nrows=595193-457108)
 therapist2_part2 = pd.read_csv(therapist2_datapath, 
-                       skiprows=range(1, 449416), 
-                       nrows=595193-449416)
+                       skiprows=range(1, 457108), 
+                       nrows=595193-457108)
 
 # Prepare data
-patient_data = patient2_part2[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4']].values.astype('float32')
+# patient_data = patient2_part2[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4']].values.astype('float32')
+patient_data = patient2_part2[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4',
+                               ' JointVelocities_1', ' JointVelocities_2', ' JointVelocities_3', ' JointVelocities_4']].values.astype('float32')
 therapist_data = therapist2_part2[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4']].values.astype('float32')
 timeseries = np.column_stack((patient_data, therapist_data))
 
@@ -36,8 +38,9 @@ def create_dataset(dataset, lookback):
     """
     X, y = [], []
     for i in range(len(dataset)-lookback):
-        feature = dataset[i:i+lookback, :4]  # Feature is patient data
-        target = dataset[i+1:i+lookback+1, 4:]  # Target is therapist data
+        feature = dataset[i:i+lookback, :8]  # Feature is patient data, if input size 8
+        # feature = dataset[i:i+lookback, :4]  # Feature is patient data, # if input size 4
+        target = dataset[i+1:i+lookback+1, -4:]  # Target is therapist data
         X.append(feature)
         y.append(target)
     X = np.array(X)
@@ -51,7 +54,8 @@ X_test, y_test = create_dataset(test, lookback=lookback)
 class JointModel(nn.Module):
     def __init__(self):
         super().__init__()
-        self.lstm = nn.LSTM(input_size=4, hidden_size=50, num_layers=1, batch_first=True)
+        self.lstm = nn.LSTM(input_size=8, hidden_size=50, num_layers=1, batch_first=True) # If input size 8
+        # self.lstm = nn.LSTM(input_size=4, hidden_size=50, num_layers=1, batch_first=True) # If input size 4
         self.linear = nn.Linear(50, 4)
     def forward(self, x):
         x, _ = self.lstm(x)
@@ -59,7 +63,7 @@ class JointModel(nn.Module):
 
 # Load model
 model = JointModel()
-model.load_state_dict(torch.load('trial1/lstm_model_epoch25.pth'))
+model.load_state_dict(torch.load('trial2/lstm_model_epoch0.pth'))
 model.eval()
 
 # Testing
@@ -90,7 +94,7 @@ with torch.no_grad():
     plot_length = len(test)  # Only plot testing portion
     
     # Fill true values (offset by lookback)
-    therapist_true = test[:, 4:]
+    therapist_true = test[:, -4:]
     
     # Get predictions (last timestep of each sequence)
     test_pred = model(X_test)[:, -1, :].numpy()
@@ -183,56 +187,56 @@ for period in periodic_pred3:
     norm_period = interp(new_time)
     normalized_periodic_pred3.append(norm_period)
 
-# Get mean and std dev of normalized data and pred
-stacked_data0 = np.vstack(normalized_periodic_data0)
-stacked_pred0 = np.vstack(normalized_periodic_pred0)
-mean_data0 = np.mean(stacked_data0, axis=0)
-mean_pred0 = np.mean(stacked_pred0, axis=0)
-std_data0 = np.std(stacked_data0, axis=0)
-std_pred0 = np.std(stacked_pred0, axis=0)
-print(f'Stacked Data0 Size: {stacked_data0.shape}')
-print(f'Stacked Pred0 Size: {stacked_pred0.shape}')
+# # Get mean and std dev of normalized data and pred
+# stacked_data0 = np.vstack(normalized_periodic_data0)
+# stacked_pred0 = np.vstack(normalized_periodic_pred0)
+# mean_data0 = np.mean(stacked_data0, axis=0)
+# mean_pred0 = np.mean(stacked_pred0, axis=0)
+# std_data0 = np.std(stacked_data0, axis=0)
+# std_pred0 = np.std(stacked_pred0, axis=0)
+# print(f'Stacked Data0 Size: {stacked_data0.shape}')
+# print(f'Stacked Pred0 Size: {stacked_pred0.shape}')
 
-stacked_data1 = np.vstack(normalized_periodic_data1)
-stacked_pred1 = np.vstack(normalized_periodic_pred1)
-mean_data1 = np.mean(stacked_data1, axis=0)
-mean_pred1 = np.mean(stacked_pred1, axis=0)
-std_data1 = np.std(stacked_data1, axis=0)
-std_pred1 = np.std(stacked_pred1, axis=0)
-print(f'Stacked Data1 Size: {stacked_data1.shape}')
-print(f'Stacked Pred1 Size: {stacked_pred1.shape}')
+# stacked_data1 = np.vstack(normalized_periodic_data1)
+# stacked_pred1 = np.vstack(normalized_periodic_pred1)
+# mean_data1 = np.mean(stacked_data1, axis=0)
+# mean_pred1 = np.mean(stacked_pred1, axis=0)
+# std_data1 = np.std(stacked_data1, axis=0)
+# std_pred1 = np.std(stacked_pred1, axis=0)
+# print(f'Stacked Data1 Size: {stacked_data1.shape}')
+# print(f'Stacked Pred1 Size: {stacked_pred1.shape}')
 
-stacked_data2 = np.vstack(normalized_periodic_data2)
-stacked_pred2 = np.vstack(normalized_periodic_pred2)
-mean_data2 = np.mean(stacked_data2, axis=0)
-mean_pred2 = np.mean(stacked_pred2, axis=0)
-std_data2 = np.std(stacked_data2, axis=0)
-std_pred2 = np.std(stacked_pred2, axis=0)
-print(f'Stacked Data2 Size: {stacked_data2.shape}')
-print(f'Stacked Pred2 Size: {stacked_pred2.shape}')
+# stacked_data2 = np.vstack(normalized_periodic_data2)
+# stacked_pred2 = np.vstack(normalized_periodic_pred2)
+# mean_data2 = np.mean(stacked_data2, axis=0)
+# mean_pred2 = np.mean(stacked_pred2, axis=0)
+# std_data2 = np.std(stacked_data2, axis=0)
+# std_pred2 = np.std(stacked_pred2, axis=0)
+# print(f'Stacked Data2 Size: {stacked_data2.shape}')
+# print(f'Stacked Pred2 Size: {stacked_pred2.shape}')
 
-stacked_data3 = np.vstack(normalized_periodic_data3)
-stacked_pred3 = np.vstack(normalized_periodic_pred3)
-mean_data3 = np.mean(stacked_data3, axis=0)
-mean_pred3 = np.mean(stacked_pred3, axis=0)
-std_data3 = np.std(stacked_data3, axis=0)
-std_pred3 = np.std(stacked_pred3, axis=0)
-print(f'Stacked Data3 Size: {stacked_data3.shape}')
-print(f'Stacked Pred3 Size: {stacked_pred3.shape}')
+# stacked_data3 = np.vstack(normalized_periodic_data3)
+# stacked_pred3 = np.vstack(normalized_periodic_pred3)
+# mean_data3 = np.mean(stacked_data3, axis=0)
+# mean_pred3 = np.mean(stacked_pred3, axis=0)
+# std_data3 = np.std(stacked_data3, axis=0)
+# std_pred3 = np.std(stacked_pred3, axis=0)
+# print(f'Stacked Data3 Size: {stacked_data3.shape}')
+# print(f'Stacked Pred3 Size: {stacked_pred3.shape}')
 
-# # Get errors for periodic data
-# # Must stay commented out until periodic data is set correctly
-mean_err0 = np.mean(abs(stacked_data0 - stacked_pred0), axis=0)
-std_err0 = np.std(abs(stacked_data0 - stacked_pred0), axis=0)
+# # # Get errors for periodic data
+# # # Must stay commented out until periodic data is set correctly
+# mean_err0 = np.mean(abs(stacked_data0 - stacked_pred0), axis=0)
+# std_err0 = np.std(abs(stacked_data0 - stacked_pred0), axis=0)
 
-mean_err1 = np.mean(abs(stacked_data1 - stacked_pred1), axis=0)
-std_err1 = np.std(abs(stacked_data1 - stacked_pred1), axis=0)
+# mean_err1 = np.mean(abs(stacked_data1 - stacked_pred1), axis=0)
+# std_err1 = np.std(abs(stacked_data1 - stacked_pred1), axis=0)
 
-mean_err2 = np.mean(abs(stacked_data2 - stacked_pred2), axis=0)
-std_err2 = np.std(abs(stacked_data2 - stacked_pred2), axis=0)
+# mean_err2 = np.mean(abs(stacked_data2 - stacked_pred2), axis=0)
+# std_err2 = np.std(abs(stacked_data2 - stacked_pred2), axis=0)
 
-mean_err3 = np.mean(abs(stacked_data3 - stacked_pred3), axis=0)
-std_err3 = np.std(abs(stacked_data3 - stacked_pred3), axis=0)
+# mean_err3 = np.mean(abs(stacked_data3 - stacked_pred3), axis=0)
+# std_err3 = np.std(abs(stacked_data3 - stacked_pred3), axis=0)
 
 # ALL PLOTTING HAPPENS BELOW HERE. READ INSTRUCTIONS FOR CREATING BEST PLOTS
 # Plot histogram of errors
