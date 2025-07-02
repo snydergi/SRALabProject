@@ -159,7 +159,7 @@ plt.figure(figsize=(12, 6))
 plt.plot(train_loss_list, label='Training Loss', alpha=0.8)
 plt.plot(valid_loss_list, label='Validation Loss', alpha=0.8)
 plt.xlabel('Epoch')
-plt.ylabel('Loss (RMSE)')
+plt.ylabel('Loss (MSE)')
 plt.title('Training and Validation Loss Over Epochs')
 plt.legend()
 plt.grid(True, alpha=0.3)
@@ -173,23 +173,3 @@ plt.legend()
 plt.savefig('training_loss_curves.png', dpi=300, bbox_inches='tight')
 
 torch.save(model.state_dict(), 'lstm_model.pth')
-
-# Plotting
-with torch.no_grad():
-    # Create arrays for plotting
-    therapist_true = np.ones_like(timeseries[:, 1]) * np.nan
-    therapist_pred = np.ones_like(timeseries[:, 1]) * np.nan
-    
-    # Fill in the true therapist data
-    therapist_true[lookback:train_size] = timeseries[lookback:train_size, 1]
-
-    # Create arrays for valid portion
-    valid_true = np.ones_like(valid[:, 1]) * np.nan
-    valid_pred = np.ones_like(valid[:, 1]) * np.nan
-    
-    # Fill in true valid data
-    valid_true[lookback:valid_size] = valid[lookback:valid_size, 1]
-    
-    # Get predictions for valid
-    valid_predictions = model(X_valid)[:, -1, :].numpy().flatten()
-    valid_pred[lookback:valid_size] = valid_predictions
