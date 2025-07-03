@@ -152,7 +152,7 @@ print(X_valid.shape, y_valid.shape)
 class JointModel(nn.Module):
     def __init__(self):
         super().__init__()
-        self.lstm = nn.LSTM(input_size=8, hidden_size=50, num_layers=1, batch_first=True)
+        self.lstm = nn.LSTM(input_size=8, hidden_size=50, num_layers=1, batch_first=True, dropout=0.2)
         self.linear = nn.Linear(50, 4)
     def forward(self, x):
         x, _ = self.lstm(x)
@@ -161,10 +161,10 @@ class JointModel(nn.Module):
     
 
 model = JointModel()
-optimizer = optim.Adam(model.parameters())
+optimizer = optim.Adam(model.parameters(), lr=0.00001)
 # optimizer = optim.Adadelta(model.parameters())
 loss_fn = nn.MSELoss()
-loader = data.DataLoader(data.TensorDataset(X_train, y_train), shuffle=True, batch_size=128)
+loader = data.DataLoader(data.TensorDataset(X_train, y_train), shuffle=True, batch_size=256)
 
 train_loss_list = []
 valid_loss_list = []
@@ -209,23 +209,3 @@ plt.legend()
 plt.savefig('training_loss_curves.png', dpi=300, bbox_inches='tight')
 
 torch.save(model.state_dict(), 'lstm_model.pth')
-
-# Plotting
-with torch.no_grad():
-    # Create arrays for plotting
-    therapist_true = np.ones_like(timeseries[:, 1]) * np.nan
-    therapist_pred = np.ones_like(timeseries[:, 1]) * np.nan
-    
-    # Fill in the true therapist data
-    therapist_true[lookback:train_size] = timeseries[lookback:train_size, 1]
-
-    # Create arrays for valid portion
-    valid_true = np.ones_like(valid[:, 1]) * np.nan
-    valid_pred = np.ones_like(valid[:, 1]) * np.nan
-    
-    # Fill in true valid data
-    valid_true[lookback:valid_size] = valid[lookback:valid_size, 1]
-    
-    # Get predictions for valid
-    valid_predictions = model(X_valid)[:, -1, :].numpy().flatten()
-    valid_pred[lookback:valid_size] = valid_predictions

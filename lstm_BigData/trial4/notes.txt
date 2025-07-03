@@ -1,5 +1,9 @@
 Dividing data as follows:
-    Combine episodes of each patient then from each combination:
+    Combine episodes of each patient/therapist then from each combination:
         Testing: 70% 
         Validation: 20%
-        Testing: 10% (Will remain separate for testing each patient separately)
+        Testing: 10% (Will remain separate for testing each patient/therapist combination separately)
+
+Increasing batch size from 128 to 256 due to the increased size of dataset.
+Adding a 0.2 dropout.
+Going back to Adam optimizer this time, but decreasing lr from 0.001 (default) to 0.00001.
