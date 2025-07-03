@@ -7,37 +7,9 @@ from scipy.signal import find_peaks
 from scipy.interpolate import interp1d
 from torchrl.modules import NoisyLinear
 
-# First Subject-Therapist Pair
-patient1_datapath = '../data/Patient1_X2_SRA_A_07-05-2024_10-39-10.csv'
-therapist1_datapath = '../data/Therapist1_X2_SRA_B_07-05-2024_10-41-46.csv'
-patient1_part1 = pd.read_csv(patient1_datapath, 
-                          skiprows=range(1, 229607), 
-                          nrows=433021-229607)
-therapist1_part1 = pd.read_csv(therapist1_datapath, 
-                            skiprows=range(1, 165636), 
-                            nrows=369050-165636)
-patient1_part2 = pd.read_csv(patient1_datapath, 
-                          skiprows=range(1, 516255), 
-                          nrows=718477-516255)
-therapist1_part2 = pd.read_csv(therapist1_datapath, 
-                            skiprows=range(1, 452284), 
-                            nrows=654506-452284)
-patient1_part3 = pd.read_csv(patient1_datapath, 
-                          skiprows=range(1, 761002), 
-                          nrows=960356-761002)
-therapist1_part3 = pd.read_csv(therapist1_datapath, 
-                            skiprows=range(1, 697032), 
-                            nrows=896386-697032)
-
-# Second Subject-Therapist Pair
-patient2_datapath = '../data/Patient2_X2_SRA_A_08-05-2024_14-33-44.csv'
-therapist2_datapath = '../data/Therapist2_X2_SRA_B_08-05-2024_14-33-51.csv'
-patient2_part1 = pd.read_csv(patient2_datapath,
-                            skiprows=range(1, 123920),
-                            nrows=272301-123920)
-therapist2_part1 = pd.read_csv(therapist2_datapath,
-                            skiprows=range(1, 123920),
-                            nrows=272301-123920)
+# Load data from patient 2, episode 2
+patient2_datapath = 'data/Patient2_X2_SRA_A_08-05-2024_14-33-44.csv'
+therapist2_datapath = 'data/Therapist2_X2_SRA_B_08-05-2024_14-33-51.csv'
 patient2_part2 = pd.read_csv(patient2_datapath, 
                      skiprows=range(1, 457108), 
                      nrows=595193-457108)
@@ -45,74 +17,23 @@ therapist2_part2 = pd.read_csv(therapist2_datapath,
                        skiprows=range(1, 457108), 
                        nrows=595193-457108)
 
-# Third Subject-Therapist Pair
-patient3_datapath = '../data/Patient3_X2_SRA_A_29-05-2024_13-36-40.csv'
-therapist3_datapath = '../data/Therapist3_X2_SRA_B_29-05-2024_13-41-19.csv'
-patient3_part1 = pd.read_csv(patient3_datapath, 
-                          skiprows=range(1, 7694), 
-                          nrows=198762-7694)
-therapist3_part1 = pd.read_csv(therapist3_datapath, 
-                            skiprows=range(1, 7694), 
-                            nrows=198762-7694)
-patient3_part2 = pd.read_csv(patient3_datapath, 
-                          skiprows=range(1, 232681), 
-                          nrows=388280-232681)
-therapist3_part2 = pd.read_csv(therapist3_datapath, 
-                            skiprows=range(1, 232681), 
-                            nrows=388280-232681)
-patient3_part3 = pd.read_csv(patient3_datapath, 
-                          skiprows=range(1, 417061), 
-                          nrows=606461-417061)
-therapist3_part3 = pd.read_csv(therapist3_datapath, 
-                            skiprows=range(1, 417062), 
-                            nrows=606462-417062)
-
-p1 = pd.concat([patient1_part1, patient1_part2, patient1_part3])
-t1 = pd.concat([therapist1_part1, therapist1_part2, therapist1_part3])
-p2 = pd.concat([patient2_part1, patient2_part2])
-t2 = pd.concat([therapist2_part1, therapist2_part2])
-p3 = pd.concat([patient3_part1, patient3_part2, patient3_part3])
-t3 = pd.concat([therapist3_part1, therapist3_part2, therapist3_part3])
-
-train_1_len = len(p1) * 0.7
-validate_1_len = len(p1) * 0.2
-train_2_len = len(p2) * 0.7
-validate_2_len = len(p2) * 0.2
-train_3_len = len(p3) * 0.7
-validate_3_len = len(p3) * 0.2
-
-# Split testing portion of data from full dataset
-patient1_test = p1[int(train_1_len + validate_1_len):]
-therapist1_test = t1[int(train_1_len + validate_1_len):]
-
-patient2_test = p2[int(train_2_len + validate_2_len):]
-therapist2_test = t2[int(train_2_len + validate_2_len):]
-
-patient3_test = p3[int(train_3_len + validate_3_len):]
-therapist3_test = t3[int(train_3_len + validate_3_len):]
-
-patient1_data = patient1_test[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4',
-                              ' JointVelocities_1', ' JointVelocities_2', ' JointVelocities_3', ' JointVelocities_4']].values.astype('float32')
-therapist1_data = therapist1_test[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4']].values.astype('float32')
-
-patient2_data = patient2_test[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4',
+# Prepare data
+# patient_data = patient2_part2[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4']].values.astype('float32')
+patient_data = patient2_part2[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4',
                                ' JointVelocities_1', ' JointVelocities_2', ' JointVelocities_3', ' JointVelocities_4']].values.astype('float32')
-therapist2_data = therapist2_test[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4']].values.astype('float32')
+therapist_data = therapist2_part2[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4']].values.astype('float32')
+timeseries = np.column_stack((patient_data, therapist_data))
 
-patient3_data = patient3_test[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4',
-                               ' JointVelocities_1', ' JointVelocities_2', ' JointVelocities_3', ' JointVelocities_4']].values.astype('float32')
-therapist3_data = therapist3_test[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4']].values.astype('float32')
-
-test_1 = np.column_stack((patient1_data, therapist1_data))
-test_2 = np.column_stack((patient2_data, therapist2_data))
-test_3 = np.column_stack((patient3_data, therapist3_data))
-
+# Testing Split
+# test_size = int(len(timeseries) * 0.5)
+# test = timeseries[(len(timeseries) - test_size):len(timeseries)]
+test = timeseries
 
 def create_dataset(dataset, lookback):
     """Transform a time series into a prediction dataset
     
     Args:
-        dataset: A numpy array of time series data
+        dataset: A numpy array of time series, first dimension is the time steps
         lookback: Size of window for prediction
     """
     X, y = [], []
@@ -127,8 +48,6 @@ def create_dataset(dataset, lookback):
     return torch.tensor(X), torch.tensor(y)
 
 lookback = 50
-patient_number = 1 # Set based on which patient data is being tested
-test = test_1 if patient_number == 1 else test_2 if patient_number == 2 else test_3
 X_test, y_test = create_dataset(test, lookback=lookback)
 
 # Model definition
