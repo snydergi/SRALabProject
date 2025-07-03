@@ -1,0 +1,5 @@
+Dividing data as follows:
+    Combine episodes of each patient then from each combination:
+        Testing: 70% 
+        Validation: 20%
+        Testing: 10% (Will remain separate for testing each patient separately)
