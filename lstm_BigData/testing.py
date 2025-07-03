@@ -185,7 +185,7 @@ with torch.no_grad():
     therapist_pred[lookback:] = test_pred
 
 # Overlay of periodic data
-# Find peaks in the therapist data and divide into periodic segments
+# Find peaks in the data and divide into periodic segments
 data_peaks0, _ = find_peaks(therapist_true[:,0], height=0.4, distance=1000)
 periodic_data0 = [therapist_true[data_peaks0[i]:data_peaks0[i+1],0] for i in range(len(data_peaks0)-1)]
 pred_peaks0, _ = find_peaks(therapist_pred[:,0], height=0.4, distance=1000)
@@ -322,7 +322,7 @@ for period in periodic_pred3:
 # ALL PLOTTING HAPPENS BELOW HERE. READ INSTRUCTIONS FOR CREATING BEST PLOTS
 # Plot histogram of errors
 fig = plt.figure(figsize=(12, 6), )
-fig.suptitle("4-to-4 Joint Prediction Error Histograms")
+fig.suptitle("Joint Prediction Error Histograms")
 for i in range(4):
     plt.subplot(2, 2, i+1)
     plt.hist(errors[:, i], bins=50, alpha=0.7, color='blue')
@@ -381,7 +381,7 @@ fig = plt.figure(figsize=(12, 6))
 
 # Plot mean and std dev of periodic data and predictions
 # Use after height is set correctly in 'find peaks' above
-# fig.suptitle("4-to-4 Joint Periodic Data and Predictions")
+# fig.suptitle("Joint Periodic Data and Predictions")
 # plt.subplot(2, 2, 1)
 # plt.plot(mean_data0, c='b', label='Mean Therapist Data')
 # plt.fill_between(range(normalized_length), 
@@ -444,7 +444,7 @@ fig = plt.figure(figsize=(12, 6))
 # plt.legend()
 
 # Plot period plot of error using mean and std dev
-# plt.suptitle("4-to-4 Joint Periodic Absolute Error")
+# plt.suptitle("Joint Periodic Absolute Error")
 # plt.subplot(2, 2, 1)
 # plt.plot(mean_err0, c='r', label='Mean Error')
 # plt.fill_between(range(normalized_length), 
