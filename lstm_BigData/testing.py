@@ -135,7 +135,7 @@ X_test, y_test = create_dataset(test, lookback=lookback)
 class JointModel(nn.Module):
     def __init__(self):
         super().__init__()
-        self.lstm = nn.LSTM(input_size=8, hidden_size=50, num_layers=1, batch_first=True) # If input size 8
+        self.lstm = nn.LSTM(input_size=8, hidden_size=50, num_layers=1, batch_first=True, dropout=0.2) # If input size 8
         # self.lstm = nn.LSTM(input_size=4, hidden_size=50, num_layers=1, batch_first=True) # If input size 4
         self.linear = nn.Linear(50, 4)
     def forward(self, x):
