@@ -8,8 +8,8 @@ from scipy.interpolate import interp1d
 from torchrl.modules import NoisyLinear
 
 # First Subject-Therapist Pair
-patient1_datapath = '../data/Patient1_X2_SRA_A_07-05-2024_10-39-10.csv'
-therapist1_datapath = '../data/Therapist1_X2_SRA_B_07-05-2024_10-41-46.csv'
+patient1_datapath = 'data/Patient1_X2_SRA_A_07-05-2024_10-39-10.csv'
+therapist1_datapath = 'data/Therapist1_X2_SRA_B_07-05-2024_10-41-46.csv'
 patient1_part1 = pd.read_csv(patient1_datapath, 
                           skiprows=range(1, 229607), 
                           nrows=433021-229607)
@@ -30,8 +30,8 @@ therapist1_part3 = pd.read_csv(therapist1_datapath,
                             nrows=896386-697032)
 
 # Second Subject-Therapist Pair
-patient2_datapath = '../data/Patient2_X2_SRA_A_08-05-2024_14-33-44.csv'
-therapist2_datapath = '../data/Therapist2_X2_SRA_B_08-05-2024_14-33-51.csv'
+patient2_datapath = 'data/Patient2_X2_SRA_A_08-05-2024_14-33-44.csv'
+therapist2_datapath = 'data/Therapist2_X2_SRA_B_08-05-2024_14-33-51.csv'
 patient2_part1 = pd.read_csv(patient2_datapath,
                             skiprows=range(1, 123920),
                             nrows=272301-123920)
@@ -46,8 +46,8 @@ therapist2_part2 = pd.read_csv(therapist2_datapath,
                        nrows=595193-457108)
 
 # Third Subject-Therapist Pair
-patient3_datapath = '../data/Patient3_X2_SRA_A_29-05-2024_13-36-40.csv'
-therapist3_datapath = '../data/Therapist3_X2_SRA_B_29-05-2024_13-41-19.csv'
+patient3_datapath = 'data/Patient3_X2_SRA_A_29-05-2024_13-36-40.csv'
+therapist3_datapath = 'data/Therapist3_X2_SRA_B_29-05-2024_13-41-19.csv'
 patient3_part1 = pd.read_csv(patient3_datapath, 
                           skiprows=range(1, 7694), 
                           nrows=198762-7694)
@@ -144,7 +144,7 @@ class JointModel(nn.Module):
 
 # Load model
 model = JointModel()
-model.load_state_dict(torch.load('trial3/lstm_model_epoch0.pth'))
+model.load_state_dict(torch.load('trial4/lstm_model_epoch143.pth'))
 model.eval()
 
 # Testing
@@ -322,7 +322,7 @@ for period in periodic_pred3:
 # ALL PLOTTING HAPPENS BELOW HERE. READ INSTRUCTIONS FOR CREATING BEST PLOTS
 # Plot histogram of errors
 fig = plt.figure(figsize=(12, 6), )
-fig.suptitle("Joint Prediction Error Histograms")
+fig.suptitle(f"Patient {patient_number} Joint Prediction Error Histograms")
 for i in range(4):
     plt.subplot(2, 2, i+1)
     plt.hist(errors[:, i], bins=50, alpha=0.7, color='blue')
@@ -346,7 +346,7 @@ plt.show()
 # Change xlim for desired time steps
 # Limit to 7500 time steps (~30 seconds) EXCEPT when determining amplitude for periodic plots
 fig = plt.figure(figsize=(12, 6))
-fig.suptitle("Testing: Therapist Predictions from Patient Data")
+fig.suptitle(f"Patient {patient_number} Testing: Therapist Predictions from Patient Data")
 for i in range(4):
     plt.subplot(2, 2, i+1)
     plt.plot(therapist_true[:, i], c='b', label=f'True Therapist Data')
@@ -381,7 +381,7 @@ fig = plt.figure(figsize=(12, 6))
 
 # Plot mean and std dev of periodic data and predictions
 # Use after height is set correctly in 'find peaks' above
-# fig.suptitle("Joint Periodic Data and Predictions")
+# fig.suptitle(f"Patient {patient_number} Joint Periodic Data and Predictions")
 # plt.subplot(2, 2, 1)
 # plt.plot(mean_data0, c='b', label='Mean Therapist Data')
 # plt.fill_between(range(normalized_length), 
@@ -486,4 +486,4 @@ fig = plt.figure(figsize=(12, 6))
 # plt.xlabel('Gait Phase %')
 # plt.legend()
 
-plt.show()
+# plt.show()
