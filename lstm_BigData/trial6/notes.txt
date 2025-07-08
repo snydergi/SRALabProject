@@ -6,6 +6,5 @@ Learning Rate: 0.00001
 See https://ieeexplore.ieee.org/abstract/document/9727104
 4 Layers
 Dense layer with 128 neurons
-tanh activation function
 dropout 0.4
 

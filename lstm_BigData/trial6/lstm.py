@@ -150,7 +150,7 @@ print(X_valid.shape, y_valid.shape)
 class JointModel(nn.Module):
     def __init__(self):
         super().__init__()
-        self.lstm = nn.LSTM(input_size=11, hidden_size=50, num_layers=4, batch_first=True, dropout=0.4, nonlinearity='tanh')
+        self.lstm = nn.LSTM(input_size=11, hidden_size=50, num_layers=4, batch_first=True, dropout=0.4)
         self.dense = nn.Linear(50, 128)
         self.linear = nn.Linear(128, 4)
     def forward(self, x):
