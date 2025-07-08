@@ -155,7 +155,6 @@ class JointModel(nn.Module):
         self.linear = nn.Linear(128, 4)
     def forward(self, x):
         x, _ = self.lstm(x)
-        x = x[:, -1, :]  # Take the output of the last time step
         x = self.dense(x)
         x = self.linear(x)
         return x
