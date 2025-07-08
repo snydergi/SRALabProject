@@ -1,0 +1,11 @@
+uint32 JointPositions_1
+uint32 JointPositions_2
+uint32 JointPositions_3
+uint32 JointPositions_4
+uint32 JointVelocities_1
+uint32 JointVelocities_2
+uint32 JointVelocities_3
+uint32 JointVelocities_4
+uint32 StanceInterpolationFactor
+uint32 BackPackAngle
+uint32 BackPackAngularVelocity
