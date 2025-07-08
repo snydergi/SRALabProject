@@ -92,15 +92,18 @@ patient3_test = p3[int(train_3_len + validate_3_len):]
 therapist3_test = t3[int(train_3_len + validate_3_len):]
 
 patient1_data = patient1_test[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4',
-                              ' JointVelocities_1', ' JointVelocities_2', ' JointVelocities_3', ' JointVelocities_4']].values.astype('float32')
+                              ' JointVelocities_1', ' JointVelocities_2', ' JointVelocities_3', ' JointVelocities_4',
+                              ' StanceInterpolationFactor', ' BackPackAngle', ' BackPackAngularVelocity']].values.astype('float32')
 therapist1_data = therapist1_test[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4']].values.astype('float32')
 
 patient2_data = patient2_test[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4',
-                               ' JointVelocities_1', ' JointVelocities_2', ' JointVelocities_3', ' JointVelocities_4']].values.astype('float32')
+                               ' JointVelocities_1', ' JointVelocities_2', ' JointVelocities_3', ' JointVelocities_4',
+                               ' StanceInterpolationFactor', ' BackPackAngle', ' BackPackAngularVelocity']].values.astype('float32')
 therapist2_data = therapist2_test[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4']].values.astype('float32')
 
 patient3_data = patient3_test[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4',
-                               ' JointVelocities_1', ' JointVelocities_2', ' JointVelocities_3', ' JointVelocities_4']].values.astype('float32')
+                               ' JointVelocities_1', ' JointVelocities_2', ' JointVelocities_3', ' JointVelocities_4',
+                               ' StanceInterpolationFactor', ' BackPackAngle', ' BackPackAngularVelocity']].values.astype('float32')
 therapist3_data = therapist3_test[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4']].values.astype('float32')
 
 test_1 = np.column_stack((patient1_data, therapist1_data))
@@ -117,7 +120,7 @@ def create_dataset(dataset, lookback):
     """
     X, y = [], []
     for i in range(len(dataset)-lookback):
-        feature = dataset[i:i+lookback, :8]  # Feature is patient data, if input size 8
+        feature = dataset[i:i+lookback, :11]  # Feature is patient data, if input size 8
         # feature = dataset[i:i+lookback, :4]  # Feature is patient data, # if input size 4
         target = dataset[i+1:i+lookback+1, -4:]  # Target is therapist data
         X.append(feature)
@@ -135,8 +138,7 @@ X_test, y_test = create_dataset(test, lookback=lookback)
 class JointModel(nn.Module):
     def __init__(self):
         super().__init__()
-        self.lstm = nn.LSTM(input_size=8, hidden_size=50, num_layers=1, batch_first=True, dropout=0.2) # If input size 8
-        # self.lstm = nn.LSTM(input_size=4, hidden_size=50, num_layers=1, batch_first=True) # If input size 4
+        self.lstm = nn.LSTM(input_size=11, hidden_size=50, num_layers=1, batch_first=True)
         self.linear = nn.Linear(50, 4)
     def forward(self, x):
         x, _ = self.lstm(x)
@@ -144,7 +146,7 @@ class JointModel(nn.Module):
 
 # Load model
 model = JointModel()
-model.load_state_dict(torch.load('trial4/lstm_model_epoch143.pth'))
+model.load_state_dict(torch.load('trial5/lstm_model_epoch198.pth'))
 model.eval()
 
 # Testing
