@@ -68,36 +68,38 @@ patient3_data = patient3_test[[' JointPositions_1', ' JointPositions_2', ' Joint
                                ' JointVelocities_1', ' JointVelocities_2', ' JointVelocities_3', ' JointVelocities_4',
                                ' StanceInterpolationFactor', ' BackPackAngle', ' BackPackAngularVelocity']].values.astype('float32')
 
+patient_number = 1
 
 def patient_raw():
     rospy.init_node('patient_raw', anonymous=True)
     pub = rospy.Publisher('patient_data', patient_data, queue_size=10)
     rate = rospy.Rate(333)
     i = 0
-    rospy.loginfo(f'patient1_data_size: {patient1_data.shape}')
+    # rospy.loginfo(f'patient1_data_size: {patient1_data.shape}')
     while not rospy.is_shutdown():
         if i >= len(patient1_data):
             i = 0
         msg = prep_message(i)
-        rospy.loginfo(msg)
+        # rospy.loginfo(msg)
         pub.publish(msg)
         i += 1
         rate.sleep()
 
 
 def prep_message(index):
+    test = patient1_data if patient_number == 1 else patient2_data if patient_number == 2 else patient3_data
     msg = patient_data()
-    msg.JointPositions_1 = patient1_data[index][0]
-    msg.JointPositions_2 = patient1_data[index][1]
-    msg.JointPositions_3 = patient1_data[index][2]
-    msg.JointPositions_4 = patient1_data[index][3]
-    msg.JointVelocities_1 = patient1_data[index][4]
-    msg.JointVelocities_2 = patient1_data[index][5]
-    msg.JointVelocities_3 = patient1_data[index][6]
-    msg.JointVelocities_4 = patient1_data[index][7]
-    msg.StanceInterpolationFactor = patient1_data[index][8]
-    msg.BackPackAngle = patient1_data[index][9]
-    msg.BackPackAngularVelocity = patient1_data[index][10]
+    msg.JointPositions_1 = test[index][0]
+    msg.JointPositions_2 = test[index][1]
+    msg.JointPositions_3 = test[index][2]
+    msg.JointPositions_4 = test[index][3]
+    msg.JointVelocities_1 = test[index][4]
+    msg.JointVelocities_2 = test[index][5]
+    msg.JointVelocities_3 = test[index][6]
+    msg.JointVelocities_4 = test[index][7]
+    msg.StanceInterpolationFactor = test[index][8]
+    msg.BackPackAngle = test[index][9]
+    msg.BackPackAngularVelocity = test[index][10]
     return msg
 
 
