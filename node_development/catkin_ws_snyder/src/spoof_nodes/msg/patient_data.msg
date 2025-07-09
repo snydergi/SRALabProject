@@ -9,3 +9,7 @@ float32 JointVelocities_4
 float32 StanceInterpolationFactor
 float32 BackPackAngle
 float32 BackPackAngularVelocity
+float32 Therapist_TrueJointPosition_1
+float32 Therapist_TrueJointPosition_2
+float32 Therapist_TrueJointPosition_3
+float32 Therapist_TrueJointPosition_4
