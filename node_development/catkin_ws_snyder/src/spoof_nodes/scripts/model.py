@@ -6,6 +6,7 @@ import torch.nn as nn
 import pandas as pd
 import matplotlib.pyplot as plt
 import time
+import csv
 
 # Model definition
 class JointModel(nn.Module):
@@ -77,7 +78,10 @@ class ModelNode:
             start = time.time()
             y_pred = predict(input_data)[:, -1, :].squeeze()
             end = time.time()
-            rospy.loginfo(f"Prediction time: {end - start:.4f} seconds")
+            with open('/home/cerebro/snyder_project/SRALabProject/node_development/misc/inference_time.csv', 'a', newline='') as f:
+                writer = csv.writer(f)
+                writer.writerow([end - start])
+            # rospy.loginfo(f"Prediction time: {end - start:.4f} seconds")
             # Prepare message
             msg = therapist_pred()
             msg.JointPositions_1 = y_pred[0].item()
