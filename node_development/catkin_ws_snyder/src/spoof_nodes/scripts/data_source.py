@@ -70,15 +70,18 @@ patient3_data = patient3_test[[' JointPositions_1', ' JointPositions_2', ' Joint
 
 
 def patient_raw():
-    pub = rospy.Publisher('patient_data', patient_data, queue_size=10)
     rospy.init_node('patient_raw', anonymous=True)
+    pub = rospy.Publisher('patient_data', patient_data, queue_size=10)
     rate = rospy.Rate(333)
     i = 0
+    rospy.loginfo(f'patient1_data_size: {patient1_data.shape}')
     while not rospy.is_shutdown():
         if i >= len(patient1_data):
             i = 0
         msg = prep_message(i)
+        rospy.loginfo(msg)
         pub.publish(msg)
+        i += 1
         rate.sleep()
 
 
@@ -96,6 +99,7 @@ def prep_message(index):
     msg.BackPackAngle = patient1_data[index][9]
     msg.BackPackAngularVelocity = patient1_data[index][10]
     return msg
+
 
 if __name__ == '__main__':
     try:

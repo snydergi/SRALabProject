@@ -1,4 +1,4 @@
-uint32 JointPositions_1
-uint32 JointPositions_2
-uint32 JointPositions_3
-uint32 JointPositions_4
+float32 JointPositions_1
+float32 JointPositions_2
+float32 JointPositions_3
+float32 JointPositions_4

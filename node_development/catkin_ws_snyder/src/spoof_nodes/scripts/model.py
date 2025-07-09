@@ -1,6 +1,10 @@
+import sys
+print(sys.path)
+print(sys.version)
 import rospy
 from std_msgs.msg import String
 from spoof_nodes.msg import patient_data, therapist_pred
+rospy.loginfo(sys.path)
 import torch
 import torch.nn as nn
 
@@ -16,7 +20,7 @@ class JointModel(nn.Module):
 
 # Load model
 model = JointModel()
-model.load_state_dict(torch.load('trial5/lstm_model_epoch198.pth'))
+model.load_state_dict(torch.load('/home/cerebro/snyder_project/SRALabProject/lstm_BigData/trial5/lstm_model_epoch198.pth'))
 model.eval()
 
 # From CANOpenRobotController
