@@ -3,7 +3,6 @@ import pandas as pd
 from std_msgs.msg import String
 from spoof_nodes.msg import patient_data
 import numpy as np
-import torch
 
 # First Subject-Therapist Pair
 patient1_datapath = '/home/cerebro/snyder_project/data/Patient1_X2_SRA_A_07-05-2024_10-39-10.csv'
