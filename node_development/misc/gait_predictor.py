@@ -11,6 +11,7 @@ import time
 from RingBuffer import RingBuffer
 import torch
 import torch.nn as nn
+import dynamic_reconfigure.client
 
 
 # Model definition
@@ -28,6 +29,9 @@ class JointModel(nn.Module):
 class ModelNode:
     def __init__(self):
         rospy.init_node('model_node', anonymous=True)
+        client = dynamic_reconfigure.client.Client('model_node')
+        params = {'model_path': ['/lstm_models/trial5_model_epoch198.pth']}
+        config = client.update_configuration(params)
         self.init_time = time.time()
 
         # Initialize RingBuffer
