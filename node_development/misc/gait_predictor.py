@@ -28,6 +28,7 @@ class JointModel(nn.Module):
 class ModelNode:
     def __init__(self):
         rospy.init_node('model_node', anonymous=True)
+        self.init_time = time.time()
 
         # Initialize RingBuffer
         self.buffer = RingBuffer(50)
@@ -61,15 +62,10 @@ class ModelNode:
                 pass # Not enough data to make a prediction
             else:
                 # Prepare input data
-                input_data = self.buffer.data
+                input_data = torch.stack(self.buffer.data)
+                input_data = input_data.unsqueeze(0) # Add batch dimension
                 # Predict
-                # start = time.time()
                 y_pred = self.predict(input_data)[:, -1, :].squeeze()
-                # end = time.time()
-                # with open('/home/cerebro/snyder_project/SRALabProject/node_development/misc/inference_time.csv', 'a', newline='') as f:
-                #     writer = csv.writer(f)
-                #     writer.writerow([end - start])
-                # rospy.loginfo(f"Prediction time: {end - start:.4f} seconds")
                 # Prepare message
                 msg = Float64MultiArray()
                 msg.data.append(y_pred[0].item())
@@ -78,7 +74,11 @@ class ModelNode:
                 msg.data.append(y_pred[3].item())
                 # Publish message
                 self.pub.publish(msg)
-                # rospy.loginfo(f"Predicted joint positions: {y_pred}")
+                # Log prediction
+                with open(f'/home/cerebro/snyder_project/SRALabProject/node_development/misc/pred_data/prediction_{self.init_time}.csv', 'a', newline='') as f:
+                    writer = csv.writer(f)
+                    writer.writerow([y_pred[0].item(), y_pred[1].item(), y_pred[2].item(), y_pred[3].item(),
+                                     js_data.position[0], js_data.position[1], js_data.position[2], js_data.position[3]])
         except Exception as e:
             rospy.logerr(f"Error in synch callback: {e}")
 
