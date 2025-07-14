@@ -1,0 +1,9 @@
+
+lstm_trial4:
+- Inputs are Joint Positions and Velocities
+
+lstm_trial5:
+- Inputs are Joint Positions and Velocities, StanceInterpolationFactor, Backpack Position and Velocity
+
+lstm_trial6:
+- Inputs are Joint Positions and Velocities, StanceInterpolationFactor, Backpack Position and Velocity
