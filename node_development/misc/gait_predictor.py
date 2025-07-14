@@ -12,6 +12,8 @@ from RingBuffer import RingBuffer
 import torch
 import torch.nn as nn
 import dynamic_reconfigure.client
+from dynamic_reconfigure.server import Server
+from CORC.cfg import lstm_model_paramsConfig
 
 
 # Model definition
@@ -29,17 +31,24 @@ class JointModel(nn.Module):
 class ModelNode:
     def __init__(self):
         rospy.init_node('model_node', anonymous=True)
-        client = dynamic_reconfigure.client.Client('model_node')
-        params = {'model_path': ['/lstm_models/trial5_model_epoch198.pth']}
-        config = client.update_configuration(params)
+        self.server = Server(lstm_model_paramsConfig, self.reconfigure_callback)
+
+        # Initialize parameters
         self.init_time = time.time()
+        self.previous_pred = [None, None, None, None]
+        self.config = {
+            'pred_diff_threshold': 0.05,
+            'model_path': '/home/cerebro/snyder_project/SRALabProject/lstm_BigData/trial5/lstm_model_epoch198.pth'
+        }
+        self.model_path = '/home/cerebro/snyder_project/SRALabProject/lstm_BigData/trial5/lstm_model_epoch198.pth'
+        self.skipped_pred_count = 0
 
         # Initialize RingBuffer
         self.buffer = RingBuffer(50)
 
         # Load model
         self.model = JointModel()
-        self.model.load_state_dict(torch.load('/home/cerebro/snyder_project/SRALabProject/lstm_BigData/trial5/lstm_model_epoch198.pth'))
+        self.model.load_state_dict(torch.load(self.model_path))
         self.model.eval()
 
         # Prepare Subscriber, Synchronizer, and Publisher
@@ -52,9 +61,27 @@ class ModelNode:
 
     def run(self):
         rospy.spin()
+
     def predict(self, x):
         y_pred = self.model(x)
         return y_pred
+
+    def reconfigure_callback(self, config, level):
+        rospy.loginfo("""Reconfigure Request: {pred_diff_threshold}, {model_path}""".format(**config))
+
+        # Reload model if path has changed
+        if hasattr(self, 'config') and self.config is not None:
+            if config['model_path'] != self.config['model_path']:
+                rospy.loginfo("Model path changed to: {}".format(config['model_path']))
+                self.model_path = config['model_path']
+                # Load new model
+                self.model.load_state_dict(torch.load(self.model_path))
+                self.model.eval()
+
+        self.config = config
+
+        return config
+
     def callback(self, js_data, si_data):
         try:
             # Extract and combine data
@@ -76,6 +103,20 @@ class ModelNode:
                 msg.data.append(y_pred[1].item())
                 msg.data.append(y_pred[2].item())
                 msg.data.append(y_pred[3].item())
+                # Check for too large of a jump in prediction
+                if self.previous_pred[0] is not None:
+                    if (abs(y_pred[0].item() - self.previous_pred[0]) > self.config['pred_diff_threshold'] or
+                        abs(y_pred[1].item() - self.previous_pred[1]) > self.config['pred_diff_threshold'] or
+                        abs(y_pred[2].item() - self.previous_pred[2]) > self.config['pred_diff_threshold'] or
+                        abs(y_pred[3].item() - self.previous_pred[3]) > self.config['pred_diff_threshold']):
+                        rospy.logwarn("Large jump in prediction detected, skipping this prediction.")
+                        self.skipped_pred_count += 1
+                        if self.skipped_pred_count > 10:
+                            self.previous_pred = [None, None, None, None]  # Reset previous prediction
+                            self.skipped_pred_count = 0
+                        return
+                # Update previous prediction
+                self.previous_pred = [y_pred[0].item(), y_pred[1].item(), y_pred[2].item(), y_pred[3].item()]
                 # Publish message
                 self.pub.publish(msg)
                 # Log prediction
@@ -84,7 +125,7 @@ class ModelNode:
                     writer.writerow([y_pred[0].item(), y_pred[1].item(), y_pred[2].item(), y_pred[3].item(),
                                      js_data.position[0], js_data.position[1], js_data.position[2], js_data.position[3]])
         except Exception as e:
-            rospy.logerr(f"Error in synch callback: {e}")
+            rospy.logerr(f"Error in synch callback: {e.with_traceback()}")
 
 
 if __name__ == '__main__':
