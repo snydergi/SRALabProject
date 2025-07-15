@@ -1,0 +1,23 @@
+When using these values, note that the corresponding csv row to index is equal to (index+2) due to python's 0 indexing and the column title row.
+
+Patient: 
+Episode 1: 
+    Start Index: 
+    End Index: 
+Episode 2: 
+    Start Index: 
+    End Index: 
+Episode 3: 
+    Start Index: 
+    End Index: 
+
+Therapist:
+Episode 1: 
+    Start Index: 
+    End Index: 
+Episode 2: 
+    Start Index: 
+    End Index: 
+Episode 3: 
+    Start Index: 
+    End Index: 

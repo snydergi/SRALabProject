@@ -2,8 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
-patient_file = '/home/gis/Documents/SRALabProject/lstm_BigData/data/Patient2_X2_SRA_A_08-05-2024_14-33-44.csv'
-therapist_file = '/home/gis/Documents/SRALabProject/lstm_BigData/data/Therapist2_X2_SRA_B_08-05-2024_14-33-51.csv'
+patient_file = '/home/gis/SRALab_Data/Patient4_X2_SRA_A_31-07-2024_11-25-24.csv'
+therapist_file = '/home/gis/SRALab_Data/Therapist4_X2_SRA_B_31-07-2024_11-29-20.csv'
 
 patient_data_raw = pd.read_csv(patient_file, low_memory=False)
 therapist_data_raw = pd.read_csv(therapist_file, low_memory=False)
@@ -42,17 +42,17 @@ patient_button_data = patient_data_raw[' greenButton'].values.astype('float32')
 # therapist_indices = []
 # for i in range(len(therapist_button_data)):
 #     if i > 0:
-#         # For start of episodes
+#         # # For start of episodes
 #         if therapist_button_data[i] == 1 and therapist_button_data[i-1] == 0:
 #             print(f"Button pressed at index {i}, time {therapist_data[i,1]}")
 #             therapist_indices.append(i)
-        # For when the button is pressed when data collection starts
-        # if therapist_button_data[i] == 1:
-        #     print(f"Button pressed at index {i}, time {therapist_time[i]}")
-        #     break
-        # For end of episodes
-        # if therapist_button_data[i] == 0 and therapist_button_data[i-1] == 1:
-        #     print(f"Button unpressed at index {i}, time {therapist_time[i]}")
+#         # # For when the button is pressed when data collection starts
+#         # if therapist_button_data[i] == 1:
+#         #     print(f"Button pressed at index {i}, time {therapist_data[i,1]}")
+#         #     break
+#         # # For end of episodes
+#         if therapist_button_data[i] == 0 and therapist_button_data[i-1] == 1:
+#             print(f"Button unpressed at index {i}, time {therapist_data[i,1]}")
 
 # FOR PATIENT DATA
 # patient_indices = []
@@ -64,11 +64,11 @@ patient_button_data = patient_data_raw[' greenButton'].values.astype('float32')
 #             patient_indices.append(j)
 #         # For when the button is pressed when data collection starts
 #         # if patient_button_data[i] == 1:
-#         #     print(f"Button pressed at index {i}, time {patient_time[i]}")
+#         #     print(f"Button pressed at index {i}, time {patient_data[j,1]}")
 #         #     break
 #         # For end of episodes
-#         # if patient_button_data[i] == 0 and patient_button_data[i-1] == 1:
-#         #     print(f"Button unpressed at index {i}, time {patient_time[i]}")
+#         if patient_button_data[j] == 0 and patient_button_data[j-1] == 1:
+#             print(f"Button unpressed at index {j}, time {patient_data[j,1]}")
 
 fig = plt.figure(figsize=(12, 6))
 plt.plot(therapist_data[:,1], therapist_data[:,0], label='Therapist Joint Positions', c='r')
