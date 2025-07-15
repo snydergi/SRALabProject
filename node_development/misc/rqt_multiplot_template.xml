@@ -35,11 +35,11 @@
                                         <relative_minimum>-1000</relative_minimum>
                                         <type>0</type>
                                     </scale>
-                                    <topic>/therapist_pred</topic>
-                                    <type>spoof_nodes/therapist_pred</type>
+                                    <topic>/X2_SRA_A/walking_mode_SS_kinematic</topic>
+                                    <type>std_msgs/Float64MultiArray</type>
                                 </x_axis>
                                 <y_axis>
-                                    <field>JointPositions_1</field>
+                                    <field>data/0</field>
                                     <field_type>0</field_type>
                                     <scale>
                                         <absolute_maximum>1000</absolute_maximum>
@@ -48,8 +48,8 @@
                                         <relative_minimum>-1000</relative_minimum>
                                         <type>0</type>
                                     </scale>
-                                    <topic>/therapist_pred</topic>
-                                    <type>spoof_nodes/therapist_pred</type>
+                                    <topic>/X2_SRA_A/walking_mode_SS_kinematic</topic>
+                                    <type>std_msgs/Float64MultiArray</type>
                                 </y_axis>
                             </axes>
                             <color>
@@ -77,7 +77,7 @@
                         <curve_1>
                             <axes>
                                 <x_axis>
-                                    <field></field>
+                                    <field>position/0</field>
                                     <field_type>1</field_type>
                                     <scale>
                                         <absolute_maximum>1000</absolute_maximum>
@@ -86,11 +86,11 @@
                                         <relative_minimum>-1000</relative_minimum>
                                         <type>0</type>
                                     </scale>
-                                    <topic>/therapist_pred</topic>
-                                    <type>spoof_nodes/therapist_pred</type>
+                                    <topic>/X2_SRA_A/joint_states</topic>
+                                    <type>sensor_msgs/JointState</type>
                                 </x_axis>
                                 <y_axis>
-                                    <field>Therapist_TrueJointPosition_1</field>
+                                    <field>position/2</field>
                                     <field_type>0</field_type>
                                     <scale>
                                         <absolute_maximum>1000</absolute_maximum>
@@ -99,8 +99,8 @@
                                         <relative_minimum>-1000</relative_minimum>
                                         <type>0</type>
                                     </scale>
-                                    <topic>/therapist_pred</topic>
-                                    <type>spoof_nodes/therapist_pred</type>
+                                    <topic>/X2_SRA_A/joint_states</topic>
+                                    <type>sensor_msgs/JointState</type>
                                 </y_axis>
                             </axes>
                             <color>
@@ -115,7 +115,7 @@
                             <style>
                                 <lines_interpolate>false</lines_interpolate>
                                 <pen_style>1</pen_style>
-                                <pen_width>2</pen_width>
+                                <pen_width>1</pen_width>
                                 <render_antialias>false</render_antialias>
                                 <steps_invert>false</steps_invert>
                                 <sticks_baseline>0</sticks_baseline>
@@ -123,7 +123,7 @@
                                 <type>0</type>
                             </style>
                             <subscriber_queue_size>100</subscriber_queue_size>
-                            <title>True Data</title>
+                            <title>Joint State</title>
                         </curve_1>
                     </curves>
                     <legend>
@@ -160,11 +160,11 @@
                                         <relative_minimum>-1000</relative_minimum>
                                         <type>0</type>
                                     </scale>
-                                    <topic>/therapist_pred</topic>
-                                    <type>spoof_nodes/therapist_pred</type>
+                                    <topic>/X2_SRA_A/walking_mode_SS_kinematic</topic>
+                                    <type>std_msgs/Float64MultiArray</type>
                                 </x_axis>
                                 <y_axis>
-                                    <field>JointPositions_2</field>
+                                    <field>data/1</field>
                                     <field_type>0</field_type>
                                     <scale>
                                         <absolute_maximum>1000</absolute_maximum>
@@ -173,8 +173,8 @@
                                         <relative_minimum>-1000</relative_minimum>
                                         <type>0</type>
                                     </scale>
-                                    <topic>/therapist_pred</topic>
-                                    <type>spoof_nodes/therapist_pred</type>
+                                    <topic>/X2_SRA_A/walking_mode_SS_kinematic</topic>
+                                    <type>std_msgs/Float64MultiArray</type>
                                 </y_axis>
                             </axes>
                             <color>
@@ -202,7 +202,7 @@
                         <curve_1>
                             <axes>
                                 <x_axis>
-                                    <field></field>
+                                    <field>position/0</field>
                                     <field_type>1</field_type>
                                     <scale>
                                         <absolute_maximum>1000</absolute_maximum>
@@ -211,11 +211,11 @@
                                         <relative_minimum>-1000</relative_minimum>
                                         <type>0</type>
                                     </scale>
-                                    <topic>/therapist_pred</topic>
-                                    <type>spoof_nodes/therapist_pred</type>
+                                    <topic>/X2_SRA_A/joint_states</topic>
+                                    <type>sensor_msgs/JointState</type>
                                 </x_axis>
                                 <y_axis>
-                                    <field>Therapist_TrueJointPosition_2</field>
+                                    <field>position/3</field>
                                     <field_type>0</field_type>
                                     <scale>
                                         <absolute_maximum>1000</absolute_maximum>
@@ -224,8 +224,8 @@
                                         <relative_minimum>-1000</relative_minimum>
                                         <type>0</type>
                                     </scale>
-                                    <topic>/therapist_pred</topic>
-                                    <type>spoof_nodes/therapist_pred</type>
+                                    <topic>/X2_SRA_A/joint_states</topic>
+                                    <type>sensor_msgs/JointState</type>
                                 </y_axis>
                             </axes>
                             <color>
@@ -248,7 +248,7 @@
                                 <type>0</type>
                             </style>
                             <subscriber_queue_size>100</subscriber_queue_size>
-                            <title>True Data</title>
+                            <title>Joint State</title>
                         </curve_1>
                     </curves>
                     <legend>
@@ -287,11 +287,11 @@
                                         <relative_minimum>-1000</relative_minimum>
                                         <type>0</type>
                                     </scale>
-                                    <topic>/therapist_pred</topic>
-                                    <type>spoof_nodes/therapist_pred</type>
+                                    <topic>/X2_SRA_A/walking_mode_SS_kinematic</topic>
+                                    <type>std_msgs/Float64MultiArray</type>
                                 </x_axis>
                                 <y_axis>
-                                    <field>JointPositions_3</field>
+                                    <field>data/2</field>
                                     <field_type>0</field_type>
                                     <scale>
                                         <absolute_maximum>1000</absolute_maximum>
@@ -300,8 +300,8 @@
                                         <relative_minimum>-1000</relative_minimum>
                                         <type>0</type>
                                     </scale>
-                                    <topic>/therapist_pred</topic>
-                                    <type>spoof_nodes/therapist_pred</type>
+                                    <topic>/X2_SRA_A/walking_mode_SS_kinematic</topic>
+                                    <type>std_msgs/Float64MultiArray</type>
                                 </y_axis>
                             </axes>
                             <color>
@@ -329,7 +329,7 @@
                         <curve_1>
                             <axes>
                                 <x_axis>
-                                    <field></field>
+                                    <field>position/0</field>
                                     <field_type>1</field_type>
                                     <scale>
                                         <absolute_maximum>1000</absolute_maximum>
@@ -338,11 +338,11 @@
                                         <relative_minimum>-1000</relative_minimum>
                                         <type>0</type>
                                     </scale>
-                                    <topic>/therapist_pred</topic>
-                                    <type>spoof_nodes/therapist_pred</type>
+                                    <topic>/X2_SRA_A/joint_states</topic>
+                                    <type>sensor_msgs/JointState</type>
                                 </x_axis>
                                 <y_axis>
-                                    <field>Therapist_TrueJointPosition_3</field>
+                                    <field>position/0</field>
                                     <field_type>0</field_type>
                                     <scale>
                                         <absolute_maximum>1000</absolute_maximum>
@@ -351,8 +351,8 @@
                                         <relative_minimum>-1000</relative_minimum>
                                         <type>0</type>
                                     </scale>
-                                    <topic>/therapist_pred</topic>
-                                    <type>spoof_nodes/therapist_pred</type>
+                                    <topic>/X2_SRA_A/joint_states</topic>
+                                    <type>sensor_msgs/JointState</type>
                                 </y_axis>
                             </axes>
                             <color>
@@ -367,7 +367,7 @@
                             <style>
                                 <lines_interpolate>false</lines_interpolate>
                                 <pen_style>1</pen_style>
-                                <pen_width>2</pen_width>
+                                <pen_width>1</pen_width>
                                 <render_antialias>false</render_antialias>
                                 <steps_invert>false</steps_invert>
                                 <sticks_baseline>0</sticks_baseline>
@@ -375,7 +375,7 @@
                                 <type>0</type>
                             </style>
                             <subscriber_queue_size>100</subscriber_queue_size>
-                            <title>True Data</title>
+                            <title>Joint State</title>
                         </curve_1>
                     </curves>
                     <legend>
@@ -412,11 +412,11 @@
                                         <relative_minimum>-1000</relative_minimum>
                                         <type>0</type>
                                     </scale>
-                                    <topic>/therapist_pred</topic>
-                                    <type>spoof_nodes/therapist_pred</type>
+                                    <topic>/X2_SRA_A/walking_mode_SS_kinematic</topic>
+                                    <type>std_msgs/Float64MultiArray</type>
                                 </x_axis>
                                 <y_axis>
-                                    <field>JointPositions_4</field>
+                                    <field>data/3</field>
                                     <field_type>0</field_type>
                                     <scale>
                                         <absolute_maximum>1000</absolute_maximum>
@@ -425,8 +425,8 @@
                                         <relative_minimum>-1000</relative_minimum>
                                         <type>0</type>
                                     </scale>
-                                    <topic>/therapist_pred</topic>
-                                    <type>spoof_nodes/therapist_pred</type>
+                                    <topic>/X2_SRA_A/walking_mode_SS_kinematic</topic>
+                                    <type>std_msgs/Float64MultiArray</type>
                                 </y_axis>
                             </axes>
                             <color>
@@ -454,7 +454,7 @@
                         <curve_1>
                             <axes>
                                 <x_axis>
-                                    <field></field>
+                                    <field>position/0</field>
                                     <field_type>1</field_type>
                                     <scale>
                                         <absolute_maximum>1000</absolute_maximum>
@@ -463,11 +463,11 @@
                                         <relative_minimum>-1000</relative_minimum>
                                         <type>0</type>
                                     </scale>
-                                    <topic>/therapist_pred</topic>
-                                    <type>spoof_nodes/therapist_pred</type>
+                                    <topic>/X2_SRA_A/joint_states</topic>
+                                    <type>sensor_msgs/JointState</type>
                                 </x_axis>
                                 <y_axis>
-                                    <field>Therapist_TrueJointPosition_4</field>
+                                    <field>position/1</field>
                                     <field_type>0</field_type>
                                     <scale>
                                         <absolute_maximum>1000</absolute_maximum>
@@ -476,8 +476,8 @@
                                         <relative_minimum>-1000</relative_minimum>
                                         <type>0</type>
                                     </scale>
-                                    <topic>/therapist_pred</topic>
-                                    <type>spoof_nodes/therapist_pred</type>
+                                    <topic>/X2_SRA_A/joint_states</topic>
+                                    <type>sensor_msgs/JointState</type>
                                 </y_axis>
                             </axes>
                             <color>
@@ -492,7 +492,7 @@
                             <style>
                                 <lines_interpolate>false</lines_interpolate>
                                 <pen_style>1</pen_style>
-                                <pen_width>2</pen_width>
+                                <pen_width>1</pen_width>
                                 <render_antialias>false</render_antialias>
                                 <steps_invert>false</steps_invert>
                                 <sticks_baseline>0</sticks_baseline>
@@ -500,7 +500,7 @@
                                 <type>0</type>
                             </style>
                             <subscriber_queue_size>100</subscriber_queue_size>
-                            <title>True Data</title>
+                            <title>Joint State</title>
                         </curve_1>
                     </curves>
                     <legend>
