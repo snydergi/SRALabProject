@@ -146,7 +146,7 @@ class JointModel(nn.Module):
 
 # Load model
 model = JointModel()
-model.load_state_dict(torch.load('trial5/lstm_model_epoch198.pth'))
+model.load_state_dict(torch.load('trial6/lstm_model_epoch194.pth'))
 model.eval()
 
 # Testing
