@@ -17,17 +17,6 @@ from CORC.cfg import lstm_model_paramsConfig
 import yaml
 
 
-# Model definition
-class JointModel(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.lstm = nn.LSTM(input_size=11, hidden_size=50, num_layers=1, batch_first=True)
-        self.linear = nn.Linear(50, 4)
-    def forward(self, x):
-        x, _ = self.lstm(x)
-        return self.linear(x)
-
-
 # Define Node
 class ModelNode:
     def __init__(self):
@@ -35,6 +24,10 @@ class ModelNode:
 
         # Initialize RingBuffer
         self.buffer = RingBuffer(50)
+
+        # Check GPU availability
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        rospy.loginfo(f"Using device: {self.device}")
 
         # Load model configurations
         config_path = os.path.join(os.path.dirname(__file__), 'lstm_models/model_configs.yaml')
@@ -61,9 +54,7 @@ class ModelNode:
         self.server = Server(lstm_model_paramsConfig, self.reconfigure_callback)
 
         # Load model
-        # self.model = JointModel()
-        # self.model.load_state_dict(torch.load(self.model_path))
-        self.model = torch.jit.load(self.model_path)
+        self.model = torch.jit.load(self.model_path).to(self.device)
         self.model.eval()
 
         # Prepare Subscriber, Synchronizer, and Publisher
@@ -84,7 +75,7 @@ class ModelNode:
         config = self.model_configs[model_name]
         try:
             model_path = os.path.join(os.path.dirname(__file__), config['path'])
-            self.model = torch.jit.load(model_path)
+            self.model = torch.jit.load(model_path).to(self.device)
             self.model.eval()
 
             self.input_slice = config['input_slice']
@@ -98,7 +89,9 @@ class ModelNode:
             return False
 
     def predict(self, x):
-        y_pred = self.model(x)
+        x = x.to(self.device)
+        with torch.no_grad():
+            y_pred = self.model(x)
         return y_pred
 
     def reconfigure_callback(self, config, level):
@@ -147,7 +140,7 @@ class ModelNode:
                 input_data = torch.stack(self.buffer.data)
                 input_data = input_data.unsqueeze(0) # Add batch dimension
                 # Predict
-                y_pred = self.predict(input_data)[:, -1, :].squeeze()
+                y_pred = self.predict(input_data)[:, -1, :].cpu().squeeze()
                 # Prepare message
                 msg = Float64MultiArray()
                 msg.data.append(y_pred[0].item())
