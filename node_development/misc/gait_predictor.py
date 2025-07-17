@@ -140,7 +140,12 @@ class ModelNode:
                 input_data = torch.stack(self.buffer.data)
                 input_data = input_data.unsqueeze(0) # Add batch dimension
                 # Predict
+                start_time = time.time()
                 y_pred = self.predict(input_data)[:, -1, :].cpu().squeeze()
+                end_time = time.time()
+                with open(f'/home/cerebro/snyder_project/SRALabProject/node_development/misc/pred_data/time_inference_{self.init_time}.csv', 'a', newline='') as f:
+                    writer = csv.writer(f)
+                    writer.writerow(['Prediction Time', self.current_model, end_time - start_time])
                 # Prepare message
                 msg = Float64MultiArray()
                 msg.data.append(y_pred[0].item())
