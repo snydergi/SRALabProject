@@ -44,7 +44,7 @@ class ModelNode:
         self.init_time = time.time()
         self.previous_pred = [None, None, None, None]
         self.config = {
-            'pred_diff_threshold': 0.05,
+            'pred_diff_threshold': 1.0,
             'model_path': '/home/cerebro/catkin_ws/src/CANOpenRobotController/python/lstm_models/lstm_trial5.pt'
         }
         self.model_path = '/home/cerebro/catkin_ws/src/CANOpenRobotController/python/lstm_models/lstm_trial5.pt'
@@ -80,7 +80,7 @@ class ModelNode:
 
             self.input_slice = config['input_slice']
             self.current_model = model_name
-            self.buffer.clear()
+            # self.buffer.clear()
             return True
         except Exception as e:
             rospy.logerr(f"Failed to load model {model_name} from {model_path}: {e}")
@@ -112,7 +112,7 @@ class ModelNode:
                         rospy.logerr(f"Failed to load model {model_name}, reverting to {self.current_model}")
                 self.config['pred_diff_threshold'] = config['pred_diff_threshold']
                 self.input_slice = self.model_configs[model_name]['input_slice']
-                self.buffer.clear()
+                # self.buffer.clear()
             return config
         except Exception as e:
             rospy.logerr(f"Error in reconfigure callback: {e}")
@@ -125,56 +125,69 @@ class ModelNode:
                                 js_data.velocity[0], js_data.velocity[1], js_data.velocity[2], js_data.velocity[3],
                                 si_data.treadmill, js_data.position[4], js_data.velocity[4]], dtype=torch.float32)
             
-            # Model-specific slicing
-            if self.current_model == 'trial4':
-                data = data[:8]
+            # Verify incoming data is changing
+            if len(self.buffer.data) > 0:
+                data_diff = torch.sum(torch.abs(data - self.buffer.data[-1]))
+                rospy.loginfo(f"Data difference from last sample: {data_diff.item()}")
 
-            # Slice the data according to the input slice
-            data = data[self.input_slice]
             # Append to buffer
             self.buffer.append(data)
-            if self.buffer.is_full is False:
-                pass # Not enough data to make a prediction
-            else:
-                # Prepare input data
-                input_data = torch.stack(self.buffer.data)
-                input_data = input_data.unsqueeze(0) # Add batch dimension
-                # Predict
-                start_time = time.time()
-                y_pred = self.predict(input_data)[:, -1, :].cpu().squeeze()
-                end_time = time.time()
-                with open(f'/home/cerebro/snyder_project/SRALabProject/node_development/misc/pred_data/time_inference_{self.init_time}.csv', 'a', newline='') as f:
+
+            # Check if we have enough data to make a prediction
+            if len(self.buffer.data) < self.buffer.max:
+                return # Not enough data to make a prediction
+           
+            # Prepare input data
+            # Shape data for prediction based on input_slice for model
+            shaped_data = torch.stack([d[self.input_slice] for d in self.buffer.data[-self.buffer.max:]])
+            input_data = shaped_data.unsqueeze(0) # Add batch dimension
+            
+            # Verify temporal variation
+            rospy.loginfo(f"Temporal variation across buffer:\n"
+                        f"First: {shaped_data[0]}\n"
+                        f"Middle: {shaped_data[len(shaped_data)//2]}\n"
+                        f"Last: {shaped_data[-1]}")
+
+            # Predict
+            start_time = time.time()
+            y_pred = self.predict(input_data)[:, -1, :].cpu().squeeze()
+            end_time = time.time()
+            
+            # Prepare message
+            msg = Float64MultiArray()
+            msg.data.append(y_pred[0].item())
+            msg.data.append(y_pred[1].item())
+            msg.data.append(y_pred[2].item())
+            msg.data.append(y_pred[3].item())
+            
+            # Check for too large of a jump in prediction
+            if self.previous_pred[0] is not None:
+                if (abs(y_pred[0].item() - self.previous_pred[0]) > self.config['pred_diff_threshold'] or
+                    abs(y_pred[1].item() - self.previous_pred[1]) > self.config['pred_diff_threshold'] or
+                    abs(y_pred[2].item() - self.previous_pred[2]) > self.config['pred_diff_threshold'] or
+                    abs(y_pred[3].item() - self.previous_pred[3]) > self.config['pred_diff_threshold']):
+                    rospy.logwarn("Large jump in prediction detected, skipping this prediction.")
+                    self.skipped_pred_count += 1
+                    if self.skipped_pred_count > 10:
+                        self.previous_pred = [None, None, None, None]  # Reset previous prediction
+                        self.skipped_pred_count = 0
+                    return
+            
+            # Update previous prediction
+            self.previous_pred = [y_pred[0].item(), y_pred[1].item(), y_pred[2].item(), y_pred[3].item()]
+           
+            # Publish message
+            self.pub.publish(msg)
+            
+            # Log prediction
+            with open(f'/home/cerebro/snyder_project/SRALabProject/node_development/misc/pred_data/prediction_{self.init_time}.csv', 'a', newline='') as f:
                     writer = csv.writer(f)
-                    writer.writerow(['Prediction Time', self.current_model, end_time - start_time])
-                # Prepare message
-                msg = Float64MultiArray()
-                msg.data.append(y_pred[0].item())
-                msg.data.append(y_pred[1].item())
-                msg.data.append(y_pred[2].item())
-                msg.data.append(y_pred[3].item())
-                # Check for too large of a jump in prediction
-                if self.previous_pred[0] is not None:
-                    if (abs(y_pred[0].item() - self.previous_pred[0]) > self.config['pred_diff_threshold'] or
-                        abs(y_pred[1].item() - self.previous_pred[1]) > self.config['pred_diff_threshold'] or
-                        abs(y_pred[2].item() - self.previous_pred[2]) > self.config['pred_diff_threshold'] or
-                        abs(y_pred[3].item() - self.previous_pred[3]) > self.config['pred_diff_threshold']):
-                        rospy.logwarn("Large jump in prediction detected, skipping this prediction.")
-                        self.skipped_pred_count += 1
-                        if self.skipped_pred_count > 10:
-                            self.previous_pred = [None, None, None, None]  # Reset previous prediction
-                            self.skipped_pred_count = 0
-                        return
-                # Update previous prediction
-                self.previous_pred = [y_pred[0].item(), y_pred[1].item(), y_pred[2].item(), y_pred[3].item()]
-                # Publish message
-                self.pub.publish(msg)
-                # Log prediction
-                with open(f'/home/cerebro/snyder_project/SRALabProject/node_development/misc/pred_data/prediction_{self.init_time}.csv', 'a', newline='') as f:
-                    writer = csv.writer(f)
-                    writer.writerow([y_pred[0].item(), y_pred[1].item(), y_pred[2].item(), y_pred[3].item(),
-                                     js_data.position[0], js_data.position[1], js_data.position[2], js_data.position[3]])
+                    writer.writerow([self.current_model, end_time-start_time, y_pred[0].item(), y_pred[1].item(), y_pred[2].item(), y_pred[3].item(),
+                                    js_data.position[0], js_data.position[1], js_data.position[2], js_data.position[3],
+                                    js_data.velocity[0], js_data.velocity[1], js_data.velocity[2], js_data.velocity[3],
+                                    si_data.treadmill, js_data.position[4], js_data.velocity[4]])
         except Exception as e:
-            rospy.logerr(f"Error in synch callback: {e.with_traceback()}")
+            rospy.logerr(f"Error in synch callback: {e}")
 
 
 if __name__ == '__main__':
