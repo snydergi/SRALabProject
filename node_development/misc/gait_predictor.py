@@ -26,7 +26,7 @@ class ModelNode:
         self.buffer = RingBuffer(50)
 
         # Check GPU availability
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device("cpu" if torch.cuda.is_available() else "cpu")
         rospy.loginfo(f"Using device: {self.device}")
 
         # Load model configurations
@@ -61,7 +61,7 @@ class ModelNode:
         robot_name = rospy.get_param('~robot_name', 'X2_SRA_A')  # Default to 'X2_SRA_A' if not set
         js_sub = Subscriber('/'+robot_name+'/joint_states', JointState)
         si_sub = Subscriber('/'+robot_name+'/stance_interpol', X2StanceInterpolation)
-        synchronizer = ApproximateTimeSynchronizer([js_sub, si_sub], queue_size=10, slop=0.001)
+        synchronizer = ApproximateTimeSynchronizer([js_sub, si_sub], queue_size=10, slop=0.0001)
         synchronizer.registerCallback(self.callback)
         self.pub = rospy.Publisher('/'+str(robot_name)+'/walking_mode_SS_kinematic/', Float64MultiArray, queue_size=10)
 
@@ -125,10 +125,10 @@ class ModelNode:
                                 js_data.velocity[0], js_data.velocity[1], js_data.velocity[2], js_data.velocity[3],
                                 si_data.treadmill, js_data.position[4], js_data.velocity[4]], dtype=torch.float32)
             
-            # Verify incoming data is changing
-            if len(self.buffer.data) > 0:
-                data_diff = torch.sum(torch.abs(data - self.buffer.data[-1]))
-                rospy.loginfo(f"Data difference from last sample: {data_diff.item()}")
+            # # Verify incoming data is changing
+            # if len(self.buffer.data) > 0:
+            #     data_diff = torch.sum(torch.abs(data - self.buffer.data[-1]))
+            #     rospy.loginfo(f"Data difference from last sample: {data_diff.item()}")
 
             # Append to buffer
             self.buffer.append(data)
@@ -139,14 +139,15 @@ class ModelNode:
            
             # Prepare input data
             # Shape data for prediction based on input_slice for model
-            shaped_data = torch.stack([d[self.input_slice] for d in self.buffer.data[-self.buffer.max:]])
+            buffer_data = torch.stack(list(self.buffer.get()))
+            shaped_data = buffer_data[:, self.input_slice]
             input_data = shaped_data.unsqueeze(0) # Add batch dimension
             
-            # Verify temporal variation
-            rospy.loginfo(f"Temporal variation across buffer:\n"
-                        f"First: {shaped_data[0]}\n"
-                        f"Middle: {shaped_data[len(shaped_data)//2]}\n"
-                        f"Last: {shaped_data[-1]}")
+            # # Verify temporal variation
+            # rospy.loginfo(f"Temporal variation across buffer:\n"
+            #             f"First: {shaped_data[0]}\n"
+            #             f"Middle: {shaped_data[len(shaped_data)//2]}\n"
+            #             f"Last: {shaped_data[-1]}")
 
             # Predict
             start_time = time.time()
