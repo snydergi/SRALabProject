@@ -146,7 +146,8 @@ class JointModel(nn.Module):
 
 # Load model
 model = JointModel()
-model.load_state_dict(torch.load('trial6/lstm_model_epoch194.pth'))
+model.load_state_dict(torch.load('trial5/lstm_model_epoch198.pth'))
+# model = torch.jit.load('/home/cerebro/snyder_project/SRALabProject/misc/model_scripting/scripts/lstm_trial5.pt')
 model.eval()
 
 # Testing
@@ -353,6 +354,7 @@ for i in range(4):
     plt.subplot(2, 2, i+1)
     plt.plot(therapist_true[:, i], c='b', label=f'True Therapist Data')
     plt.plot(therapist_pred[:, i], c='r', linestyle='--', label=f'Predicted Therapist Data')
+    # plt.scatter(np.arange(len(therapist_pred)), therapist_pred[:, i], c='r', marker='x', label=f'Predicted Therapist Data', alpha=0.5)
     plt.xlim(0, 7500)
     plt.xlabel('Time Steps (~4ms)')
     plt.ylabel('Joint Positions (Radians)')
