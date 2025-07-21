@@ -5,11 +5,12 @@ import torch
 import torch.nn as nn
 
 # Load data
-datapath = '/home/cerebro/snyder_project/SRALabProject/node_development/misc/pred_data/prediction_1752856570.5665696.csv'
+datapath = '/home/gis/SRALab_Data/ExperimentDay1/prediction_1752606480.2458458.csv'
 data = pd.read_csv(datapath, header=None)
 
 # Get input data (last 11 columns)
 data_input = data.iloc[:, -11:].values.astype(np.float32)
+print("Data Input Shape:", data_input.shape)
 
 # Model definition
 class JointModel(nn.Module):
@@ -22,21 +23,38 @@ class JointModel(nn.Module):
         x, _ = self.lstm(x)
         return self.linear(x)
 
+# Create dataset
+def create_dataset(dataset, lookback):
+    """Transform a time series into a prediction dataset
+    
+    Args:
+        dataset: A numpy array of time series data
+        lookback: Size of window for prediction
+    """
+    X, y = [], []
+    for i in range(len(dataset)-lookback):
+        feature = dataset[i:i+lookback, :11]  # Feature is patient data, change based on input size
+        target = dataset[i+1:i+lookback+1, -4:]  # Target is therapist data
+        X.append(feature)
+        y.append(target)
+    X = np.array(X)
+    y = np.array(y)
+    return torch.tensor(X), torch.tensor(y)
+
 # Load model
 model = JointModel()
-model.load_state_dict(torch.load('/home/cerebro/snyder_project/SRALabProject/lstm_BigData/trial5/lstm_model_epoch198.pth'))
+model.load_state_dict(torch.load('/home/gis/Documents/SRALabProject/lstm_BigData/trial5/lstm_model_epoch198.pth'))
 model.eval()
 
 # Generate predictions
-window_size = 50  # Should match your training sequence length
+lookback = 50
+X_test, y_test = create_dataset(data_input, lookback)
 predictions = []
 
 with torch.no_grad():
-    for i in range(len(data_input) - window_size + 1):
-        window = data_input[i:i+window_size]
-        input_tensor = torch.tensor(window).unsqueeze(0)  # Add batch dimension
-        pred = model(input_tensor)[:, -1, :].numpy()
-        predictions.append(pred.squeeze())
+    # Get all predictions (taking last timestep from each sequence)
+    y_pred2 = model(X_test)[:, -1, :].squeeze()  # Shape: [n_samples]
+    y_true = y_test[:, -1, :].squeeze()        # Shape: [n_samples]
 
 predictions = np.array(predictions)
 
