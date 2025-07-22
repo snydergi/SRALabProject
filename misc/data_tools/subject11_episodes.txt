@@ -1,23 +1,29 @@
 When using these values, note that the corresponding csv row to index is equal to (index+2) due to python's 0 indexing and the column title row.
 
 Patient: 
-Episode 1: 
-    Start Index: 
-    End Index: 
-Episode 2: 
-    Start Index: 
-    End Index: 
-Episode 3: 
-    Start Index: 
-    End Index: 
+Episode 1: P presses button second. Trim 1min. 
+    Start Index: 21352 -> plus 1min (15384 steps) -> 36736, Time: 482.6629943847656
+    End Index: 97918, Time: 666.208984375
+Episode 2: P presses button second. Trim 30s.
+    Start Index: 99118 -> plus 30s (7692 steps) -> 106810, Time: 1079.5849609375
+    End Index: 249477, Time: 1507.5870361328125
+Episode 3: P presses button second. Trim 30s. P releases button first.
+    Start Index: 253584 -> plus 30s (7692 steps) -> 261276, Time: 2043.383056640625
+    End Index: 459642, Time: 2638.48095703125
+Episode 4: P presses button second. Trim 30s. 
+    Start Index: 577408 -> plus 30s (7692 steps) -> 585100, Time: 3514.655029296875
+    End Index: 787869, Time: 4122.9609375
 
 Therapist:
-Episode 1: 
-    Start Index: 
-    End Index: 
-Episode 2: 
-    Start Index: 
-    End Index: 
+Episode 1: T releases button first.
+    Start Index: 36736, Time: 482.6629943847656
+    End Index: 97918, Time: 666.208984375
+Episode 2: T releases button first. 
+    Start Index: 106810, Time: 1079.5849609375
+    End Index: 249477, Time: 1507.5870361328125
 Episode 3: 
-    Start Index: 
-    End Index: 
+    Start Index: 261276, Time: 2043.383056640625
+    End Index: 459642, Time: 2638.48095703125
+Episode 4: T releases button first.
+    Start Index: 585100, Time: 3514.655029296875
+    End Index: 787869, Time: 4122.962890625
