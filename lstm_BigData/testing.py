@@ -324,16 +324,16 @@ for period in periodic_pred3:
 
 # ALL PLOTTING HAPPENS BELOW HERE. READ INSTRUCTIONS FOR CREATING BEST PLOTS
 # Plot histogram of errors
-fig = plt.figure(figsize=(12, 6), )
-fig.suptitle(f"Patient {patient_number} Joint Prediction Error Histograms")
-for i in range(4):
-    plt.subplot(2, 2, i+1)
-    plt.hist(errors[:, i], bins=50, alpha=0.7, color='blue')
-    plt.xlabel('Error (Radians)')
-    plt.ylabel('# of Occurrences')
-    plt.title(f'Joint {i+1}, RMSE: {joint_rmses[i]:.4f}, Max (abs): {abs(errors[:,i]).max():.4f}, Std Dev (abs): {abs(errors[:,i]).std():.4f}, Mean (abs): {abs(errors[:,i]).mean():.4f}')
-    plt.grid(True)
-plt.show()
+# fig = plt.figure(figsize=(12, 6), )
+# fig.suptitle(f"Patient {patient_number} Joint Prediction Error Histograms")
+# for i in range(4):
+#     plt.subplot(2, 2, i+1)
+#     plt.hist(errors[:, i], bins=50, alpha=0.7, color='blue')
+#     plt.xlabel('Error (Radians)')
+#     plt.ylabel('# of Occurrences')
+#     plt.title(f'Joint {i+1}, RMSE: {joint_rmses[i]:.4f}, Max (abs): {abs(errors[:,i]).max():.4f}, Std Dev (abs): {abs(errors[:,i]).std():.4f}, Mean (abs): {abs(errors[:,i]).mean():.4f}')
+#     plt.grid(True)
+# plt.show()
 
 # use to determining amplitude for periodic plots
 # fig = plt.figure(figsize=(12, 6))
@@ -352,6 +352,8 @@ fig = plt.figure(figsize=(12, 6))
 fig.suptitle(f"Patient {patient_number} Testing: Therapist Predictions from Patient Data")
 for i in range(4):
     plt.subplot(2, 2, i+1)
+    pNum = 2 if i == 0 else 0 if i == 2 else 1 if i == 3 else 3
+    plt.plot(test[:, pNum], c='g', label=f'Patient Data')
     plt.plot(therapist_true[:, i], c='b', label=f'True Therapist Data')
     plt.plot(therapist_pred[:, i], c='r', linestyle='--', label=f'Predicted Therapist Data')
     # plt.scatter(np.arange(len(therapist_pred)), therapist_pred[:, i], c='r', marker='x', label=f'Predicted Therapist Data', alpha=0.5)

@@ -3,11 +3,12 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import torch
 import torch.nn as nn
+import csv
 
 # Load data
-datapath = '/home/gis/SRALab_Data/ExperimentDay1/prediction_1752606480.2458458.csv'
+datapath = '/home/gis/SRALab_Data/ExperimentDay3/prediction_1753215345.0074022.csv'
 data = pd.read_csv(datapath, header=None)
-
+data = data[data[0].str.contains('trial4')]
 # Get input data (last 11 columns)
 data_input = data.iloc[:, -11:].values.astype(np.float32)
 print("Data Input Shape:", data_input.shape)
@@ -56,10 +57,7 @@ with torch.no_grad():
     y_pred2 = model(X_test)[:, -1, :].squeeze()  # Shape: [n_samples]
     y_true = y_test[:, -1, :].squeeze()        # Shape: [n_samples]
 
-predictions = np.array(predictions)
-
-# Create scatter plots
-plt.figure(figsize=(12, 8))
+predictions = np.array(y_pred2)
 
 # Create time axis for x-values
 time_steps = np.arange(len(predictions))
@@ -72,23 +70,39 @@ joint_styles = [
     {'color': 'purple', 'marker': 'D', 'label': 'Joint 4'}
 ]
 
-# Plot each joint's predictions
+# Create figure with 4 subplots
+fig, axes = plt.subplots(2, 2, figsize=(12, 8))  # 2 rows, 2 columns
+fig.suptitle('Predicted Joint Angles (Scatter Plots)', fontsize=14)
+
+# Flatten the axes array for easy iteration
+axes = axes.ravel()
+
+# Plot each joint's predictions in its own subplot
 for i in range(4):
-    plt.scatter(
+    axes[i].plot(
         time_steps,
         predictions[:, i],
-        c=joint_styles[i]['color'],
-        marker=joint_styles[i]['marker'],
+        color=joint_styles[i]['color'],
         label=joint_styles[i]['label'],
         alpha=0.6,
-        edgecolors='w',
-        linewidths=0.5
+        linewidth=0.5
     )
+    # axes[i].scatter(
+    #     time_steps,
+    #     predictions[:, i],
+    #     c=joint_styles[i]['color'],
+    #     marker=joint_styles[i]['marker'],
+    #     label=joint_styles[i]['label'],
+    #     alpha=0.6,
+    #     edgecolors='w',
+    #     linewidths=0.5
+    # )
+    
+    axes[i].set_title(joint_styles[i]['label'])
+    axes[i].set_xlabel('Time Step', fontsize=10)
+    axes[i].set_ylabel('Angle (rad)', fontsize=10)
+    axes[i].grid(True, linestyle='--', alpha=0.6)
+    axes[i].legend(fontsize=8)
 
-plt.title('Predicted Joint Angles (Scatter Plot)', fontsize=14)
-plt.xlabel('Time Step', fontsize=12)
-plt.ylabel('Angle (rad)', fontsize=12)
-plt.grid(True, linestyle='--', alpha=0.6)
-plt.legend(fontsize=10)
 plt.tight_layout()
 plt.show()

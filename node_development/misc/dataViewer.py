@@ -4,10 +4,11 @@ import numpy as np
 import csv
 
 joint_predictions = []
-with open('/home/gis/SRALab_Data/ExperimentDay1/prediction_1752606480.2458458.csv', 'r') as file:
+with open('/home/gis/SRALab_Data/ExperimentDay3/prediction_1753215345.0074022.csv', 'r') as file:
     reader = csv.reader(file)
     for row in reader:
-        joint_predictions.append(float(row[0]))
+        if row[0] == 'trial4':
+            joint_predictions.append(float(row[2]))
 
 joint_predictions = np.array(joint_predictions)
 
