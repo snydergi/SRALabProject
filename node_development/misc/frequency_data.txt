@@ -1,0 +1,34 @@
+Patient 1 Data:
+    Frequency: 327.75940697418514 Hz
+    Standard Deviation: 0.0011936227462353097
+    Average Time Step: 0.003051018456592343 seconds
+
+Patient 2 Data:
+    Frequency: 327.1893384768691 Hz
+    Standard Deviation: 0.0012367338164549137
+    Average Time Step: 0.003056334306781502 seconds
+
+Patient 3 Data:
+    Frequency: 318.310471825973 Hz
+    Standard Deviation: 0.0014300321361742888
+    Average Time Step: 0.0031415868735437673 seconds
+
+Patient 4 Data:
+    Frequency: 323.94634034454884 Hz
+    Standard Deviation: 0.001311910090014002
+    Average Time Step: 0.0030869309989314943 seconds
+
+Patient 6 Data:
+    Frequency: 333.2989825948323 Hz
+    Standard Deviation: 0.0010082517284086378
+    Average Time Step: 0.0030003091885090704 seconds
+
+Patient 9 Data:
+    Frequency: 333.28022469089893 Hz
+    Standard Deviation: 0.0010341672444681386
+    Average Time Step: 0.003000478053948298 seconds
+
+Patient 11 Data:
+    Frequency: 333.25818319410774 Hz
+    Standard Deviation: 0.001018178048081909
+    Average Time Step: 0.003000676503771088 seconds
