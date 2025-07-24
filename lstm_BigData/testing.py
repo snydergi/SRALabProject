@@ -146,7 +146,7 @@ class JointModel(nn.Module):
 
 # Load model
 model = JointModel()
-model.load_state_dict(torch.load('trial5/lstm_model_epoch198.pth'))
+model.load_state_dict(torch.load('trial4/lstm_model_epoch198.pth'))
 # model = torch.jit.load('/home/cerebro/snyder_project/SRALabProject/misc/model_scripting/scripts/lstm_trial5.pt')
 model.eval()
 
