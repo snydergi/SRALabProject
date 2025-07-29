@@ -22,6 +22,9 @@ class ModelNode:
     def __init__(self):
         rospy.init_node('model_node', anonymous=True)
 
+        # Establish rate for the node
+        self.rate = rospy.Rate(333)
+
         # Initialize RingBuffer
         self.buffer = RingBuffer(50)
 
@@ -66,7 +69,43 @@ class ModelNode:
         self.pub = rospy.Publisher('/'+str(robot_name)+'/walking_mode_SS_kinematic/', Float64MultiArray, queue_size=10)
 
     def run(self):
-        rospy.spin()
+        while not rospy.is_shutdown():
+            y_pred = self.predict()
+            if y_pred is not None:
+                # Prepare message
+                msg = Float64MultiArray()
+                msg.data.append(y_pred[0].item())
+                msg.data.append(y_pred[1].item())
+                msg.data.append(y_pred[2].item())
+                msg.data.append(y_pred[3].item())
+                
+                # Check for too large of a jump in prediction
+                if self.previous_pred[0] is not None:
+                    if (abs(y_pred[0].item() - self.previous_pred[0]) > self.config['pred_diff_threshold'] or
+                        abs(y_pred[1].item() - self.previous_pred[1]) > self.config['pred_diff_threshold'] or
+                        abs(y_pred[2].item() - self.previous_pred[2]) > self.config['pred_diff_threshold'] or
+                        abs(y_pred[3].item() - self.previous_pred[3]) > self.config['pred_diff_threshold']):
+                        rospy.logwarn("Large jump in prediction detected, skipping this prediction.")
+                        self.skipped_pred_count += 1
+                        if self.skipped_pred_count > 10:
+                            self.previous_pred = [None, None, None, None]  # Reset previous prediction
+                            self.skipped_pred_count = 0
+                        return
+                
+                # Update previous prediction
+                self.previous_pred = [y_pred[0].item(), y_pred[1].item(), y_pred[2].item(), y_pred[3].item()]
+            
+                # Publish message
+                self.pub.publish(msg)
+                
+                # # Log prediction
+                # with open(f'/home/cerebro/snyder_project/SRALabProject/node_development/misc/pred_data/prediction_{self.init_time}.csv', 'a', newline='') as f:
+                #         writer = csv.writer(f)
+                #         writer.writerow([self.current_model, end_time-start_time, y_pred[0].item(), y_pred[1].item(), y_pred[2].item(), y_pred[3].item(),
+                #                         js_data.position[0], js_data.position[1], js_data.position[2], js_data.position[3],
+                #                         js_data.velocity[0], js_data.velocity[1], js_data.velocity[2], js_data.velocity[3],
+                #                         si_data.treadmill, js_data.position[4], js_data.velocity[4]])
+            self.rate.sleep()
 
     def load_model(self, model_name):
         if model_name not in self.model_configs:
@@ -88,10 +127,29 @@ class ModelNode:
             self.input_slice = None
             return False
 
-    def predict(self, x):
-        x = x.to(self.device) ### Check if this slows down inference since already on cpu
+    def predict(self):
+        start_time = time.time()
+        # Check if we have enough data to make a prediction
+        if len(self.buffer.data) < self.buffer.max:
+            return None # Not enough data to make a prediction
+        
+        # Prepare input data
+        # Shape data for prediction based on input_slice for model
+        buffer_data = torch.stack(list(self.buffer.get()))
+        shaped_data = buffer_data[:, self.input_slice]
+        input_data = shaped_data.unsqueeze(0) # Add batch dimension
+        
+        # # Verify temporal variation
+        # rospy.loginfo(f"Temporal variation across buffer:\n"
+        #             f"First: {shaped_data[0]}\n"
+        #             f"Middle: {shaped_data[len(shaped_data)//2]}\n"
+        #             f"Last: {shaped_data[-1]}")
+
+        # Predict
+        x = input_data.to(self.device)
         with torch.no_grad():
-            y_pred = self.model(x)
+            y_pred = self.model(x)[:, -1, :].cpu().squeeze()
+        end_time = time.time()
         return y_pred
 
     def reconfigure_callback(self, config, level):
@@ -133,60 +191,6 @@ class ModelNode:
             # Append to buffer
             self.buffer.append(data)
 
-            # Check if we have enough data to make a prediction
-            if len(self.buffer.data) < self.buffer.max:
-                return # Not enough data to make a prediction
-           
-            # Prepare input data
-            # Shape data for prediction based on input_slice for model
-            buffer_data = torch.stack(list(self.buffer.get()))
-            shaped_data = buffer_data[:, self.input_slice]
-            input_data = shaped_data.unsqueeze(0) # Add batch dimension
-            
-            # # Verify temporal variation
-            # rospy.loginfo(f"Temporal variation across buffer:\n"
-            #             f"First: {shaped_data[0]}\n"
-            #             f"Middle: {shaped_data[len(shaped_data)//2]}\n"
-            #             f"Last: {shaped_data[-1]}")
-
-            # Predict
-            start_time = time.time()
-            y_pred = self.predict(input_data)[:, -1, :].cpu().squeeze()
-            end_time = time.time()
-            
-            # Prepare message
-            msg = Float64MultiArray()
-            msg.data.append(y_pred[0].item())
-            msg.data.append(y_pred[1].item())
-            msg.data.append(y_pred[2].item())
-            msg.data.append(y_pred[3].item())
-            
-            # Check for too large of a jump in prediction
-            if self.previous_pred[0] is not None:
-                if (abs(y_pred[0].item() - self.previous_pred[0]) > self.config['pred_diff_threshold'] or
-                    abs(y_pred[1].item() - self.previous_pred[1]) > self.config['pred_diff_threshold'] or
-                    abs(y_pred[2].item() - self.previous_pred[2]) > self.config['pred_diff_threshold'] or
-                    abs(y_pred[3].item() - self.previous_pred[3]) > self.config['pred_diff_threshold']):
-                    rospy.logwarn("Large jump in prediction detected, skipping this prediction.")
-                    self.skipped_pred_count += 1
-                    if self.skipped_pred_count > 10:
-                        self.previous_pred = [None, None, None, None]  # Reset previous prediction
-                        self.skipped_pred_count = 0
-                    return
-            
-            # Update previous prediction
-            self.previous_pred = [y_pred[0].item(), y_pred[1].item(), y_pred[2].item(), y_pred[3].item()]
-           
-            # Publish message
-            self.pub.publish(msg)
-            
-            # Log prediction
-            with open(f'/home/cerebro/snyder_project/SRALabProject/node_development/misc/pred_data/prediction_{self.init_time}.csv', 'a', newline='') as f:
-                    writer = csv.writer(f)
-                    writer.writerow([self.current_model, end_time-start_time, y_pred[0].item(), y_pred[1].item(), y_pred[2].item(), y_pred[3].item(),
-                                    js_data.position[0], js_data.position[1], js_data.position[2], js_data.position[3],
-                                    js_data.velocity[0], js_data.velocity[1], js_data.velocity[2], js_data.velocity[3],
-                                    si_data.treadmill, js_data.position[4], js_data.velocity[4]])
         except Exception as e:
             rospy.logerr(f"Error in synch callback: {e}")
 
