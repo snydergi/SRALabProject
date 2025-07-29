@@ -89,7 +89,7 @@ class ModelNode:
             return False
 
     def predict(self, x):
-        x = x.to(self.device)
+        x = x.to(self.device) ### Check if this slows down inference since already on cpu
         with torch.no_grad():
             y_pred = self.model(x)
         return y_pred
