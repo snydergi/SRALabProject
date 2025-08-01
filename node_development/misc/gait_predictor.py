@@ -150,6 +150,9 @@ class ModelNode:
         with torch.no_grad():
             y_pred = self.model(x)[:, -1, :].cpu().squeeze()
         end_time = time.time()
+        with open(f'/home/cerebro/snyder_project/SRALabProject/node_development/misc/pred_data/inferenceTimes_{self.init_time}.csv', 'a', newline='') as f:
+            writer = csv.writer(f)
+            writer.writerow([self.current_model, end_time-start_time, y_pred[0].item(), y_pred[1].item(), y_pred[2].item(), y_pred[3].item()])
         return y_pred
 
     def reconfigure_callback(self, config, level):
