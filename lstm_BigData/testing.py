@@ -67,12 +67,120 @@ therapist3_part3 = pd.read_csv(therapist3_datapath,
                             skiprows=range(1, 417062), 
                             nrows=606462-417062)
 
+# Fourth Subject-Therapist Pair
+patient4_datapath = 'data/Patient4_X2_SRA_A_31-07-2024_11-25-24.csv'
+therapist4_datapath = 'data/Therapist4_X2_SRA_B_31-07-2024_11-29-20.csv'
+patient4_part1 = pd.read_csv(patient4_datapath, 
+                          skiprows=range(1, 85602), 
+                          nrows=285867-85602)
+therapist4_part1 = pd.read_csv(therapist4_datapath, 
+                            skiprows=range(1, 28003), 
+                            nrows=228268-28003)
+patient4_part2 = pd.read_csv(patient4_datapath, 
+                          skiprows=range(1, 307526), 
+                          nrows=435811-307526)
+therapist4_part2 = pd.read_csv(therapist4_datapath, 
+                            skiprows=range(1, 249927), 
+                            nrows=378212-249927)
+patient4_part3 = pd.read_csv(patient4_datapath, 
+                          skiprows=range(1, 481091), 
+                          nrows=593066-481091)
+therapist4_part3 = pd.read_csv(therapist4_datapath, 
+                            skiprows=range(1, 423491), 
+                            nrows=535482-423491)
+patient4_part4 = pd.read_csv(patient4_datapath,
+                            skiprows=range(1, 610823), 
+                            nrows=688030-610823)
+therapist4_part4 = pd.read_csv(therapist4_datapath,
+                            skiprows=range(1, 553222), 
+                            nrows=630428-553222)
+
+# Sixth Subject-Therapist Pair
+patient6_datapath = 'data/Patient6_X2_SRA_A_15-08-2024_09-47-25.csv'
+therapist6_datapath = 'data/Therapist6_X2_SRA_B_15-08-2024_09-47-47.csv'
+patient6_part1 = pd.read_csv(patient6_datapath, 
+                          skiprows=range(1, 7695), 
+                          nrows=205185-7695)
+therapist6_part1 = pd.read_csv(therapist6_datapath, 
+                            skiprows=range(1, 7695), 
+                            nrows=205185-7695)
+patient6_part2 = pd.read_csv(patient6_datapath, 
+                          skiprows=range(1, 215454), 
+                          nrows=419150-215454)
+therapist6_part2 = pd.read_csv(therapist6_datapath, 
+                            skiprows=range(1, 215454), 
+                            nrows=419150-215454)
+patient6_part3 = pd.read_csv(patient6_datapath, 
+                          skiprows=range(1, 456313), 
+                          nrows=656732-456313)
+therapist6_part3 = pd.read_csv(therapist6_datapath, 
+                            skiprows=range(1, 456313), 
+                            nrows=656732-456313)
+
+# Ninth Subject-Therapist Pair
+patient9_datapath = 'data/Patient9_X2_SRA_A_07-10-2024_14-41-04.csv'
+therapist9_datapath = 'data/Therapist9_X2_SRA_B_07-10-2024_14-41-12.csv'
+patient9_part1 = pd.read_csv(patient9_datapath, 
+                          skiprows=range(1, 52347), 
+                          nrows=245511-52347)
+therapist9_part1 = pd.read_csv(therapist9_datapath, 
+                            skiprows=range(1, 46634), 
+                            nrows=239798-46634)
+patient9_part2 = pd.read_csv(patient9_datapath, 
+                          skiprows=range(1, 373504), 
+                          nrows=560745-373504)
+therapist9_part2 = pd.read_csv(therapist9_datapath, 
+                            skiprows=range(1, 367792), 
+                            nrows=555032-367792)
+patient9_part3 = pd.read_csv(patient9_datapath, 
+                          skiprows=range(1, 732658), 
+                          nrows=917918-732658)
+therapist9_part3 = pd.read_csv(therapist9_datapath, 
+                            skiprows=range(1, 726946), 
+                            nrows=912205-726946)
+
+# Eleventh Subject-Therapist Pair
+patient11_datapath = 'data/Patient11_X2_SRA_A_19-09-2024_09-37-01.csv'
+therapist11_datapath = 'data/Therapist11_X2_SRA_B_19-09-2024_09-37-07.csv'
+patient11_part1 = pd.read_csv(patient11_datapath, 
+                          skiprows=range(1, 36738), 
+                          nrows=97920-36738)
+therapist11_part1 = pd.read_csv(therapist11_datapath, 
+                            skiprows=range(1, 36738), 
+                            nrows=97920-36738)
+patient11_part2 = pd.read_csv(patient11_datapath, 
+                          skiprows=range(1, 106812), 
+                          nrows=249479-106812)
+therapist11_part2 = pd.read_csv(therapist11_datapath, 
+                            skiprows=range(1, 106812), 
+                            nrows=249479-106812)
+patient11_part3 = pd.read_csv(patient11_datapath, 
+                          skiprows=range(1, 261278), 
+                          nrows=459644-261278)
+therapist11_part3 = pd.read_csv(therapist11_datapath, 
+                            skiprows=range(1, 261278), 
+                            nrows=459644-261278)
+patient11_part4 = pd.read_csv(patient11_datapath,
+                            skiprows=range(1, 585102), 
+                            nrows=787871-585102)
+therapist11_part4 = pd.read_csv(therapist11_datapath,
+                            skiprows=range(1, 585102), 
+                            nrows=787871-585102)
+
 p1 = pd.concat([patient1_part1, patient1_part2, patient1_part3])
 t1 = pd.concat([therapist1_part1, therapist1_part2, therapist1_part3])
 p2 = pd.concat([patient2_part1, patient2_part2])
 t2 = pd.concat([therapist2_part1, therapist2_part2])
 p3 = pd.concat([patient3_part1, patient3_part2, patient3_part3])
 t3 = pd.concat([therapist3_part1, therapist3_part2, therapist3_part3])
+p4 = pd.concat([patient4_part1, patient4_part2, patient4_part3, patient4_part4])
+t4 = pd.concat([therapist4_part1, therapist4_part2, therapist4_part3, therapist4_part4])
+p6 = pd.concat([patient6_part1, patient6_part2, patient6_part3])
+t6 = pd.concat([therapist6_part1, therapist6_part2, therapist6_part3])
+p9 = pd.concat([patient9_part1, patient9_part2, patient9_part3])
+t9 = pd.concat([therapist9_part1, therapist9_part2, therapist9_part3])
+p11 = pd.concat([patient11_part1, patient11_part2, patient11_part3, patient11_part4])
+t11 = pd.concat([therapist11_part1, therapist11_part2, therapist11_part3, therapist11_part4])
 
 train_1_len = len(p1) * 0.7
 validate_1_len = len(p1) * 0.2
@@ -80,6 +188,14 @@ train_2_len = len(p2) * 0.7
 validate_2_len = len(p2) * 0.2
 train_3_len = len(p3) * 0.7
 validate_3_len = len(p3) * 0.2
+train_4_len = len(p4) * 0.7
+validate_4_len = len(p4) * 0.2
+train_6_len = len(p6) * 0.7
+validate_6_len = len(p6) * 0.2
+train_9_len = len(p9) * 0.7
+validate_9_len = len(p9) * 0.2
+train_11_len = len(p11) * 0.7
+validate_11_len = len(p11) * 0.2
 
 # Split testing portion of data from full dataset
 patient1_test = p1[int(train_1_len + validate_1_len):]
@@ -92,18 +208,16 @@ patient3_test = p3[int(train_3_len + validate_3_len):]
 therapist3_test = t3[int(train_3_len + validate_3_len):]
 
 patient1_data = patient1_test[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4',
-                              ' JointVelocities_1', ' JointVelocities_2', ' JointVelocities_3', ' JointVelocities_4',
-                              ' StanceInterpolationFactor', ' BackPackAngle', ' BackPackAngularVelocity']].values.astype('float32')
+                              ' JointVelocities_1', ' JointVelocities_2', ' JointVelocities_3', ' JointVelocities_4']].values.astype('float32') 
+                            #   ' StanceInterpolationFactor', ' BackPackAngle', ' BackPackAngularVelocity'
 therapist1_data = therapist1_test[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4']].values.astype('float32')
 
 patient2_data = patient2_test[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4',
-                               ' JointVelocities_1', ' JointVelocities_2', ' JointVelocities_3', ' JointVelocities_4',
-                               ' StanceInterpolationFactor', ' BackPackAngle', ' BackPackAngularVelocity']].values.astype('float32')
+                               ' JointVelocities_1', ' JointVelocities_2', ' JointVelocities_3', ' JointVelocities_4']].values.astype('float32')
 therapist2_data = therapist2_test[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4']].values.astype('float32')
 
 patient3_data = patient3_test[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4',
-                               ' JointVelocities_1', ' JointVelocities_2', ' JointVelocities_3', ' JointVelocities_4',
-                               ' StanceInterpolationFactor', ' BackPackAngle', ' BackPackAngularVelocity']].values.astype('float32')
+                               ' JointVelocities_1', ' JointVelocities_2', ' JointVelocities_3', ' JointVelocities_4']].values.astype('float32')
 therapist3_data = therapist3_test[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4']].values.astype('float32')
 
 test_1 = np.column_stack((patient1_data, therapist1_data))
@@ -120,7 +234,7 @@ def create_dataset(dataset, lookback):
     """
     X, y = [], []
     for i in range(len(dataset)-lookback):
-        feature = dataset[i:i+lookback, :11]  # Feature is patient data, if input size 8
+        feature = dataset[i:i+lookback, :8]  # Feature is patient data, if input size 8
         # feature = dataset[i:i+lookback, :4]  # Feature is patient data, # if input size 4
         target = dataset[i+1:i+lookback+1, -4:]  # Target is therapist data
         X.append(feature)
@@ -138,7 +252,7 @@ X_test, y_test = create_dataset(test, lookback=lookback)
 class JointModel(nn.Module):
     def __init__(self):
         super().__init__()
-        self.lstm = nn.LSTM(input_size=11, hidden_size=50, num_layers=1, batch_first=True)
+        self.lstm = nn.LSTM(input_size=8, hidden_size=50, num_layers=1, batch_first=True)
         self.linear = nn.Linear(50, 4)
     def forward(self, x):
         x, _ = self.lstm(x)
@@ -146,7 +260,7 @@ class JointModel(nn.Module):
 
 # Load model
 model = JointModel()
-model.load_state_dict(torch.load('trial4/lstm_model_epoch198.pth'))
+model.load_state_dict(torch.load('trial7/lstm_model_epoch146.pth'))
 # model = torch.jit.load('/home/cerebro/snyder_project/SRALabProject/misc/model_scripting/scripts/lstm_trial5.pt')
 model.eval()
 
@@ -324,16 +438,16 @@ for period in periodic_pred3:
 
 # ALL PLOTTING HAPPENS BELOW HERE. READ INSTRUCTIONS FOR CREATING BEST PLOTS
 # Plot histogram of errors
-# fig = plt.figure(figsize=(12, 6), )
-# fig.suptitle(f"Patient {patient_number} Joint Prediction Error Histograms")
-# for i in range(4):
-#     plt.subplot(2, 2, i+1)
-#     plt.hist(errors[:, i], bins=50, alpha=0.7, color='blue')
-#     plt.xlabel('Error (Radians)')
-#     plt.ylabel('# of Occurrences')
-#     plt.title(f'Joint {i+1}, RMSE: {joint_rmses[i]:.4f}, Max (abs): {abs(errors[:,i]).max():.4f}, Std Dev (abs): {abs(errors[:,i]).std():.4f}, Mean (abs): {abs(errors[:,i]).mean():.4f}')
-#     plt.grid(True)
-# plt.show()
+fig = plt.figure(figsize=(12, 6), )
+fig.suptitle(f"Patient {patient_number} Joint Prediction Error Histograms")
+for i in range(4):
+    plt.subplot(2, 2, i+1)
+    plt.hist(errors[:, i], bins=50, alpha=0.7, color='blue')
+    plt.xlabel('Error (Radians)')
+    plt.ylabel('# of Occurrences')
+    plt.title(f'Joint {i+1}, RMSE: {joint_rmses[i]:.4f}, Max (abs): {abs(errors[:,i]).max():.4f}, Std Dev (abs): {abs(errors[:,i]).std():.4f}, Mean (abs): {abs(errors[:,i]).mean():.4f}')
+    plt.grid(True)
+plt.show()
 
 # use to determining amplitude for periodic plots
 # fig = plt.figure(figsize=(12, 6))
