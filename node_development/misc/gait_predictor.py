@@ -6,7 +6,7 @@ import numpy as np
 from message_filters import Subscriber, ApproximateTimeSynchronizer
 from sensor_msgs.msg import JointState
 from std_msgs.msg import Float64MultiArray
-from CORC.msg import X2StanceInterpolation
+from CORC.msg import X2StanceInterpolation, X2RobotState
 import time
 from RingBuffer import RingBuffer
 import torch
@@ -38,7 +38,7 @@ class ModelNode:
             self.model_configs = yaml.safe_load(f)['models']
 
         # Load default model config
-        self.current_model = 'trial5'
+        self.current_model = 'trial4'
         self.model = None
         self.input_slice = None
         self.load_model(self.current_model)
@@ -46,11 +46,14 @@ class ModelNode:
         # Initialize parameters
         self.init_time = time.time()
         self.previous_pred = [None, None, None, None]
+        self.previous_pred_time = None
+        self.filter_alpha = 0.2 # For velocity filtering
+        self.filtered_vels = [0.0, 0.0, 0.0, 0.0] # Initialize filtered velocities
         self.config = {
             'pred_diff_threshold': 1.0,
-            'model_path': '/home/cerebro/catkin_ws/src/CANOpenRobotController/python/lstm_models/lstm_trial5.pt'
+            'model_path': '/home/cerebro/catkin_ws/src/CANOpenRobotController/python/lstm_models/lstm_trial4.pt'
         }
-        self.model_path = '/home/cerebro/catkin_ws/src/CANOpenRobotController/python/lstm_models/lstm_trial5.pt'
+        self.model_path = '/home/cerebro/catkin_ws/src/CANOpenRobotController/python/lstm_models/lstm_trial4.pt'
         self.skipped_pred_count = 0
 
         # Initialize dynamic reconfigure
@@ -66,18 +69,27 @@ class ModelNode:
         si_sub = Subscriber('/'+robot_name+'/stance_interpol', X2StanceInterpolation)
         synchronizer = ApproximateTimeSynchronizer([js_sub, si_sub], queue_size=10, slop=0.0001)
         synchronizer.registerCallback(self.callback)
-        self.pub = rospy.Publisher('/'+str(robot_name)+'/walking_mode_SS_kinematic/', Float64MultiArray, queue_size=10)
+        self.pub = rospy.Publisher('/X2_SRA_B/custom_robot_state', X2RobotState, queue_size=10)
 
     def run(self):
         while not rospy.is_shutdown():
             y_pred = self.predict()
-            if y_pred is not None:
+            if y_pred is not None and self.previous_pred[0] is not None:
+                # Numerically calculate joint velocities
+                cur_time = time.time()
+                jt_vels = []
+                for i in range(4):
+                    if self.previous_pred_time is not None:
+                        dt = cur_time - self.previous_pred_time
+                        vel = (y_pred[i].item() - self.previous_pred[i]) / dt
+                        self.filtered_vels[i] = self.filter_alpha * vel + (1 - self.filter_alpha) * self.filtered_vels[i]
+                        jt_vels.append(self.filtered_vels[i])
+
                 # Prepare message
-                msg = Float64MultiArray()
-                msg.data.append(y_pred[0].item())
-                msg.data.append(y_pred[1].item())
-                msg.data.append(y_pred[2].item())
-                msg.data.append(y_pred[3].item())
+                msg = X2RobotState()
+                msg.header.stamp = rospy.Time.now()
+                msg.joint_state.position.extend(y_pred.tolist())
+                msg.joint_state.velocity.extend(jt_vels)
                 
                 # Check for too large of a jump in prediction
                 if self.previous_pred[0] is not None:
@@ -93,8 +105,9 @@ class ModelNode:
                         return
                 
                 # Update previous prediction
-                self.previous_pred = [y_pred[0].item(), y_pred[1].item(), y_pred[2].item(), y_pred[3].item()]
-            
+                self.previous_pred = y_pred.tolist()
+                self.previous_pred_time = time.time()
+
                 # Publish message
                 self.pub.publish(msg)
                 
@@ -105,6 +118,9 @@ class ModelNode:
                 #                         js_data.position[0], js_data.position[1], js_data.position[2], js_data.position[3],
                 #                         js_data.velocity[0], js_data.velocity[1], js_data.velocity[2], js_data.velocity[3],
                 #                         si_data.treadmill, js_data.position[4], js_data.velocity[4]])
+            elif y_pred is not None and self.previous_pred[0] is None:
+                self.previous_pred = y_pred.tolist()
+                self.previous_pred_time = time.time()
             self.rate.sleep()
 
     def load_model(self, model_name):
@@ -150,9 +166,9 @@ class ModelNode:
         with torch.no_grad():
             y_pred = self.model(x)[:, -1, :].cpu().squeeze()
         end_time = time.time()
-        with open(f'/home/cerebro/snyder_project/SRALabProject/node_development/misc/pred_data/inferenceTimes_{self.init_time}.csv', 'a', newline='') as f:
-            writer = csv.writer(f)
-            writer.writerow([self.current_model, end_time-start_time, y_pred[0].item(), y_pred[1].item(), y_pred[2].item(), y_pred[3].item()])
+        # with open(f'/home/cerebro/snyder_project/SRALabProject/node_development/misc/pred_data/inferenceTimes_{self.init_time}.csv', 'a', newline='') as f:
+        #     writer = csv.writer(f)
+        #     writer.writerow([self.current_model, end_time-start_time, y_pred[0].item(), y_pred[1].item(), y_pred[2].item(), y_pred[3].item()])
         return y_pred
 
     def reconfigure_callback(self, config, level):
