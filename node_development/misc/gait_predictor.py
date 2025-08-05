@@ -47,7 +47,7 @@ class ModelNode:
         self.init_time = time.time()
         self.previous_pred = [None, None, None, None]
         self.previous_pred_time = None
-        self.filter_alpha = 0.2 # For velocity filtering
+        self.filter_alpha = 0.05 # For velocity filtering
         self.filtered_vels = [0.0, 0.0, 0.0, 0.0] # Initialize filtered velocities
         self.config = {
             'pred_diff_threshold': 1.0,
@@ -89,7 +89,11 @@ class ModelNode:
                 msg = X2RobotState()
                 msg.header.stamp = rospy.Time.now()
                 msg.joint_state.position.extend(y_pred.tolist())
+                msg.joint_state.position.extend([0.0])
                 msg.joint_state.velocity.extend(jt_vels)
+                msg.joint_state.velocity.extend([0.0])
+                msg.joint_state.effort = [0.0, 0.0, 0.0, 0.0, 0.0]
+                msg.link_lengths = [0.38, 0.38, 0.38, 0.38]
                 
                 # Check for too large of a jump in prediction
                 if self.previous_pred[0] is not None:
@@ -106,7 +110,7 @@ class ModelNode:
                 
                 # Update previous prediction
                 self.previous_pred = y_pred.tolist()
-                self.previous_pred_time = time.time()
+                self.previous_pred_time = cur_time
 
                 # Publish message
                 self.pub.publish(msg)
