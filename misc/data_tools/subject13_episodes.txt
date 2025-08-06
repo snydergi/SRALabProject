@@ -1,0 +1,23 @@
+When using these values, note that the corresponding csv row to index is equal to (index+2) due to python's 0 indexing and the column title row.
+
+Patient: 
+Episode 1: P starts and ends. Trim 30s.
+    Start Index: 16525 -> plus 30s (7692 steps) -> 24217, Time: 255.60000610351562
+    End Index: 222137, Time: 849.3599853515625
+Episode 2: P starts and ends. Trim 30s.
+    Start Index: 230104 -> plus 30s (7692 steps) -> 237796, Time: 1482.5360107421875
+    End Index: 439960, Time: 2089.028076171875
+Episode 3: P starts and ends. Trim 1m.
+    Start Index: 448224 -> plus 1min (15384 steps) -> 463608, Time: 2545.77197265625
+    End Index: 659762, Time: 3134.23388671875
+
+Therapist:
+Episode 1: 
+    Start Index: 24217, Time: 255.60000610351562
+    End Index: 222137, Time: 849.3599853515625
+Episode 2:  
+    Start Index: 237796, Time: 1482.5360107421875
+    End Index: 439960, Time: 2089.028076171875
+Episode 3: 
+    Start Index: 463608, Time: 2545.77197265625
+    End Index: 659762, Time: 3134.23388671875
