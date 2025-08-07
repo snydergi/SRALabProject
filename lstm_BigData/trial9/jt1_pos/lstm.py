@@ -5,9 +5,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.utils.data as data
-
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-print(f"Using device: {device}")
+import time
 
 # Load the data
 patient_data = pd.read_csv('../../data/patient_training_full.csv', skiprows=0).values
@@ -37,13 +35,14 @@ def create_dataset(dataset, lookback):
     """
     X, y = [], []
     for i in range(len(dataset)-lookback):
-        feature = dataset[i:i+lookback, :8]  # Feature is patient data
-        target = dataset[i+1:i+lookback+1, -8]  # Target is therapist data
+        feature = dataset[i:i+lookback, :8]  # Feature is patient data, shape [lookback, 8]
+        target = dataset[i+1:i+lookback+1, -8]  # Target is therapist data, shape [lookback]
+        target = target.reshape(-1, 1) # Reshape target to be [lookback, 1]
         X.append(feature)
         y.append(target)
     X = np.array(X)
     y = np.array(y)
-    return torch.tensor(X), torch.tensor(y)
+    return torch.tensor(X, dtype=torch.float32), torch.tensor(y, dtype=torch.float32)
 
 lookback = 50  # ~4ms timestep, so ~200ms lookback window
 X_train, y_train = create_dataset(train, lookback=lookback)
@@ -62,7 +61,7 @@ class JointModel(nn.Module):
         return x
     
 
-model = JointModel().to(device)
+model = JointModel()
 optimizer = optim.Adam(model.parameters(), lr=0.00001)
 # optimizer = optim.Adadelta(model.parameters())
 loss_fn = nn.MSELoss()
@@ -72,10 +71,10 @@ train_loss_list = []
 valid_loss_list = []
 n_epochs = 150
 for epoch in range(n_epochs):
+    start_time = time.time()
     model.train()
     epoch_losses = []
     for X_batch, y_batch in loader:
-        X_batch, y_batch = X_batch.to(device), y_batch.to(device)
         y_pred = model(X_batch)
         loss = loss_fn(y_pred, y_batch)
         optimizer.zero_grad()
@@ -85,8 +84,6 @@ for epoch in range(n_epochs):
     train_loss_list.append(np.mean(epoch_losses))
     model.eval()
     with torch.no_grad():
-        X_train, y_train = X_train.to(device), y_train.to(device)
-        X_valid, y_valid = X_valid.to(device), y_valid.to(device)
         y_pred = model(X_train)
         train_rmse = np.sqrt(loss_fn(y_pred, y_train))
         y_pred = model(X_valid)
@@ -94,6 +91,7 @@ for epoch in range(n_epochs):
         valid_loss_list.append(loss_fn(y_pred, y_valid))
         print(f"Epoch {epoch}: Train RMSE {train_rmse:.4f}, Validation RMSE {valid_rmse:.4f}")
     torch.save(model.state_dict(), f'lstm_model_epoch{epoch}.pth')
+    print(f"Epoch {epoch} training time: {time.time() - start_time}")
 
 # Plotting the losses
 plt.figure(figsize=(12, 6))
