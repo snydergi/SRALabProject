@@ -37,7 +37,7 @@ def create_dataset(dataset, lookback, step=1):
         lookback: Size of window for prediction
     """
     X, y = [], []
-    for i in range(len(dataset)-lookback):
+    for i in range(0, len(dataset)-lookback, step):
         feature = dataset[i:i+lookback, :8]  # Feature is patient data, shape [lookback, 8]
         target = dataset[i+1:i+lookback+1, -8]  # Target is therapist data, shape [lookback]
         target = target.reshape(-1, 1) # Reshape target to be [lookback, 1]
