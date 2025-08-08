@@ -1,3 +1,5 @@
+#### This structure was used for each model in trial 9, only changing input specifications.
+
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
