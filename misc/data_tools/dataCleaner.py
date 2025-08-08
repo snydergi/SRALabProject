@@ -1,5 +1,6 @@
 import pandas as pd
 import csv
+import numpy as np
 
 # First Subject-Therapist Pair
 patient1_datapath = '../../lstm_BigData/data/Patient1_X2_SRA_A_07-05-2024_10-39-10.csv'
@@ -248,16 +249,22 @@ patient1_train = p1[:int(train_1_len)]
 therapist1_train = t1[:int(train_1_len)]
 patient1_valid = p1[int(train_1_len):int(train_1_len + validate_1_len)]
 therapist1_valid = t1[int(train_1_len):int(train_1_len + validate_1_len)]
+patient1_test = p1[int(train_1_len + validate_1_len):]
+therapist1_test = t1[int(train_1_len + validate_1_len):]
 
 patient2_train = p2[:int(train_2_len)]
 therapist2_train = t2[:int(train_2_len)]
 patient2_valid = p2[int(train_2_len):int(train_2_len + validate_2_len)]
 therapist2_valid = t2[int(train_2_len):int(train_2_len + validate_2_len)]
+patient2_test = p2[int(train_2_len + validate_2_len):]
+therapist2_test = t2[int(train_2_len + validate_2_len):]
 
 patient3_train = p3[:int(train_3_len)]
 therapist3_train = t3[:int(train_3_len)]
 patient3_valid = p3[int(train_3_len):int(train_3_len + validate_3_len)]
 therapist3_valid = t3[int(train_3_len):int(train_3_len + validate_3_len)]
+patient3_test = p3[int(train_3_len + validate_3_len):]
+therapist3_test = t3[int(train_3_len + validate_3_len):]
 
 patient4_train = p4[:int(train_4_len)]
 therapist4_train = t4[:int(train_4_len)]
@@ -299,13 +306,35 @@ patient_data = patient_train[[' JointPositions_1', ' JointPositions_2', ' JointP
                               ' JointVelocities_1', ' JointVelocities_2', ' JointVelocities_3', ' JointVelocities_4',
                               ' StanceInterpolationFactor', ' BackPackAngle', ' BackPackAngularVelocity']].values.astype('float32')
 therapist_data = therapist_train[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4',
-                               ' JointVelocities_1', ' JointVelocities_2', ' JointVelocities_3', ' JointVelocities_4']].values.astype('float32')
+                                  ' JointVelocities_1', ' JointVelocities_2', ' JointVelocities_3', ' JointVelocities_4']].values.astype('float32')
 
 patient_valid = patient_valid[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4',
-                              ' JointVelocities_1', ' JointVelocities_2', ' JointVelocities_3', ' JointVelocities_4',
-                              ' StanceInterpolationFactor', ' BackPackAngle', ' BackPackAngularVelocity']].values.astype('float32')
+                               ' JointVelocities_1', ' JointVelocities_2', ' JointVelocities_3', ' JointVelocities_4',
+                               ' StanceInterpolationFactor', ' BackPackAngle', ' BackPackAngularVelocity']].values.astype('float32')
 therapist_valid = therapist_valid[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4',
-                               ' JointVelocities_1', ' JointVelocities_2', ' JointVelocities_3', ' JointVelocities_4']].values.astype('float32')
+                                   ' JointVelocities_1', ' JointVelocities_2', ' JointVelocities_3', ' JointVelocities_4']].values.astype('float32')
+
+patient1_test = patient1_test[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4',
+                               ' JointVelocities_1', ' JointVelocities_2', ' JointVelocities_3', ' JointVelocities_4',
+                               ' StanceInterpolationFactor', ' BackPackAngle', ' BackPackAngularVelocity']].values.astype('float32')
+therapist1_test = therapist1_test[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4',
+                                   ' JointVelocities_1', ' JointVelocities_2', ' JointVelocities_3', ' JointVelocities_4']].values.astype('float32')
+
+patient2_test = patient2_test[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4',
+                               ' JointVelocities_1', ' JointVelocities_2', ' JointVelocities_3', ' JointVelocities_4',
+                               ' StanceInterpolationFactor', ' BackPackAngle', ' BackPackAngularVelocity']].values.astype('float32')
+therapist2_test = therapist2_test[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4',
+                                   ' JointVelocities_1', ' JointVelocities_2', ' JointVelocities_3', ' JointVelocities_4']].values.astype('float32')
+
+patient3_test = patient3_test[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4',
+                               ' JointVelocities_1', ' JointVelocities_2', ' JointVelocities_3', ' JointVelocities_4',
+                               ' StanceInterpolationFactor', ' BackPackAngle', ' BackPackAngularVelocity']].values.astype('float32')
+therapist3_test = therapist3_test[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4',
+                                   ' JointVelocities_1', ' JointVelocities_2', ' JointVelocities_3', ' JointVelocities_4']].values.astype('float32')
+
+test_1 = np.column_stack((patient1_test, therapist1_test))
+test_2 = np.column_stack((patient2_test, therapist2_test))
+test_3 = np.column_stack((patient3_test, therapist3_test))
 
 with open(f'../../lstm_BigData/data/patient_training_full.csv', 'a', newline='') as f:
     writer = csv.writer(f)
@@ -332,3 +361,30 @@ with open(f'../../lstm_BigData/data/therapist_validation_full.csv', 'a', newline
     writer.writerow(['JointPositions_1', 'JointPositions_2', 'JointPositions_3', 'JointPositions_4',
                      'JointVelocities_1', 'JointVelocities_2', 'JointVelocities_3', 'JointVelocities_4'])
     pd.DataFrame(therapist_valid).to_csv(f, header=False, index=False)
+
+with open(f'../../lstm_BigData/data/test_set_1.csv', 'a', newline='') as f:
+    writer = csv.writer(f)
+    writer.writerow(['JointPositions_1', 'JointPositions_2', 'JointPositions_3', 'JointPositions_4',
+                     'JointVelocities_1', 'JointVelocities_2', 'JointVelocities_3', 'JointVelocities_4',
+                     'StanceInterpolationFactor', 'BackPackAngle', 'BackPackAngularVelocity',
+                     'TjointPositions_1', 'TjointPositions_2', 'TjointPositions_3', 'TjointPositions_4', 
+                     'TjointVelocities_1', 'TjointVelocities_2', 'TjointVelocities_3', 'TjointVelocities_4'])
+    pd.DataFrame(test_1).to_csv(f, header=False, index=False)
+
+with open(f'../../lstm_BigData/data/test_set_2.csv', 'a', newline='') as f:
+    writer = csv.writer(f)
+    writer.writerow(['JointPositions_1', 'JointPositions_2', 'JointPositions_3', 'JointPositions_4',
+                     'JointVelocities_1', 'JointVelocities_2', 'JointVelocities_3', 'JointVelocities_4',
+                     'StanceInterpolationFactor', 'BackPackAngle', 'BackPackAngularVelocity',
+                     'TjointPositions_1', 'TjointPositions_2', 'TjointPositions_3', 'TjointPositions_4', 
+                     'TjointVelocities_1', 'TjointVelocities_2', 'TjointVelocities_3', 'TjointVelocities_4'])
+    pd.DataFrame(test_2).to_csv(f, header=False, index=False)
+
+with open(f'../../lstm_BigData/data/test_set_3.csv', 'a', newline='') as f:
+    writer = csv.writer(f)
+    writer.writerow(['JointPositions_1', 'JointPositions_2', 'JointPositions_3', 'JointPositions_4',
+                     'JointVelocities_1', 'JointVelocities_2', 'JointVelocities_3', 'JointVelocities_4',
+                     'StanceInterpolationFactor', 'BackPackAngle', 'BackPackAngularVelocity',
+                     'TjointPositions_1', 'TjointPositions_2', 'TjointPositions_3', 'TjointPositions_4', 
+                     'TjointVelocities_1', 'TjointVelocities_2', 'TjointVelocities_3', 'TjointVelocities_4'])
+    pd.DataFrame(test_3).to_csv(f, header=False, index=False)
