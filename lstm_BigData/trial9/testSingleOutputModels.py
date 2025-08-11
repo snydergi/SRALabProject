@@ -7,225 +7,18 @@ from scipy.signal import find_peaks
 from scipy.interpolate import interp1d
 from torchrl.modules import NoisyLinear
 
-# First Subject-Therapist Pair
-patient1_datapath = '../../data/Patient1_X2_SRA_A_07-05-2024_10-39-10.csv'
-therapist1_datapath = '../../data/Therapist1_X2_SRA_B_07-05-2024_10-41-46.csv'
-patient1_part1 = pd.read_csv(patient1_datapath, 
-                          skiprows=range(1, 229607), 
-                          nrows=433021-229607)
-therapist1_part1 = pd.read_csv(therapist1_datapath, 
-                            skiprows=range(1, 165636), 
-                            nrows=369050-165636)
-patient1_part2 = pd.read_csv(patient1_datapath, 
-                          skiprows=range(1, 516255), 
-                          nrows=718477-516255)
-therapist1_part2 = pd.read_csv(therapist1_datapath, 
-                            skiprows=range(1, 452284), 
-                            nrows=654506-452284)
-patient1_part3 = pd.read_csv(patient1_datapath, 
-                          skiprows=range(1, 761002), 
-                          nrows=960356-761002)
-therapist1_part3 = pd.read_csv(therapist1_datapath, 
-                            skiprows=range(1, 697032), 
-                            nrows=896386-697032)
+# Set plotting parameters
+plt.rcParams['svg.fonttype'] = 'none'
 
-# Second Subject-Therapist Pair
-patient2_datapath = '../../data/Patient2_X2_SRA_A_08-05-2024_14-33-44.csv'
-therapist2_datapath = '../../data/Therapist2_X2_SRA_B_08-05-2024_14-33-51.csv'
-patient2_part1 = pd.read_csv(patient2_datapath,
-                            skiprows=range(1, 123920),
-                            nrows=272301-123920)
-therapist2_part1 = pd.read_csv(therapist2_datapath,
-                            skiprows=range(1, 123920),
-                            nrows=272301-123920)
-patient2_part2 = pd.read_csv(patient2_datapath, 
-                     skiprows=range(1, 457108), 
-                     nrows=595193-457108)
-therapist2_part2 = pd.read_csv(therapist2_datapath, 
-                       skiprows=range(1, 457108), 
-                       nrows=595193-457108)
+# Load the data
+# DATA ORDER:
+# p_jt_pos1, p_jt_pos2, p_jt_pos3, p_jt_pos4, p_jt_vel1, p_jt_vel2, p_jt_vel3, p_jt_vel4, p_SIF, p_bp_pos, p_bp_vel,
+# t_jt_pos1, t_jt_pos2, t_jt_pos3, t_jt_pos4, t_jt_vel1, t_jt_vel2, t_jt_vel3, t_jt_vel4
+test_1 = pd.read_csv('../data/test_set_1.csv', skiprows=0).values
+test_2 = pd.read_csv('../data/test_set_2.csv', skiprows=0).values
+test_3 = pd.read_csv('../data/test_set_3.csv', skiprows=0).values
 
-# Third Subject-Therapist Pair
-patient3_datapath = '../../data/Patient3_X2_SRA_A_29-05-2024_13-36-40.csv'
-therapist3_datapath = '../../data/Therapist3_X2_SRA_B_29-05-2024_13-41-19.csv'
-patient3_part1 = pd.read_csv(patient3_datapath, 
-                          skiprows=range(1, 7694), 
-                          nrows=198762-7694)
-therapist3_part1 = pd.read_csv(therapist3_datapath, 
-                            skiprows=range(1, 7694), 
-                            nrows=198762-7694)
-patient3_part2 = pd.read_csv(patient3_datapath, 
-                          skiprows=range(1, 232681), 
-                          nrows=388280-232681)
-therapist3_part2 = pd.read_csv(therapist3_datapath, 
-                            skiprows=range(1, 232681), 
-                            nrows=388280-232681)
-patient3_part3 = pd.read_csv(patient3_datapath, 
-                          skiprows=range(1, 417061), 
-                          nrows=606461-417061)
-therapist3_part3 = pd.read_csv(therapist3_datapath, 
-                            skiprows=range(1, 417062), 
-                            nrows=606462-417062)
-
-# Fourth Subject-Therapist Pair
-patient4_datapath = '../../data/Patient4_X2_SRA_A_31-07-2024_11-25-24.csv'
-therapist4_datapath = '../../data/Therapist4_X2_SRA_B_31-07-2024_11-29-20.csv'
-patient4_part1 = pd.read_csv(patient4_datapath, 
-                          skiprows=range(1, 85602), 
-                          nrows=285867-85602)
-therapist4_part1 = pd.read_csv(therapist4_datapath, 
-                            skiprows=range(1, 28003), 
-                            nrows=228268-28003)
-patient4_part2 = pd.read_csv(patient4_datapath, 
-                          skiprows=range(1, 307526), 
-                          nrows=435811-307526)
-therapist4_part2 = pd.read_csv(therapist4_datapath, 
-                            skiprows=range(1, 249927), 
-                            nrows=378212-249927)
-patient4_part3 = pd.read_csv(patient4_datapath, 
-                          skiprows=range(1, 481091), 
-                          nrows=593066-481091)
-therapist4_part3 = pd.read_csv(therapist4_datapath, 
-                            skiprows=range(1, 423491), 
-                            nrows=535482-423491)
-patient4_part4 = pd.read_csv(patient4_datapath,
-                            skiprows=range(1, 610823), 
-                            nrows=688030-610823)
-therapist4_part4 = pd.read_csv(therapist4_datapath,
-                            skiprows=range(1, 553222), 
-                            nrows=630428-553222)
-
-# Sixth Subject-Therapist Pair
-patient6_datapath = '../../data/Patient6_X2_SRA_A_15-08-2024_09-47-25.csv'
-therapist6_datapath = '../../data/Therapist6_X2_SRA_B_15-08-2024_09-47-47.csv'
-patient6_part1 = pd.read_csv(patient6_datapath, 
-                          skiprows=range(1, 7695), 
-                          nrows=205185-7695)
-therapist6_part1 = pd.read_csv(therapist6_datapath, 
-                            skiprows=range(1, 7695), 
-                            nrows=205185-7695)
-patient6_part2 = pd.read_csv(patient6_datapath, 
-                          skiprows=range(1, 215454), 
-                          nrows=419150-215454)
-therapist6_part2 = pd.read_csv(therapist6_datapath, 
-                            skiprows=range(1, 215454), 
-                            nrows=419150-215454)
-patient6_part3 = pd.read_csv(patient6_datapath, 
-                          skiprows=range(1, 456313), 
-                          nrows=656732-456313)
-therapist6_part3 = pd.read_csv(therapist6_datapath, 
-                            skiprows=range(1, 456313), 
-                            nrows=656732-456313)
-
-# Ninth Subject-Therapist Pair
-patient9_datapath = '../../data/Patient9_X2_SRA_A_07-10-2024_14-41-04.csv'
-therapist9_datapath = '../../data/Therapist9_X2_SRA_B_07-10-2024_14-41-12.csv'
-patient9_part1 = pd.read_csv(patient9_datapath, 
-                          skiprows=range(1, 52347), 
-                          nrows=245511-52347)
-therapist9_part1 = pd.read_csv(therapist9_datapath, 
-                            skiprows=range(1, 46634), 
-                            nrows=239798-46634)
-patient9_part2 = pd.read_csv(patient9_datapath, 
-                          skiprows=range(1, 373504), 
-                          nrows=560745-373504)
-therapist9_part2 = pd.read_csv(therapist9_datapath, 
-                            skiprows=range(1, 367792), 
-                            nrows=555032-367792)
-patient9_part3 = pd.read_csv(patient9_datapath, 
-                          skiprows=range(1, 732658), 
-                          nrows=917918-732658)
-therapist9_part3 = pd.read_csv(therapist9_datapath, 
-                            skiprows=range(1, 726946), 
-                            nrows=912205-726946)
-
-# Eleventh Subject-Therapist Pair
-patient11_datapath = '../../data/Patient11_X2_SRA_A_19-09-2024_09-37-01.csv'
-therapist11_datapath = '../../data/Therapist11_X2_SRA_B_19-09-2024_09-37-07.csv'
-patient11_part1 = pd.read_csv(patient11_datapath, 
-                          skiprows=range(1, 36738), 
-                          nrows=97920-36738)
-therapist11_part1 = pd.read_csv(therapist11_datapath, 
-                            skiprows=range(1, 36738), 
-                            nrows=97920-36738)
-patient11_part2 = pd.read_csv(patient11_datapath, 
-                          skiprows=range(1, 106812), 
-                          nrows=249479-106812)
-therapist11_part2 = pd.read_csv(therapist11_datapath, 
-                            skiprows=range(1, 106812), 
-                            nrows=249479-106812)
-patient11_part3 = pd.read_csv(patient11_datapath, 
-                          skiprows=range(1, 261278), 
-                          nrows=459644-261278)
-therapist11_part3 = pd.read_csv(therapist11_datapath, 
-                            skiprows=range(1, 261278), 
-                            nrows=459644-261278)
-patient11_part4 = pd.read_csv(patient11_datapath,
-                            skiprows=range(1, 585102), 
-                            nrows=787871-585102)
-therapist11_part4 = pd.read_csv(therapist11_datapath,
-                            skiprows=range(1, 585102), 
-                            nrows=787871-585102)
-
-p1 = pd.concat([patient1_part1, patient1_part2, patient1_part3])
-t1 = pd.concat([therapist1_part1, therapist1_part2, therapist1_part3])
-p2 = pd.concat([patient2_part1, patient2_part2])
-t2 = pd.concat([therapist2_part1, therapist2_part2])
-p3 = pd.concat([patient3_part1, patient3_part2, patient3_part3])
-t3 = pd.concat([therapist3_part1, therapist3_part2, therapist3_part3])
-p4 = pd.concat([patient4_part1, patient4_part2, patient4_part3, patient4_part4])
-t4 = pd.concat([therapist4_part1, therapist4_part2, therapist4_part3, therapist4_part4])
-p6 = pd.concat([patient6_part1, patient6_part2, patient6_part3])
-t6 = pd.concat([therapist6_part1, therapist6_part2, therapist6_part3])
-p9 = pd.concat([patient9_part1, patient9_part2, patient9_part3])
-t9 = pd.concat([therapist9_part1, therapist9_part2, therapist9_part3])
-p11 = pd.concat([patient11_part1, patient11_part2, patient11_part3, patient11_part4])
-t11 = pd.concat([therapist11_part1, therapist11_part2, therapist11_part3, therapist11_part4])
-
-train_1_len = len(p1) * 0.7
-validate_1_len = len(p1) * 0.2
-train_2_len = len(p2) * 0.7
-validate_2_len = len(p2) * 0.2
-train_3_len = len(p3) * 0.7
-validate_3_len = len(p3) * 0.2
-train_4_len = len(p4) * 0.7
-validate_4_len = len(p4) * 0.2
-train_6_len = len(p6) * 0.7
-validate_6_len = len(p6) * 0.2
-train_9_len = len(p9) * 0.7
-validate_9_len = len(p9) * 0.2
-train_11_len = len(p11) * 0.7
-validate_11_len = len(p11) * 0.2
-
-# Split testing portion of data from full dataset
-patient1_test = p1[int(train_1_len + validate_1_len):]
-therapist1_test = t1[int(train_1_len + validate_1_len):]
-
-patient2_test = p2[int(train_2_len + validate_2_len):]
-therapist2_test = t2[int(train_2_len + validate_2_len):]
-
-patient3_test = p3[int(train_3_len + validate_3_len):]
-therapist3_test = t3[int(train_3_len + validate_3_len):]
-
-patient1_data = patient1_test[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4',
-                              ' JointVelocities_1', ' JointVelocities_2', ' JointVelocities_3', ' JointVelocities_4']].values.astype('float32') 
-                            #   ' StanceInterpolationFactor', ' BackPackAngle', ' BackPackAngularVelocity'
-therapist1_data = therapist1_test[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4']].values.astype('float32')
-
-patient2_data = patient2_test[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4',
-                               ' JointVelocities_1', ' JointVelocities_2', ' JointVelocities_3', ' JointVelocities_4']].values.astype('float32')
-therapist2_data = therapist2_test[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4']].values.astype('float32')
-
-patient3_data = patient3_test[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4',
-                               ' JointVelocities_1', ' JointVelocities_2', ' JointVelocities_3', ' JointVelocities_4']].values.astype('float32')
-therapist3_data = therapist3_test[[' JointPositions_1', ' JointPositions_2', ' JointPositions_3', ' JointPositions_4']].values.astype('float32')
-
-test_1 = np.column_stack((patient1_data, therapist1_data))
-test_2 = np.column_stack((patient2_data, therapist2_data))
-test_3 = np.column_stack((patient3_data, therapist3_data))
-
-
-def create_dataset(dataset, lookback):
+def create_dataset(dataset, lookback, step=1):
     """Transform a time series into a prediction dataset
     
     Args:
@@ -233,20 +26,22 @@ def create_dataset(dataset, lookback):
         lookback: Size of window for prediction
     """
     X, y = [], []
-    for i in range(len(dataset)-lookback):
+    for i in range(0, len(dataset)-lookback, step):
         feature = dataset[i:i+lookback, :8]  # Feature is patient data, if input size 8
         # feature = dataset[i:i+lookback, :4]  # Feature is patient data, # if input size 4
-        target = dataset[i+1:i+lookback+1, -4]  # Target is therapist data
+        target = dataset[i+1:i+lookback+1, predicted_target]  # Target is therapist data
         target = target.reshape(-1, 1)
         X.append(feature)
         y.append(target)
     X = np.array(X)
     y = np.array(y)
-    return torch.tensor(X), torch.tensor(y)
+    return torch.tensor(X, dtype=torch.float32), torch.tensor(y, dtype=torch.float32)
 
-lookback = 50
+lookback, step = 50, 5
 patient_number = 1 # Set based on which patient data is being tested
 test = test_1 if patient_number == 1 else test_2 if patient_number == 2 else test_3
+predicted_target = -2 # Index based on data order above
+pIndex = 4 # Index of patient joint to plot against therapist joint (0-3 for patient joints 1-4)
 X_test, y_test = create_dataset(test, lookback=lookback)
 
 # Model definition
@@ -261,7 +56,7 @@ class JointModel(nn.Module):
 
 # Load model
 model = JointModel()
-model.load_state_dict(torch.load('lstm_model_epoch149.pth'))
+model.load_state_dict(torch.load('jt3_vel/lstm_model_epoch148.pth'))
 # model = torch.jit.load('/home/cerebro/snyder_project/SRALabProject/misc/model_scripting/scripts/lstm_trial5.pt')
 model.eval()
 
@@ -289,7 +84,7 @@ with torch.no_grad():
     plot_length = len(test)  # Only plot testing portion
     
     # Fill true values (offset by lookback)
-    therapist_true = test[:, -4]
+    therapist_true = test[:, predicted_target]
     therapist_true = therapist_true.reshape(-1, 1)
     
     # Get predictions (last timestep of each sequence)
@@ -309,56 +104,22 @@ with torch.no_grad():
 # print(f'Stacked Data0 Size: {stacked_data0.shape}')
 # print(f'Stacked Pred0 Size: {stacked_pred0.shape}')
 
-# stacked_data1 = np.vstack(normalized_periodic_data1)
-# stacked_pred1 = np.vstack(normalized_periodic_pred1)
-# mean_data1 = np.mean(stacked_data1, axis=0)
-# mean_pred1 = np.mean(stacked_pred1, axis=0)
-# std_data1 = np.std(stacked_data1, axis=0)
-# std_pred1 = np.std(stacked_pred1, axis=0)
-# print(f'Stacked Data1 Size: {stacked_data1.shape}')
-# print(f'Stacked Pred1 Size: {stacked_pred1.shape}')
-
-# stacked_data2 = np.vstack(normalized_periodic_data2)
-# stacked_pred2 = np.vstack(normalized_periodic_pred2)
-# mean_data2 = np.mean(stacked_data2, axis=0)
-# mean_pred2 = np.mean(stacked_pred2, axis=0)
-# std_data2 = np.std(stacked_data2, axis=0)
-# std_pred2 = np.std(stacked_pred2, axis=0)
-# print(f'Stacked Data2 Size: {stacked_data2.shape}')
-# print(f'Stacked Pred2 Size: {stacked_pred2.shape}')
-
-# stacked_data3 = np.vstack(normalized_periodic_data3)
-# stacked_pred3 = np.vstack(normalized_periodic_pred3)
-# mean_data3 = np.mean(stacked_data3, axis=0)
-# mean_pred3 = np.mean(stacked_pred3, axis=0)
-# std_data3 = np.std(stacked_data3, axis=0)
-# std_pred3 = np.std(stacked_pred3, axis=0)
-# print(f'Stacked Data3 Size: {stacked_data3.shape}')
-# print(f'Stacked Pred3 Size: {stacked_pred3.shape}')
-
 # # # Get errors for periodic data
 # # # Must stay commented out until periodic data is set correctly
 # mean_err0 = np.mean(abs(stacked_data0 - stacked_pred0), axis=0)
 # std_err0 = np.std(abs(stacked_data0 - stacked_pred0), axis=0)
 
-# mean_err1 = np.mean(abs(stacked_data1 - stacked_pred1), axis=0)
-# std_err1 = np.std(abs(stacked_data1 - stacked_pred1), axis=0)
-
-# mean_err2 = np.mean(abs(stacked_data2 - stacked_pred2), axis=0)
-# std_err2 = np.std(abs(stacked_data2 - stacked_pred2), axis=0)
-
-# mean_err3 = np.mean(abs(stacked_data3 - stacked_pred3), axis=0)
-# std_err3 = np.std(abs(stacked_data3 - stacked_pred3), axis=0)
-
 # ALL PLOTTING HAPPENS BELOW HERE. READ INSTRUCTIONS FOR CREATING BEST PLOTS
 # Plot histogram of errors
 fig = plt.figure(figsize=(12, 6), )
-fig.suptitle(f"Patient {patient_number} Joint Prediction Error Histograms")
 plt.hist(errors, bins=50, alpha=0.7, color='blue')
-plt.xlabel('Error (Radians)')
+# plt.xlabel('Error (Radians)')
+plt.xlabel('Error (Radians/second)')
 plt.ylabel('# of Occurrences')
-plt.title(f'Joint 1, RMSE: {test_rmse:.4f}, Max (abs): {abs(errors).max():.4f}, Std Dev (abs): {abs(errors).std():.4f}, Mean (abs): {abs(errors).mean():.4f}')
+# plt.title(f'Therapist Joint 2 Position Errors, RMSE: {test_rmse:.4f}, Max (abs): {abs(errors).max():.4f}, Std Dev (abs): {abs(errors).std():.4f}, Mean (abs): {abs(errors).mean():.4f}')
+plt.title(f'Therapist Joint 3 Velocity Errors, RMSE: {test_rmse:.4f}, Max (abs): {abs(errors).max():.4f}, Std Dev (abs): {abs(errors).std():.4f}, Mean (abs): {abs(errors).mean():.4f}')
 plt.grid(True)
+plt.savefig('/home/gis/Documents/SRALabProject/lstm_BigData/plots/trial9/jt3_vel_error_histogram.svg', format='svg', dpi=300, bbox_inches='tight', transparent=True)
 plt.show()
 
 # use to determining amplitude for periodic plots
@@ -375,18 +136,19 @@ plt.show()
 # Change xlim for desired time steps
 # Limit to 7500 time steps (~30 seconds) EXCEPT when determining amplitude for periodic plots
 fig = plt.figure(figsize=(12, 6))
-pNum = 2
-plt.plot(test[:, pNum], c='g', label=f'Patient Data')
+# plt.title(f"Therapist Joint 2 Position Predictions with Patient Joint 4")
+plt.title(f"Therapist Joint 3 Velocity Predictions with Patient Joint 1")
+plt.plot(test[:, pIndex], c='g', label=f'Patient Data') # Set to corresponding patient data index
 plt.plot(therapist_true, c='b', label=f'True Therapist Data')
 plt.plot(therapist_pred, c='r', linestyle='--', label=f'Predicted Therapist Data')
 # plt.scatter(np.arange(len(therapist_pred)), therapist_pred[:, i], c='r', marker='x', label=f'Predicted Therapist Data', alpha=0.5)
 plt.xlim(0, 7500)
 plt.xlabel('Time Steps (~4ms)')
-plt.ylabel('Joint Positions (Radians)')
+# plt.ylabel('Joint Positions (Radians)')
+plt.ylabel('Joint Velocities (Radians/second)')
 plt.legend()
-plt.title(f"Joint 1")
+plt.savefig('/home/gis/Documents/SRALabProject/lstm_BigData/plots/trial9/jt3_vel_predictions.svg', format='svg', dpi=300, bbox_inches='tight', transparent=True)
 plt.show()
-# # plt.savefig('lstm_therapist_prediction.png', dpi=300, bbox_inches='tight')
 
 # # Plot error over time
 # plt.figure(figsize=(12, 6))
@@ -399,7 +161,7 @@ plt.show()
 # plt.show()
 
 # Plot normalized periodic data
-fig = plt.figure(figsize=(12, 6))
+# fig = plt.figure(figsize=(12, 6))
 
 # Plots each period as a separate line. Use to look for outliers in amplitude
 # Missteps can cause outliers where multiple periods will be combined into one. Need to fix height in 'find peaks' above
@@ -410,8 +172,6 @@ fig = plt.figure(figsize=(12, 6))
 
 # Plot mean and std dev of periodic data and predictions
 # Use after height is set correctly in 'find peaks' above
-# fig.suptitle(f"Patient {patient_number} Joint Periodic Data and Predictions")
-# plt.subplot(2, 2, 1)
 # plt.plot(mean_data0, c='b', label='Mean Therapist Data')
 # plt.fill_between(range(normalized_length), 
 #                  mean_data0 - std_data0, 
@@ -426,91 +186,14 @@ fig = plt.figure(figsize=(12, 6))
 # plt.ylabel('Joint Positions (Radians)')
 # plt.xlabel('Gait Phase %')
 # plt.legend()
-# plt.subplot(2, 2, 2)
-# plt.plot(mean_data1, c='b', label='Mean Therapist Data')
-# plt.fill_between(range(normalized_length), 
-#                  mean_data1 - std_data1, 
-#                  mean_data1 + std_data1, 
-#                  color='b', alpha=0.2)
-# plt.plot(mean_pred1, c='r', label='Mean Predicted Therapist Data')
-# plt.fill_between(range(normalized_length), 
-#                  mean_pred1 - std_pred1, 
-#                  mean_pred1 + std_pred1, 
-#                  color='r', alpha=0.2)
-# plt.title("Left Knee")
-# plt.ylabel('Joint Positions (Radians)')
-# plt.xlabel('Gait Phase %')
-# plt.legend()
-# plt.subplot(2, 2, 3)
-# plt.plot(mean_data2, c='b', label='Mean Therapist Data')
-# plt.fill_between(range(normalized_length), 
-#                  mean_data2 - std_data2, 
-#                  mean_data2 + std_data2, 
-#                  color='b', alpha=0.2)
-# plt.plot(mean_pred2, c='r', label='Mean Predicted Therapist Data')
-# plt.fill_between(range(normalized_length), 
-#                  mean_pred2 - std_pred2, 
-#                  mean_pred2 + std_pred2, 
-#                  color='r', alpha=0.2)
-# plt.title("Right Hip")
-# plt.ylabel('Joint Positions (Radians)')
-# plt.xlabel('Gait Phase %')
-# plt.legend()
-# plt.subplot(2, 2, 4)
-# plt.plot(mean_data3, c='b', label='Mean Therapist Data')
-# plt.fill_between(range(normalized_length), 
-#                  mean_data3 - std_data3, 
-#                  mean_data3 + std_data3, 
-#                  color='b', alpha=0.2)
-# plt.plot(mean_pred3, c='r', label='Mean Predicted Therapist Data')
-# plt.fill_between(range(normalized_length), 
-#                  mean_pred3 - std_pred3, 
-#                  mean_pred3 + std_pred3, 
-#                  color='r', alpha=0.2)
-# plt.title("Right Knee")
-# plt.ylabel('Joint Positions (Radians)')
-# plt.xlabel('Gait Phase %')
-# plt.legend()
 
 # Plot period plot of error using mean and std dev
-# plt.suptitle("Joint Periodic Absolute Error")
-# plt.subplot(2, 2, 1)
 # plt.plot(mean_err0, c='r', label='Mean Error')
 # plt.fill_between(range(normalized_length), 
 #                  mean_err0 - std_err0, 
 #                  mean_err0 + std_err0, 
 #                  color='r', alpha=0.2)
 # plt.title("Left Hip")
-# plt.ylabel('Joint Error (Radians)')
-# plt.xlabel('Gait Phase %')
-# plt.legend()
-# plt.subplot(2, 2, 2)
-# plt.plot(mean_err1, c='r', label='Mean Error')
-# plt.fill_between(range(normalized_length), 
-#                  mean_err1 - std_err1, 
-#                  mean_err1 + std_err1, 
-#                  color='r', alpha=0.2)
-# plt.title("Left Knee")
-# plt.ylabel('Joint Error (Radians)')
-# plt.xlabel('Gait Phase %')
-# plt.legend()
-# plt.subplot(2, 2, 3)
-# plt.plot(mean_err2, c='r', label='Mean Error')
-# plt.fill_between(range(normalized_length), 
-#                  mean_err2 - std_err2, 
-#                  mean_err2 + std_err2, 
-#                  color='r', alpha=0.2)
-# plt.title("Right Hip")
-# plt.ylabel('Joint Error (Radians)')
-# plt.xlabel('Gait Phase %')
-# plt.legend()
-# plt.subplot(2, 2, 4)
-# plt.plot(mean_err3, c='r', label='Mean Error')
-# plt.fill_between(range(normalized_length), 
-#                  mean_err3 - std_err3, 
-#                  mean_err3 + std_err3, 
-#                  color='r', alpha=0.2)
-# plt.title("Right Knee")
 # plt.ylabel('Joint Error (Radians)')
 # plt.xlabel('Gait Phase %')
 # plt.legend()
