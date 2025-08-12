@@ -73,58 +73,76 @@ class ModelNode:
 
     def run(self):
         while not rospy.is_shutdown():
-            y_pred = self.predict()
-            if y_pred is not None and self.previous_pred[0] is not None:
-                # Numerically calculate joint velocities
-                cur_time = time.time()
-                jt_vels = []
-                for i in range(4):
-                    if self.previous_pred_time is not None:
-                        dt = cur_time - self.previous_pred_time
-                        vel = (y_pred[i].item() - self.previous_pred[i]) / dt
-                        self.filtered_vels[i] = self.filter_alpha * vel + (1 - self.filter_alpha) * self.filtered_vels[i]
-                        jt_vels.append(self.filtered_vels[i])
+            if self.current_model != 'stacked':
+                y_pred = self.predict()
+                if y_pred is not None and self.previous_pred[0] is not None:
+                    # Numerically calculate joint velocities
+                    cur_time = time.time()
+                    jt_vels = []
+                    for i in range(4):
+                        if self.previous_pred_time is not None:
+                            dt = cur_time - self.previous_pred_time
+                            vel = (y_pred[i].item() - self.previous_pred[i]) / dt
+                            jt_vels.append(vel)
+                            # self.filtered_vels[i] = self.filter_alpha * vel + (1 - self.filter_alpha) * self.filtered_vels[i]
+                            # jt_vels.append(self.filtered_vels[i])
 
-                # Prepare message
-                msg = X2RobotState()
-                msg.header.stamp = rospy.Time.now()
-                msg.joint_state.position.extend(y_pred.tolist())
-                msg.joint_state.position.extend([0.0])
-                msg.joint_state.velocity.extend(jt_vels)
-                msg.joint_state.velocity.extend([0.0])
-                msg.joint_state.effort = [0.0, 0.0, 0.0, 0.0, 0.0]
-                msg.link_lengths = [0.38, 0.38, 0.38, 0.38]
-                
-                # Check for too large of a jump in prediction
-                if self.previous_pred[0] is not None:
-                    if (abs(y_pred[0].item() - self.previous_pred[0]) > self.config['pred_diff_threshold'] or
-                        abs(y_pred[1].item() - self.previous_pred[1]) > self.config['pred_diff_threshold'] or
-                        abs(y_pred[2].item() - self.previous_pred[2]) > self.config['pred_diff_threshold'] or
-                        abs(y_pred[3].item() - self.previous_pred[3]) > self.config['pred_diff_threshold']):
-                        rospy.logwarn("Large jump in prediction detected, skipping this prediction.")
-                        self.skipped_pred_count += 1
-                        if self.skipped_pred_count > 10:
-                            self.previous_pred = [None, None, None, None]  # Reset previous prediction
-                            self.skipped_pred_count = 0
-                        return
-                
-                # Update previous prediction
-                self.previous_pred = y_pred.tolist()
-                self.previous_pred_time = cur_time
+                    # Prepare message
+                    msg = X2RobotState()
+                    msg.header.stamp = rospy.Time.now()
+                    msg.joint_state.position.extend(y_pred.tolist())
+                    msg.joint_state.position.extend([0.0])
+                    msg.joint_state.velocity.extend(jt_vels)
+                    msg.joint_state.velocity.extend([0.0])
+                    msg.joint_state.effort = [0.0, 0.0, 0.0, 0.0, 0.0]
+                    msg.link_lengths = [0.38, 0.38, 0.38, 0.38]
+                    
+                    # Check for too large of a jump in prediction
+                    if self.previous_pred[0] is not None:
+                        if (abs(y_pred[0].item() - self.previous_pred[0]) > self.config['pred_diff_threshold'] or
+                            abs(y_pred[1].item() - self.previous_pred[1]) > self.config['pred_diff_threshold'] or
+                            abs(y_pred[2].item() - self.previous_pred[2]) > self.config['pred_diff_threshold'] or
+                            abs(y_pred[3].item() - self.previous_pred[3]) > self.config['pred_diff_threshold']):
+                            rospy.logwarn("Large jump in prediction detected, skipping this prediction.")
+                            self.skipped_pred_count += 1
+                            if self.skipped_pred_count > 10:
+                                self.previous_pred = [None, None, None, None]  # Reset previous prediction
+                                self.skipped_pred_count = 0
+                            return
+                    
+                    # Update previous prediction
+                    self.previous_pred = y_pred.tolist()
+                    self.previous_pred_time = cur_time
 
-                # Publish message
-                self.pub.publish(msg)
-                
-                # # Log prediction
-                # with open(f'/home/cerebro/snyder_project/SRALabProject/node_development/misc/pred_data/prediction_{self.init_time}.csv', 'a', newline='') as f:
-                #         writer = csv.writer(f)
-                #         writer.writerow([self.current_model, end_time-start_time, y_pred[0].item(), y_pred[1].item(), y_pred[2].item(), y_pred[3].item(),
-                #                         js_data.position[0], js_data.position[1], js_data.position[2], js_data.position[3],
-                #                         js_data.velocity[0], js_data.velocity[1], js_data.velocity[2], js_data.velocity[3],
-                #                         si_data.treadmill, js_data.position[4], js_data.velocity[4]])
-            elif y_pred is not None and self.previous_pred[0] is None:
-                self.previous_pred = y_pred.tolist()
-                self.previous_pred_time = time.time()
+                    # Publish message
+                    self.pub.publish(msg)
+                    
+                    # # Log prediction
+                    # with open(f'/home/cerebro/snyder_project/SRALabProject/node_development/misc/pred_data/prediction_{self.init_time}.csv', 'a', newline='') as f:
+                    #         writer = csv.writer(f)
+                    #         writer.writerow([self.current_model, end_time-start_time, y_pred[0].item(), y_pred[1].item(), y_pred[2].item(), y_pred[3].item(),
+                    #                         js_data.position[0], js_data.position[1], js_data.position[2], js_data.position[3],
+                    #                         js_data.velocity[0], js_data.velocity[1], js_data.velocity[2], js_data.velocity[3],
+                    #                         si_data.treadmill, js_data.position[4], js_data.velocity[4]])
+                elif y_pred is not None and self.previous_pred[0] is None:
+                    self.previous_pred = y_pred.tolist()
+                    self.previous_pred_time = time.time()
+            else:
+                # Model is stacked
+                y_pred = self.predict()
+                if y_pred is not None:
+                    # Prepare message
+                    msg = X2RobotState()
+                    msg.header.stamp = rospy.Time.now()
+                    msg.joint_state.position.extend(y_pred[:4].tolist())
+                    msg.joint_state.position.extend([0.0])
+                    msg.joint_state.velocity.extend(y_pred[4:8].tolist())
+                    msg.joint_state.velocity.extend([0.0])
+                    msg.joint_state.effort = [0.0, 0.0, 0.0, 0.0, 0.0]
+                    msg.link_lengths = [0.38, 0.38, 0.38, 0.38]
+
+                    # Publish message
+                    self.pub.publish(msg)
             self.rate.sleep()
 
     def load_model(self, model_name):
@@ -180,7 +198,8 @@ class ModelNode:
         model_mapping = {
             0: "trial4",
             1: "trial5",
-            2: "trial6"
+            2: "trial6",
+            3: "stacked"
         }
         try: 
             if config['model_type'] in model_mapping:
