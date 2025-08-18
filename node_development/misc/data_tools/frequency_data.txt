@@ -1,3 +1,6 @@
+Approximate frequency of collected patient data for each patient in dataset. 
+Used when confirming frequency alignment for incoming and outgoing data (predictions).
+
 Patient 1 Data:
     Frequency: 327.75940697418514 Hz
     Standard Deviation: 0.0011936227462353097
