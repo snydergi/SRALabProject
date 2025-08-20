@@ -1,0 +1,307 @@
+/home/gsm0197/sralab_working/lstm_BigData/trial10/jt1_vel/lstm.py:48: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /pytorch/torch/csrc/utils/tensor_new.cpp:254.)
+  return torch.tensor(X, dtype=torch.float32), torch.tensor(y, dtype=torch.float32)
+Using device: cuda
+Training data shape: (3440201, 19)
+Validation data shape: (982916, 19)
+torch.Size([344013, 50, 8]) torch.Size([344013, 50, 1])
+torch.Size([98285, 50, 8]) torch.Size([98285, 50, 1])
+Epoch 0: Train MSE 1.2306, Validation MSE 1.1750
+Epoch 0 training time: 79.09084486961365
+Epoch 1: Train MSE 0.9688, Validation MSE 0.8617
+Epoch 1 training time: 32.955435037612915
+Epoch 2: Train MSE 0.6050, Validation MSE 0.4728
+Epoch 2 training time: 14.46215295791626
+Epoch 3: Train MSE 0.3338, Validation MSE 0.3160
+Epoch 3 training time: 75.3525230884552
+Epoch 4: Train MSE 0.2560, Validation MSE 0.2697
+Epoch 4 training time: 45.931952714920044
+Epoch 5: Train MSE 0.2222, Validation MSE 0.2401
+Epoch 5 training time: 63.34931182861328
+Epoch 6: Train MSE 0.1982, Validation MSE 0.2161
+Epoch 6 training time: 46.056124210357666
+Epoch 7: Train MSE 0.1796, Validation MSE 0.1983
+Epoch 7 training time: 40.447381019592285
+Epoch 8: Train MSE 0.1657, Validation MSE 0.1857
+Epoch 8 training time: 118.23480033874512
+Epoch 9: Train MSE 0.1555, Validation MSE 0.1768
+Epoch 9 training time: 27.740134239196777
+Epoch 10: Train MSE 0.1480, Validation MSE 0.1700
+Epoch 10 training time: 22.835724592208862
+Epoch 11: Train MSE 0.1421, Validation MSE 0.1646
+Epoch 11 training time: 77.00557327270508
+Epoch 12: Train MSE 0.1372, Validation MSE 0.1602
+Epoch 12 training time: 70.28536891937256
+Epoch 13: Train MSE 0.1331, Validation MSE 0.1563
+Epoch 13 training time: 8.177108764648438
+Epoch 14: Train MSE 0.1296, Validation MSE 0.1533
+Epoch 14 training time: 10.854093313217163
+Epoch 15: Train MSE 0.1264, Validation MSE 0.1499
+Epoch 15 training time: 56.477479457855225
+Epoch 16: Train MSE 0.1236, Validation MSE 0.1477
+Epoch 16 training time: 109.45935106277466
+Epoch 17: Train MSE 0.1210, Validation MSE 0.1453
+Epoch 17 training time: 98.5534451007843
+Epoch 18: Train MSE 0.1186, Validation MSE 0.1430
+Epoch 18 training time: 58.53097867965698
+Epoch 19: Train MSE 0.1164, Validation MSE 0.1409
+Epoch 19 training time: 48.2519953250885
+Epoch 20: Train MSE 0.1143, Validation MSE 0.1388
+Epoch 20 training time: 91.74532628059387
+Epoch 21: Train MSE 0.1124, Validation MSE 0.1374
+Epoch 21 training time: 49.56302356719971
+Epoch 22: Train MSE 0.1105, Validation MSE 0.1357
+Epoch 22 training time: 36.215346574783325
+Epoch 23: Train MSE 0.1088, Validation MSE 0.1338
+Epoch 23 training time: 45.41023397445679
+Epoch 24: Train MSE 0.1071, Validation MSE 0.1326
+Epoch 24 training time: 83.9003746509552
+Epoch 25: Train MSE 0.1055, Validation MSE 0.1308
+Epoch 25 training time: 85.29826974868774
+Epoch 26: Train MSE 0.1039, Validation MSE 0.1296
+Epoch 26 training time: 81.54326677322388
+Epoch 27: Train MSE 0.1024, Validation MSE 0.1280
+Epoch 27 training time: 93.41801524162292
+Epoch 28: Train MSE 0.1009, Validation MSE 0.1264
+Epoch 28 training time: 78.99506688117981
+Epoch 29: Train MSE 0.0996, Validation MSE 0.1250
+Epoch 29 training time: 75.19838166236877
+Epoch 30: Train MSE 0.0983, Validation MSE 0.1237
+Epoch 30 training time: 57.625136852264404
+Epoch 31: Train MSE 0.0972, Validation MSE 0.1227
+Epoch 31 training time: 20.610763549804688
+Epoch 32: Train MSE 0.0961, Validation MSE 0.1219
+Epoch 32 training time: 6.125837564468384
+Epoch 33: Train MSE 0.0950, Validation MSE 0.1206
+Epoch 33 training time: 4.994431257247925
+Epoch 34: Train MSE 0.0941, Validation MSE 0.1196
+Epoch 34 training time: 8.392086744308472
+Epoch 35: Train MSE 0.0932, Validation MSE 0.1189
+Epoch 35 training time: 80.93668389320374
+Epoch 36: Train MSE 0.0923, Validation MSE 0.1179
+Epoch 36 training time: 53.44364333152771
+Epoch 37: Train MSE 0.0916, Validation MSE 0.1170
+Epoch 37 training time: 54.356568574905396
+Epoch 38: Train MSE 0.0908, Validation MSE 0.1165
+Epoch 38 training time: 40.30008292198181
+Epoch 39: Train MSE 0.0902, Validation MSE 0.1157
+Epoch 39 training time: 111.94455623626709
+Epoch 40: Train MSE 0.0895, Validation MSE 0.1151
+Epoch 40 training time: 55.32224917411804
+Epoch 41: Train MSE 0.0890, Validation MSE 0.1143
+Epoch 41 training time: 24.054996013641357
+Epoch 42: Train MSE 0.0884, Validation MSE 0.1139
+Epoch 42 training time: 12.70378303527832
+Epoch 43: Train MSE 0.0879, Validation MSE 0.1134
+Epoch 43 training time: 50.8251576423645
+Epoch 44: Train MSE 0.0874, Validation MSE 0.1132
+Epoch 44 training time: 114.31564569473267
+Epoch 45: Train MSE 0.0870, Validation MSE 0.1126
+Epoch 45 training time: 53.7450065612793
+Epoch 46: Train MSE 0.0865, Validation MSE 0.1117
+Epoch 46 training time: 39.57092261314392
+Epoch 47: Train MSE 0.0861, Validation MSE 0.1114
+Epoch 47 training time: 74.23326349258423
+Epoch 48: Train MSE 0.0857, Validation MSE 0.1109
+Epoch 48 training time: 39.92047429084778
+Epoch 49: Train MSE 0.0853, Validation MSE 0.1106
+Epoch 49 training time: 35.625659227371216
+Epoch 50: Train MSE 0.0849, Validation MSE 0.1101
+Epoch 50 training time: 37.84402585029602
+Epoch 51: Train MSE 0.0846, Validation MSE 0.1099
+Epoch 51 training time: 45.0814688205719
+Epoch 52: Train MSE 0.0842, Validation MSE 0.1095
+Epoch 52 training time: 58.09194540977478
+Epoch 53: Train MSE 0.0839, Validation MSE 0.1089
+Epoch 53 training time: 71.07192659378052
+Epoch 54: Train MSE 0.0835, Validation MSE 0.1088
+Epoch 54 training time: 35.774949073791504
+Epoch 55: Train MSE 0.0832, Validation MSE 0.1083
+Epoch 55 training time: 70.40531778335571
+Epoch 56: Train MSE 0.0829, Validation MSE 0.1082
+Epoch 56 training time: 55.67752385139465
+Epoch 57: Train MSE 0.0826, Validation MSE 0.1078
+Epoch 57 training time: 36.466198444366455
+Epoch 58: Train MSE 0.0823, Validation MSE 0.1075
+Epoch 58 training time: 44.04061007499695
+Epoch 59: Train MSE 0.0820, Validation MSE 0.1075
+Epoch 59 training time: 58.383747816085815
+Epoch 60: Train MSE 0.0817, Validation MSE 0.1070
+Epoch 60 training time: 76.20283222198486
+Epoch 61: Train MSE 0.0815, Validation MSE 0.1069
+Epoch 61 training time: 18.9703209400177
+Epoch 62: Train MSE 0.0812, Validation MSE 0.1069
+Epoch 62 training time: 49.44548797607422
+Epoch 63: Train MSE 0.0809, Validation MSE 0.1062
+Epoch 63 training time: 48.67572236061096
+Epoch 64: Train MSE 0.0807, Validation MSE 0.1053
+Epoch 64 training time: 80.47548937797546
+Epoch 65: Train MSE 0.0805, Validation MSE 0.1057
+Epoch 65 training time: 76.33388543128967
+Epoch 66: Train MSE 0.0802, Validation MSE 0.1060
+Epoch 66 training time: 26.676141023635864
+Epoch 67: Train MSE 0.0800, Validation MSE 0.1051
+Epoch 67 training time: 8.526300430297852
+Epoch 68: Train MSE 0.0798, Validation MSE 0.1046
+Epoch 68 training time: 26.81898021697998
+Epoch 69: Train MSE 0.0796, Validation MSE 0.1049
+Epoch 69 training time: 97.57495188713074
+Epoch 70: Train MSE 0.0794, Validation MSE 0.1043
+Epoch 70 training time: 109.27716255187988
+Epoch 71: Train MSE 0.0792, Validation MSE 0.1042
+Epoch 71 training time: 38.37879490852356
+Epoch 72: Train MSE 0.0790, Validation MSE 0.1042
+Epoch 72 training time: 27.81998610496521
+Epoch 73: Train MSE 0.0788, Validation MSE 0.1043
+Epoch 73 training time: 33.82109498977661
+Epoch 74: Train MSE 0.0786, Validation MSE 0.1040
+Epoch 74 training time: 28.831002712249756
+Epoch 75: Train MSE 0.0785, Validation MSE 0.1040
+Epoch 75 training time: 10.682770252227783
+Epoch 76: Train MSE 0.0783, Validation MSE 0.1038
+Epoch 76 training time: 5.890119791030884
+Epoch 77: Train MSE 0.0781, Validation MSE 0.1033
+Epoch 77 training time: 5.9685211181640625
+Epoch 78: Train MSE 0.0780, Validation MSE 0.1036
+Epoch 78 training time: 5.40837550163269
+Epoch 79: Train MSE 0.0778, Validation MSE 0.1032
+Epoch 79 training time: 5.073151350021362
+Epoch 80: Train MSE 0.0777, Validation MSE 0.1030
+Epoch 80 training time: 4.978655815124512
+Epoch 81: Train MSE 0.0775, Validation MSE 0.1025
+Epoch 81 training time: 5.040957927703857
+Epoch 82: Train MSE 0.0774, Validation MSE 0.1026
+Epoch 82 training time: 12.71416449546814
+Epoch 83: Train MSE 0.0773, Validation MSE 0.1028
+Epoch 83 training time: 26.309399366378784
+Epoch 84: Train MSE 0.0771, Validation MSE 0.1027
+Epoch 84 training time: 105.52120876312256
+Epoch 85: Train MSE 0.0770, Validation MSE 0.1024
+Epoch 85 training time: 93.11078596115112
+Epoch 86: Train MSE 0.0769, Validation MSE 0.1022
+Epoch 86 training time: 113.09322810173035
+Epoch 87: Train MSE 0.0768, Validation MSE 0.1026
+Epoch 87 training time: 60.166285037994385
+Epoch 88: Train MSE 0.0766, Validation MSE 0.1019
+Epoch 88 training time: 15.044733762741089
+Epoch 89: Train MSE 0.0765, Validation MSE 0.1019
+Epoch 89 training time: 13.948272943496704
+Epoch 90: Train MSE 0.0764, Validation MSE 0.1020
+Epoch 90 training time: 25.69050884246826
+Epoch 91: Train MSE 0.0763, Validation MSE 0.1017
+Epoch 91 training time: 55.15784811973572
+Epoch 92: Train MSE 0.0762, Validation MSE 0.1018
+Epoch 92 training time: 17.55262064933777
+Epoch 93: Train MSE 0.0761, Validation MSE 0.1015
+Epoch 93 training time: 67.90760374069214
+Epoch 94: Train MSE 0.0760, Validation MSE 0.1014
+Epoch 94 training time: 69.44657921791077
+Epoch 95: Train MSE 0.0758, Validation MSE 0.1013
+Epoch 95 training time: 55.3474862575531
+Epoch 96: Train MSE 0.0757, Validation MSE 0.1015
+Epoch 96 training time: 67.81476593017578
+Epoch 97: Train MSE 0.0756, Validation MSE 0.1011
+Epoch 97 training time: 60.57107138633728
+Epoch 98: Train MSE 0.0755, Validation MSE 0.1012
+Epoch 98 training time: 99.26057624816895
+Epoch 99: Train MSE 0.0754, Validation MSE 0.1006
+Epoch 99 training time: 91.46232342720032
+Epoch 100: Train MSE 0.0753, Validation MSE 0.1008
+Epoch 100 training time: 55.42813420295715
+Epoch 101: Train MSE 0.0753, Validation MSE 0.1007
+Epoch 101 training time: 99.92768049240112
+Epoch 102: Train MSE 0.0752, Validation MSE 0.1009
+Epoch 102 training time: 93.06565475463867
+Epoch 103: Train MSE 0.0751, Validation MSE 0.1008
+Epoch 103 training time: 77.46431875228882
+Epoch 104: Train MSE 0.0750, Validation MSE 0.1006
+Epoch 104 training time: 76.76814699172974
+Epoch 105: Train MSE 0.0749, Validation MSE 0.1004
+Epoch 105 training time: 25.834188222885132
+Epoch 106: Train MSE 0.0748, Validation MSE 0.1009
+Epoch 106 training time: 24.38302779197693
+Epoch 107: Train MSE 0.0747, Validation MSE 0.1006
+Epoch 107 training time: 61.726388692855835
+Epoch 108: Train MSE 0.0746, Validation MSE 0.1008
+Epoch 108 training time: 39.954078674316406
+Epoch 109: Train MSE 0.0745, Validation MSE 0.1007
+Epoch 109 training time: 40.73656105995178
+Epoch 110: Train MSE 0.0745, Validation MSE 0.1007
+Epoch 110 training time: 84.34785485267639
+Epoch 111: Train MSE 0.0744, Validation MSE 0.1001
+Epoch 111 training time: 41.8772988319397
+Epoch 112: Train MSE 0.0743, Validation MSE 0.1006
+Epoch 112 training time: 60.37087059020996
+Epoch 113: Train MSE 0.0742, Validation MSE 0.0999
+Epoch 113 training time: 38.97450876235962
+Epoch 114: Train MSE 0.0741, Validation MSE 0.1001
+Epoch 114 training time: 30.06708574295044
+Epoch 115: Train MSE 0.0741, Validation MSE 0.0997
+Epoch 115 training time: 52.44333815574646
+Epoch 116: Train MSE 0.0740, Validation MSE 0.0998
+Epoch 116 training time: 157.64212894439697
+Epoch 117: Train MSE 0.0739, Validation MSE 0.1000
+Epoch 117 training time: 38.097763538360596
+Epoch 118: Train MSE 0.0738, Validation MSE 0.0996
+Epoch 118 training time: 8.108474969863892
+Epoch 119: Train MSE 0.0738, Validation MSE 0.0993
+Epoch 119 training time: 5.282794952392578
+Epoch 120: Train MSE 0.0737, Validation MSE 0.0995
+Epoch 120 training time: 5.212770938873291
+Epoch 121: Train MSE 0.0736, Validation MSE 0.0996
+Epoch 121 training time: 4.997083425521851
+Epoch 122: Train MSE 0.0735, Validation MSE 0.0993
+Epoch 122 training time: 5.120099067687988
+Epoch 123: Train MSE 0.0735, Validation MSE 0.0994
+Epoch 123 training time: 46.617562770843506
+Epoch 124: Train MSE 0.0734, Validation MSE 0.0994
+Epoch 124 training time: 71.14859294891357
+Epoch 125: Train MSE 0.0733, Validation MSE 0.0990
+Epoch 125 training time: 94.03341865539551
+Epoch 126: Train MSE 0.0733, Validation MSE 0.0989
+Epoch 126 training time: 75.70824337005615
+Epoch 127: Train MSE 0.0732, Validation MSE 0.0990
+Epoch 127 training time: 108.89686131477356
+Epoch 128: Train MSE 0.0731, Validation MSE 0.0996
+Epoch 128 training time: 26.786592721939087
+Epoch 129: Train MSE 0.0731, Validation MSE 0.0993
+Epoch 129 training time: 7.997431039810181
+Epoch 130: Train MSE 0.0730, Validation MSE 0.0988
+Epoch 130 training time: 14.91934847831726
+Epoch 131: Train MSE 0.0729, Validation MSE 0.0991
+Epoch 131 training time: 28.497429132461548
+Epoch 132: Train MSE 0.0729, Validation MSE 0.0993
+Epoch 132 training time: 39.47062969207764
+Epoch 133: Train MSE 0.0728, Validation MSE 0.0988
+Epoch 133 training time: 45.5902636051178
+Epoch 134: Train MSE 0.0727, Validation MSE 0.0989
+Epoch 134 training time: 56.91943168640137
+Epoch 135: Train MSE 0.0727, Validation MSE 0.0995
+Epoch 135 training time: 68.63141059875488
+Epoch 136: Train MSE 0.0726, Validation MSE 0.0992
+Epoch 136 training time: 76.28793835639954
+Epoch 137: Train MSE 0.0726, Validation MSE 0.0982
+Epoch 137 training time: 88.99142408370972
+Epoch 138: Train MSE 0.0725, Validation MSE 0.0988
+Epoch 138 training time: 47.46139144897461
+Epoch 139: Train MSE 0.0724, Validation MSE 0.0986
+Epoch 139 training time: 35.715593338012695
+Epoch 140: Train MSE 0.0724, Validation MSE 0.0989
+Epoch 140 training time: 29.587342500686646
+Epoch 141: Train MSE 0.0723, Validation MSE 0.0983
+Epoch 141 training time: 80.1777491569519
+Epoch 142: Train MSE 0.0723, Validation MSE 0.0983
+Epoch 142 training time: 48.04999923706055
+Epoch 143: Train MSE 0.0722, Validation MSE 0.0981
+Epoch 143 training time: 37.932122468948364
+Epoch 144: Train MSE 0.0722, Validation MSE 0.0983
+Epoch 144 training time: 84.88645267486572
+Epoch 145: Train MSE 0.0721, Validation MSE 0.0982
+Epoch 145 training time: 36.091055393218994
+Epoch 146: Train MSE 0.0720, Validation MSE 0.0990
+Epoch 146 training time: 59.78325629234314
+Epoch 147: Train MSE 0.0720, Validation MSE 0.0985
+Epoch 147 training time: 78.96748447418213
+Epoch 148: Train MSE 0.0719, Validation MSE 0.0985
+Epoch 148 training time: 25.04491138458252
+Epoch 149: Train MSE 0.0719, Validation MSE 0.0984
+Epoch 149 training time: 38.869117975234985

@@ -61,14 +61,14 @@ class StackedModel(nn.Module):
         self.j4v = JointModel()
 
         # Load pretrained weights
-        self.j1p.load_state_dict(torch.load('../../lstm_BigData/trial9/jt1_pos/lstm_model_epoch143.pth'))
-        self.j2p.load_state_dict(torch.load('../../lstm_BigData/trial9/jt2_pos/lstm_model_epoch129.pth'))
-        self.j3p.load_state_dict(torch.load('../../lstm_BigData/trial9/jt3_pos/lstm_model_epoch140.pth'))
-        self.j4p.load_state_dict(torch.load('../../lstm_BigData/trial9/jt4_pos/lstm_model_epoch147.pth'))
-        self.j1v.load_state_dict(torch.load('../../lstm_BigData/trial9/jt1_vel/lstm_model_epoch135.pth'))
-        self.j2v.load_state_dict(torch.load('../../lstm_BigData/trial9/jt2_vel/lstm_model_epoch149.pth'))
-        self.j3v.load_state_dict(torch.load('../../lstm_BigData/trial9/jt3_vel/lstm_model_epoch148.pth'))
-        self.j4v.load_state_dict(torch.load('../../lstm_BigData/trial9/jt4_vel/lstm_model_epoch149.pth'))
+        self.j1p.load_state_dict(torch.load('../../lstm_BigData/trial10/jt1_pos/lstm_model_epoch149.pth'))
+        self.j2p.load_state_dict(torch.load('../../lstm_BigData/trial10/jt2_pos/lstm_model_epoch148.pth'))
+        self.j3p.load_state_dict(torch.load('../../lstm_BigData/trial10/jt3_pos/lstm_model_epoch147.pth'))
+        self.j4p.load_state_dict(torch.load('../../lstm_BigData/trial10/jt4_pos/lstm_model_epoch148.pth'))
+        self.j1v.load_state_dict(torch.load('../../lstm_BigData/trial10/jt1_vel/lstm_model_epoch143.pth'))
+        self.j2v.load_state_dict(torch.load('../../lstm_BigData/trial10/jt2_vel/lstm_model_epoch149.pth'))
+        self.j3v.load_state_dict(torch.load('../../lstm_BigData/trial10/jt3_vel/lstm_model_epoch144.pth'))
+        self.j4v.load_state_dict(torch.load('../../lstm_BigData/trial10/jt4_vel/lstm_model_epoch147.pth'))
 
     def forward(self, x):
         x1p = self.j1p(x)
@@ -90,4 +90,4 @@ class StackedModel(nn.Module):
 
 model = StackedModel()
 model_sctipted = torch.jit.script(model)
-model_sctipted.save('scripts/stacked_model.pt')
+model_sctipted.save('scripts/stacked_future_model.pt')

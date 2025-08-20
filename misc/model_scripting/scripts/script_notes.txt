@@ -7,3 +7,9 @@ lstm_trial5:
 
 lstm_trial6:
 - Inputs are Joint Positions and Velocities, StanceInterpolationFactor, Backpack Position and Velocity
+
+stacked_model:
+- Inputs are Joint Positions and Velocities
+
+stacked_future_modelL
+- Inputs are Joint Positions and Velocities
