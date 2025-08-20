@@ -38,7 +38,7 @@ class ModelNode:
             self.model_configs = yaml.safe_load(f)['models']
 
         # Load default model config
-        self.current_model = 'trial4'
+        self.current_model = 'stacked'
         self.model = None
         self.input_slice = None
         self.load_model(self.current_model)
@@ -51,9 +51,10 @@ class ModelNode:
         self.filtered_vels = [0.0, 0.0, 0.0, 0.0] # Initialize filtered velocities
         self.config = {
             'pred_diff_threshold': 1.0,
-            'model_path': '/home/cerebro/catkin_ws/src/CANOpenRobotController/python/lstm_models/lstm_trial4.pt'
+            'model_path': '/home/cerebro/catkin_ws/src/CANOpenRobotController/python/lstm_models/stacked_model.pt',
+            'future_distance': 1
         }
-        self.model_path = '/home/cerebro/catkin_ws/src/CANOpenRobotController/python/lstm_models/lstm_trial4.pt'
+        self.model_path = '/home/cerebro/catkin_ws/src/CANOpenRobotController/python/lstm_models/stacked_model.pt'
         self.skipped_pred_count = 0
 
         # Initialize dynamic reconfigure
@@ -73,11 +74,11 @@ class ModelNode:
 
     def run(self):
         while not rospy.is_shutdown():
-            if self.current_model != 'stacked':
+            cur_time = time.time()
+            if self.current_model != 'stacked' and self.current_model != 'stacked_future':
                 y_pred = self.predict()
                 if y_pred is not None and self.previous_pred[0] is not None:
                     # Numerically calculate joint velocities
-                    cur_time = time.time()
                     jt_vels = []
                     for i in range(4):
                         if self.previous_pred_time is not None:
@@ -131,6 +132,15 @@ class ModelNode:
                 # Model is stacked
                 y_pred = self.predict()
                 if y_pred is not None:
+                    if self.previous_pred[0] is not None:
+                        # Numerically calculate joint velocities
+                        jt_vels = []
+                        for i in range(4):
+                            if self.previous_pred_time is not None:
+                                dt = cur_time - self.previous_pred_time
+                                vel = (y_pred[i].item() - self.previous_pred[i]) / dt
+                                jt_vels.append(vel)
+
                     # Prepare message
                     msg = X2RobotState()
                     msg.header.stamp = rospy.Time.now()
@@ -141,8 +151,18 @@ class ModelNode:
                     msg.joint_state.effort = [0.0, 0.0, 0.0, 0.0, 0.0]
                     msg.link_lengths = [0.38, 0.38, 0.38, 0.38]
 
+                    # Update previous prediction
+                    self.previous_pred = y_pred[:4].tolist()
+                    self.previous_pred_time = cur_time
+
                     # Publish message
                     self.pub.publish(msg)
+
+                    # # Log Velocities
+                    # with open(f'/home/cerebro/snyder_project/SRALabProject/node_development/misc/pred_data/velocities_{self.init_time}.csv', 'a', newline='') as f:
+                    #         writer = csv.writer(f)
+                    #         writer.writerow([rospy.Time.now(), y_pred[4].item(), y_pred[5].item(), y_pred[6].item(), y_pred[7].item(),
+                    #                         jt_vels[0], jt_vels[1], jt_vels[2], jt_vels[3]])
             self.rate.sleep()
 
     def load_model(self, model_name):
@@ -185,8 +205,13 @@ class ModelNode:
 
         # Predict
         x = input_data.to(self.device)
-        with torch.no_grad():
-            y_pred = self.model(x)[:, -1, :].cpu().squeeze()
+        if self.current_model!= 'stacked_future':
+            with torch.no_grad():
+                y_pred = self.model(x)[:, -1, :].cpu().squeeze()
+        else:
+            with torch.no_grad():
+                index = -26 + self.config['future_distance'] # -26 because future window is 25. So when dyn reconfig is set to 25, will select final pred.
+                y_pred = self.model(x)[:, index, :].cpu().squeeze()
         end_time = time.time()
         # with open(f'/home/cerebro/snyder_project/SRALabProject/node_development/misc/pred_data/inferenceTimes_{self.init_time}.csv', 'a', newline='') as f:
         #     writer = csv.writer(f)
@@ -194,12 +219,13 @@ class ModelNode:
         return y_pred
 
     def reconfigure_callback(self, config, level):
-        rospy.loginfo("""Reconfigure Request: {pred_diff_threshold}, {model_type}""".format(**config))
+        rospy.loginfo("""Reconfigure Request: threshold {pred_diff_threshold}, model {model_type}, future dist {future_distance}""".format(**config))
         model_mapping = {
             0: "trial4",
             1: "trial5",
             2: "trial6",
-            3: "stacked"
+            3: "stacked",
+            4: "stacked_future"
         }
         try: 
             if config['model_type'] in model_mapping:
@@ -212,6 +238,7 @@ class ModelNode:
                         rospy.logerr(f"Failed to load model {model_name}, reverting to {self.current_model}")
                 self.config['pred_diff_threshold'] = config['pred_diff_threshold']
                 self.input_slice = self.model_configs[model_name]['input_slice']
+                self.config['future_distance'] = config.get('future_distance', 1)
                 # self.buffer.clear()
             return config
         except Exception as e:
