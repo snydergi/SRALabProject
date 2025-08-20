@@ -26,10 +26,10 @@ def create_dataset(dataset, lookback, step=1):
         lookback: Size of window for prediction
     """
     X, y = [], []
-    for i in range(0, len(dataset)-lookback, step):
+    for i in range(0, len(dataset)-lookback-25, step):
         feature = dataset[i:i+lookback, :8]  # Feature is patient data, if input size 8
         # feature = dataset[i:i+lookback, :4]  # Feature is patient data, # if input size 4
-        target = dataset[i+1:i+lookback+1, predicted_target]  # Target is therapist data
+        target = dataset[i+25:i+lookback+25, predicted_target]  # Target is therapist data
         target = target.reshape(-1, 1)
         X.append(feature)
         y.append(target)
@@ -40,8 +40,8 @@ def create_dataset(dataset, lookback, step=1):
 lookback, step = 50, 5
 patient_number = 1 # Set based on which patient data is being tested
 test = test_1 if patient_number == 1 else test_2 if patient_number == 2 else test_3
-predicted_target = -2 # Index based on data order above
-pIndex = 4 # Index of patient joint to plot against therapist joint (0-3 for patient joints 1-4)
+predicted_target = -8 # Index based on data order above
+pIndex = 2 # Index of patient joint to plot against therapist joint (0-3 for patient joints 1-4)
 X_test, y_test = create_dataset(test, lookback=lookback)
 
 # Model definition
@@ -56,7 +56,7 @@ class JointModel(nn.Module):
 
 # Load model
 model = JointModel()
-model.load_state_dict(torch.load('jt3_vel/lstm_model_epoch148.pth'))
+model.load_state_dict(torch.load('jt1_pos/lstm_model_epoch149.pth'))
 # model = torch.jit.load('/home/cerebro/snyder_project/SRALabProject/misc/model_scripting/scripts/lstm_trial5.pt')
 model.eval()
 
@@ -92,7 +92,7 @@ with torch.no_grad():
 
     # Fill predictions (aligned with true values)
     therapist_pred = np.full_like(therapist_true, np.nan)
-    therapist_pred[lookback:] = test_pred
+    therapist_pred[lookback:lookback + len(test_pred)] = test_pred
 
 # # Get mean and std dev of normalized data and pred
 # stacked_data0 = np.vstack(normalized_periodic_data0)
@@ -117,9 +117,9 @@ plt.hist(errors, bins=50, alpha=0.7, color='blue')
 plt.xlabel('Error (Radians/second)')
 plt.ylabel('# of Occurrences')
 # plt.title(f'Therapist Joint 2 Position Errors, RMSE: {test_rmse:.4f}, Max (abs): {abs(errors).max():.4f}, Std Dev (abs): {abs(errors).std():.4f}, Mean (abs): {abs(errors).mean():.4f}')
-plt.title(f'Therapist Joint 3 Velocity Errors, RMSE: {test_rmse:.4f}, Max (abs): {abs(errors).max():.4f}, Std Dev (abs): {abs(errors).std():.4f}, Mean (abs): {abs(errors).mean():.4f}')
+plt.title(f'Therapist Joint 1 Velocity Errors, RMSE: {test_rmse:.4f}, Max (abs): {abs(errors).max():.4f}, Std Dev (abs): {abs(errors).std():.4f}, Mean (abs): {abs(errors).mean():.4f}')
 plt.grid(True)
-plt.savefig('/home/gis/Documents/SRALabProject/lstm_BigData/plots/trial9/jt3_vel_error_histogram.svg', format='svg', dpi=300, bbox_inches='tight', transparent=True)
+# plt.savefig('/home/gis/Documents/SRALabProject/lstm_BigData/plots/trial9/jt3_vel_error_histogram.svg', format='svg', dpi=300, bbox_inches='tight', transparent=True)
 plt.show()
 
 # use to determining amplitude for periodic plots
@@ -137,17 +137,17 @@ plt.show()
 # Limit to 7500 time steps (~30 seconds) EXCEPT when determining amplitude for periodic plots
 fig = plt.figure(figsize=(12, 6))
 # plt.title(f"Therapist Joint 2 Position Predictions with Patient Joint 4")
-plt.title(f"Therapist Joint 3 Velocity Predictions with Patient Joint 1")
+plt.title(f"Therapist Joint 1 Velocity Predictions with Patient Joint 3")
 plt.plot(test[:, pIndex], c='g', label=f'Patient Data') # Set to corresponding patient data index
 plt.plot(therapist_true, c='b', label=f'True Therapist Data')
 plt.plot(therapist_pred, c='r', linestyle='--', label=f'Predicted Therapist Data')
 # plt.scatter(np.arange(len(therapist_pred)), therapist_pred[:, i], c='r', marker='x', label=f'Predicted Therapist Data', alpha=0.5)
 plt.xlim(0, 7500)
-plt.xlabel('Time Steps (~4ms)')
+plt.xlabel('Time Steps (~3ms)')
 # plt.ylabel('Joint Positions (Radians)')
 plt.ylabel('Joint Velocities (Radians/second)')
 plt.legend()
-plt.savefig('/home/gis/Documents/SRALabProject/lstm_BigData/plots/trial9/jt3_vel_predictions.svg', format='svg', dpi=300, bbox_inches='tight', transparent=True)
+# plt.savefig('/home/gis/Documents/SRALabProject/lstm_BigData/plots/trial9/jt3_vel_predictions.svg', format='svg', dpi=300, bbox_inches='tight', transparent=True)
 plt.show()
 
 # # Plot error over time
