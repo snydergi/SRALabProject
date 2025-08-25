@@ -8,3 +8,4 @@ venv/*
 *.ods#
 build/
 devel/
+*.mp4
