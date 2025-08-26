@@ -55,11 +55,20 @@ X_valid, y_valid = create_dataset(valid, lookback=lookback)
 
 # Model definition
 class JointModel(nn.Module):
+    """A neural network model combining LSTM and linear layers for sequence prediction.
+    
+    This model processes sequential input data using an LSTM layer followed by a linear
+    transformation layer to produce predictions for each timestep.
+    
+    Architecture:
+        - LSTM layer: 1 layer, 50 hidden units, processes sequences with 4 input features
+        - Linear layer: Maps from 50-dimensional LSTM output to 1-dimensional prediction
+    """
     def __init__(self):
+        """Initialize JointModel."""
         super().__init__()
         self.lstm = nn.LSTM(input_size=4, hidden_size=50, num_layers=1, batch_first=True)
         self.linear = nn.Linear(50, 1)
-        # self.linear = NoisyLinear(50, 1)
     def forward(self, x):
         x, _ = self.lstm(x)
         return self.linear(x)

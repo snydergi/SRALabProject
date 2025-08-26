@@ -90,15 +90,22 @@ print(X_train.shape, y_train.shape)
 print(X_test.shape, y_test.shape)
 
 class JointModel(nn.Module):
+    """A neural network model combining LSTM and noisy linear layers for sequence prediction.
+    
+    This model processes sequential input data using an LSTM layer followed by a noisy linear
+    transformation layer to produce predictions for each timestep.
+    
+    Architecture:
+        - LSTM layer: 1 layer, 50 hidden units, processes sequences with 4 input features
+        - Noisy Linear layer: Maps from 50-dimensional LSTM output to 1-dimensional prediction
+    """
     def __init__(self):
+        """Initialize JointModel."""
         super().__init__()
         self.lstm = nn.LSTM(input_size=4, hidden_size=50, num_layers=1, batch_first=True)
-        # self.linear = nn.Linear(50, 1)
         self.linear = NoisyLinear(50, 1)
     def forward(self, x):
         x, _ = self.lstm(x)
-        # extract only the last time step
-        # x = x[:, -1, :]
         x = self.linear(x)
         return x
     

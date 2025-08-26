@@ -360,7 +360,17 @@ print(X_train.shape, y_train.shape)
 print(X_valid.shape, y_valid.shape)
 
 class JointModel(nn.Module):
+    """A neural network model combining LSTM and linear layers for sequence prediction.
+    
+    This model processes sequential input data using an LSTM layer followed by a linear
+    transformation layer to produce predictions for each timestep.
+    
+    Architecture:
+        - LSTM layer: 1 layer, 50 hidden units, processes sequences with 8 input features
+        - Linear layer: Maps from 50-dimensional LSTM output to 4-dimensional prediction
+    """
     def __init__(self):
+        """Initialize JointModel."""
         super().__init__()
         self.lstm = nn.LSTM(input_size=8, hidden_size=50, num_layers=1, batch_first=True)
         self.linear = nn.Linear(50, 4)
