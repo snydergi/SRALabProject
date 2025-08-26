@@ -18,11 +18,16 @@ test_size = len(timeseries) - train_size
 train, test = timeseries[:train_size], timeseries[train_size:]
 
 def create_dataset(dataset, lookback):
-    """Transform time series data into a prediction dataset
+    """Transform time series data into a prediction dataset.
     
     Args:
-        dataset: An array of time series data
-        lookback: Size of window for prediction
+        dataset (np.ndarray): An array of time series data. Shape [timesteps, features]
+        lookback (int): Size of window for prediction
+
+    Returns:
+        tuple:
+            - X (torch.Tensor): Feature tensor, shape [samples, lookback]
+            - y (torch.Tensor): Target tensor, shape [samples, lookback]
     """
     X, y = [], []
     for i in range(len(dataset)-lookback):

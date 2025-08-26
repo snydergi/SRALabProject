@@ -19,17 +19,26 @@ test_2 = pd.read_csv('../data/test_set_2.csv', skiprows=0).values
 test_3 = pd.read_csv('../data/test_set_3.csv', skiprows=0).values
 
 def create_dataset(dataset, lookback, step=1):
-    """Transform time series data into a prediction dataset
+    """Transform time series data into a prediction dataset.
     
     Args:
-        dataset: An array of time series data
-        lookback: Size of window for prediction
-        step: Value for range to step (used to reduce data size and make adjacent data more varied)
+        dataset (np.ndarray): An array of time series data. Shape [timesteps, features]
+        lookback (int): Size of window for prediction
+        step (int, optional): Step between consecutive windows. Defaults to 1.
+
+    Returns:
+        tuple:
+            - X (torch.Tensor): Feature tensor, shape [samples, lookback, 8]
+            - y (torch.Tensor): Target tensor, shape [samples, lookback, 1]
+
+    Notes:
+        - Change second feature index to select feature joint/joints
+        - Change second target index to select target joint/joints
+        - This version has a 25 step offset between windows to increase future prediction time.
     """
     X, y = [], []
     for i in range(0, len(dataset)-lookback, step):
         feature = dataset[i:i+lookback, :8]  # Feature is patient data, if input size 8
-        # feature = dataset[i:i+lookback, :4]  # Feature is patient data, # if input size 4
         target = dataset[i+1:i+lookback+1, predicted_target]  # Target is therapist data
         target = target.reshape(-1, 1)
         X.append(feature)

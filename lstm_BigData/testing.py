@@ -226,16 +226,24 @@ test_3 = np.column_stack((patient3_data, therapist3_data))
 
 
 def create_dataset(dataset, lookback):
-    """Transform time series data into a prediction dataset
+    """Transform time series data into a prediction dataset.
     
     Args:
-        dataset: An array of time series data
-        lookback: Size of window for prediction
+        dataset (np.ndarray): An array of time series data. Shape [timesteps, features]
+        lookback (int): Size of window for prediction
+
+    Returns:
+        tuple:
+            - X (torch.Tensor): Feature tensor, shape [samples, lookback, 8]
+            - y (torch.Tensor): Target tensor, shape [samples, lookback, 4]
+
+    Notes:
+        - Change second feature index to select feature joint/joints
+        - Change second target index to select target joint/joints
     """
     X, y = [], []
     for i in range(len(dataset)-lookback):
         feature = dataset[i:i+lookback, :8]  # Feature is patient data, if input size 8
-        # feature = dataset[i:i+lookback, :4]  # Feature is patient data, # if input size 4
         target = dataset[i+1:i+lookback+1, -4:]  # Target is therapist data
         X.append(feature)
         y.append(target)

@@ -32,12 +32,22 @@ print(f"Validation data shape: {timeseries_valid.shape}")
 train, valid = timeseries, timeseries_valid
 
 def create_dataset(dataset, lookback, step=1):
-    """Transform time series data into a prediction dataset
+    """Transform time series data into a prediction dataset.
     
     Args:
-        dataset: An array of time series data
-        lookback: Size of window for prediction
-        step: Value for range to step (used to reduce data size and make adjacent data more varied)
+        dataset (np.ndarray): An array of time series data. Shape [timesteps, features]
+        lookback (int): Size of window for prediction
+        step (int, optional): Step between consecutive windows. Defaults to 1.
+
+    Returns:
+        tuple:
+            - X (torch.Tensor): Feature tensor, shape [samples, lookback, 8]
+            - y (torch.Tensor): Target tensor, shape [samples, lookback, 1]
+
+    Notes:
+        - Change second feature index to select feature joint/joints
+        - Change second target index to select target joint/joints
+        - This version has a 25 step offset between windows to increase future prediction time.
     """
     X, y = [], []
     for i in range(0, len(dataset)-lookback, step):

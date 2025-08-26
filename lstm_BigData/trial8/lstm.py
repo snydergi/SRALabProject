@@ -328,11 +328,20 @@ valid_size = int(len(timeseries_valid))
 train, valid = timeseries[:train_size], timeseries_valid[:valid_size]
 
 def create_dataset(dataset, lookback):
-    """Transform time series data into a prediction dataset
+    """Transform time series data into a prediction dataset.
     
     Args:
-        dataset: An array of time series data
-        lookback: Size of window for prediction
+        dataset (np.ndarray): An array of time series data. Shape [timesteps, features]
+        lookback (int): Size of window for prediction
+
+    Returns:
+        tuple:
+            - X (torch.Tensor): Feature tensor, shape [samples, lookback, 8]
+            - y (torch.Tensor): Target tensor, shape [samples, lookback, 1]
+
+    Notes:
+        - Change second feature index to select feature joint/joints
+        - Change second target index to select target joint/joints
     """
     X, y = [], []
     for i in range(len(dataset)-lookback):

@@ -18,12 +18,21 @@ test_2 = pd.read_csv('../../lstm_BigData/data/test_set_2.csv', skiprows=0).value
 test_3 = pd.read_csv('../../lstm_BigData/data/test_set_3.csv', skiprows=0).values
 
 def create_dataset(dataset, lookback, step=1):
-    """Transform time series data into a prediction dataset
+    """Transform time series data into a prediction dataset.
     
     Args:
-        dataset: An array of time series data
-        lookback: Size of window for prediction
-        step: Value for range to step (used to reduce data size and make adjacent data more varied)
+        dataset (np.ndarray): An array of time series data. Shape [timesteps, features]
+        lookback (int): Size of window for prediction
+        step (int, optional): Step between consecutive windows. Defaults to 1.
+
+    Returns:
+        tuple:
+            - X (torch.Tensor): Feature tensor, shape [samples, lookback, 8]
+            - y (torch.Tensor): Target tensor, shape [samples, lookback, 8]
+
+    Notes:
+        - Change second feature index to select feature joint/joints
+        - Change second target index to select target joint/joints
     """
     X, y = [], []
     for i in range(0, len(dataset)-lookback, step):
