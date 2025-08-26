@@ -23,9 +23,14 @@ timeseries = np.column_stack((patient_data, therapist_data))
 valid_size = int(len(timeseries) * 0.5)
 valid = timeseries[(len(timeseries) - valid_size):len(timeseries)]
 
-# Create dataset function (optimized)
+# Create dataset function
 def create_dataset(dataset, lookback):
-    """Transform a time series into a prediction dataset"""
+    """Transform time series data into a prediction dataset
+    
+    Args:
+        dataset: An array of time series data
+        lookback: Size of window for prediction
+    """
     X = np.array([dataset[i:i+lookback, 0] for i in range(len(dataset)-lookback)])
     y = np.array([dataset[i+1:i+lookback+1, 1] for i in range(len(dataset)-lookback)])
     return (torch.tensor(X).unsqueeze(-1), 

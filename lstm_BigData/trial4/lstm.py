@@ -127,10 +127,10 @@ valid_size = int(len(timeseries_valid * 0.5))
 train, valid = timeseries[:train_size], timeseries_valid[:valid_size]
 
 def create_dataset(dataset, lookback):
-    """Transform a time series into a prediction dataset
+    """Transform time series data into a prediction dataset
     
     Args:
-        dataset: A numpy array of time series, first dimension is the time steps
+        dataset: An array of time series data
         lookback: Size of window for prediction
     """
     X, y = [], []

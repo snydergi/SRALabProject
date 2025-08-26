@@ -32,11 +32,12 @@ print(f"Validation data shape: {timeseries_valid.shape}")
 train, valid = timeseries, timeseries_valid
 
 def create_dataset(dataset, lookback, step=1):
-    """Transform a time series into a prediction dataset
+    """Transform time series data into a prediction dataset
     
     Args:
-        dataset: A numpy array of time series data
+        dataset: An array of time series data
         lookback: Size of window for prediction
+        step: Value for range to step (used to reduce data size and make adjacent data more varied)
     """
     X, y = [], []
     for i in range(0, len(dataset)-lookback, step):
