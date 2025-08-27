@@ -1,0 +1,17 @@
+Copy of episode information originally provided by Abhishek Sankar.
+
+The data contains joint state information for the two exoskeletons, marked A and B,
+across three 10-minute sessions of over-ground walking. The three-session splits are
+noted by their corresponding row numbers (excluding the header) in the CSV file as
+follows:
+{
+episode_stats:
+start:
+- 164041
+- 454139
+- 696306
+end:
+- 367374
+- 654139
+- 894640
+}

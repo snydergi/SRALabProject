@@ -1,0 +1,29 @@
+When using these values, note that the corresponding csv row to index is equal to (index+2) due to python's 0 indexing and the column title row.
+
+Patient: 
+Episode 1: Patient releases button first.
+    Start Index: 85600, Time: 842.0349731445312
+    End Index: 285865, Time: 1442.8280029296875
+Episode 2: Patient releases button first.
+    Start Index: 307524, Time: 2486.60400390625
+    End Index: 435809, Time: 2871.4609375
+Episode 3: Patient releases button first.
+    Start Index: 481089, Time: 3603.998046875
+    End Index: 593064, Time: 3939.988037109375
+Episode 4: Patient presses button second. Need to trim >1min for synched steps. Patient releases button first.
+    Start Index: 595437 -> plus 1min (15384 steps) -> 610821, Time: 4569.09716796875
+    End Index: 688028, Time: 4800.7177734375
+
+Therapist:
+Episode 1: Therpist presses button second. Need to trim >1min for synched steps.
+    Start Index: 12617 -> plus 1min (15384 steps) -> 28001, Time: 842.0349731445312
+    End Index: 228266, Time: 1442.8280029296875 
+Episode 2: Therpist presses button second. Need to trim >30sec for synched steps.
+    Start Index: 242233 -> plus 30s (7692 steps) -> 249925, Time: 2486.60595703125
+    End Index: 378210, Time: 2871.4609375 
+Episode 3: Therpist presses button second. Need to trim >30sec for synched steps.
+    Start Index: 415797 -> plus 30s (7692 steps) -> 423489, Time: 3603.998046875
+    End Index: 535480, Time: 3939.986083984375 
+Episode 4:
+    Start Index: 553220, Time: 4569.09716796875
+    End Index: 630426, Time: 4800.7158203125
