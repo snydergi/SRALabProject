@@ -8,6 +8,9 @@ from sensor_msgs.msg import JointState
 from std_msgs.msg import Float64MultiArray
 from CORC.msg import X2StanceInterpolation, X2RobotState
 import time
+import sys
+script_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, script_dir)
 from RingBuffer import RingBuffer
 import torch
 import torch.nn as nn
@@ -33,7 +36,7 @@ class ModelNode:
         rospy.loginfo(f"Using device: {self.device}")
 
         # Load model configurations
-        config_path = os.path.join(os.path.dirname(__file__), 'lstm_models/model_configs.yaml')
+        config_path = os.path.join(os.path.dirname(__file__), '../cfg/model_configs.yaml')
         with open(config_path) as f:
             self.model_configs = yaml.safe_load(f)['models']
 
@@ -54,7 +57,7 @@ class ModelNode:
             'model_path': '../models/stacked_model.pt',
             'future_distance': 1
         }
-        self.model_path = '../models/stacked_model.pt'
+        self.model_path = os.path.join(os.path.dirname(__file__), '../models/stacked_model.pt')
         self.skipped_pred_count = 0
 
         # Initialize dynamic reconfigure
@@ -171,7 +174,7 @@ class ModelNode:
             return False
         config = self.model_configs[model_name]
         try:
-            model_path = os.path.join(os.path.dirname(__file__), config['path'])
+            model_path = os.path.join(os.path.dirname(__file__), '../' + config['path'])
             self.model = torch.jit.load(model_path).to(self.device)
             self.model.eval()
 

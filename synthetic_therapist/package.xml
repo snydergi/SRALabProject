@@ -22,6 +22,7 @@
   <build_export_depend>rospy</build_export_depend>
   <build_export_depend>std_msgs</build_export_depend>
   <build_export_depend>sensor_msgs</build_export_depend>
+  <build_export_depend>message_filters</build_export_depend>
   
   <exec_depend>message_runtime</exec_depend>
   <exec_depend>dynamic_reconfigure</exec_depend>
@@ -31,4 +32,5 @@
   <exec_depend>sensor_msgs</exec_depend>
   <exec_depend>python3-torch</exec_depend>
   <exec_depend>python3-numpy</exec_depend>
+  <exec_depend>message_filters</exec_depend>
 </package>

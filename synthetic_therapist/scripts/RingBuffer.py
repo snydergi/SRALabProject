@@ -1,3 +1,4 @@
+# From CORC
 # This class allows to store position data, with the right window size
 class RingBuffer:
     """ class that implements a not-yet-full buffer """

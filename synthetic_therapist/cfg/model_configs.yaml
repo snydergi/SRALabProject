@@ -1,0 +1,25 @@
+models:
+  trial4:
+    path: "models/lstm_trial4.pt"
+    input_slice: [0,1,2,3,4,5,6,7]
+    description: "Only joint angles and velocities"
+  
+  trial5:
+    path: "models/lstm_trial5.pt"
+    input_slice: [0,1,2,3,4,5,6,7,8,9,10]
+    description: "Joint angles, velocities, SIF, backpack angle and velocity"
+  
+  trial6:
+    path: "models/lstm_trial6.pt"
+    input_slice: [0,1,2,3,4,5,6,7,8,9,10]
+    description: "Joint angles, velocities, SIF, backpack angle and velocity"
+
+  stacked:
+    path: "models/stacked_model.pt"
+    input_slice: [0,1,2,3,4,5,6,7]
+    description: "Stacked joint angles and velocities"
+
+  stacked_future:
+    path: "models/stacked_future_model.pt"
+    input_slice: [0,1,2,3,4,5,6,7]
+    description: "Stacked joint angles and velocities with further future prediction"
