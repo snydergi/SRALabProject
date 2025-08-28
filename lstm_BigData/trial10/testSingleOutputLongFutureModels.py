@@ -76,7 +76,7 @@ class JointModel(nn.Module):
 
 # Load model
 model = JointModel()
-model.load_state_dict(torch.load('jt1_pos/lstm_model_epoch149.pth'))
+model.load_state_dict(torch.load('jt1_pos/lstm_model_epoch149.pth', map_location=torch.device('cpu')))
 # model = torch.jit.load('/home/cerebro/snyder_project/SRALabProject/misc/model_scripting/scripts/lstm_trial5.pt')
 model.eval()
 
@@ -152,69 +152,87 @@ print(f'Stacked Pred0 Size: {stacked_pred0.shape}')
 mean_err0 = np.mean(abs(stacked_data0 - stacked_pred0), axis=0)
 std_err0 = np.std(abs(stacked_data0 - stacked_pred0), axis=0)
 
-# Create streaming animation of mean data with multiple iterations
-fig3, ax3 = plt.subplots(figsize=(12, 6))
-ax3.set_xlim(0, 500)  # 5 periods * 100 points each = 500
-ax3.set_ylim(min(np.min(mean_data0), np.min(mean_pred0)) - 0.1, 
-             max(np.max(mean_data0), np.max(mean_pred0)) + 0.1)
-ax3.set_xlabel('Gait Phase % (Multiple Periods)')
-ax3.set_ylabel('Joint Position (Radians)')
-ax3.set_title('Streaming Mean Data - Multiple Periods')
-ax3.grid(True)
+# Create two synchronized animations: patient data and predictions
+fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 12))
+plt.subplots_adjust(hspace=0.4)
 
-# Initialize empty lines
-line_mean_data_stream, = ax3.plot([], [], 'b-', linewidth=2, label='Mean True Data')
-line_mean_pred_stream, = ax3.plot([], [], 'r-', linewidth=2, label='Mean Predicted Data')
-ax3.legend(loc='upper right')
+# Configuration parameters - ADJUST THESE AS NEEDED
+TIME_WINDOW_SECONDS = 15  # Total time to show in animation (seconds)
+SAMPLING_RATE_HZ = 333    # Data sampling rate (Hz) - adjust based on your data
+ANIMATION_INTERVAL = 3   # Milliseconds between frames
 
-# Number of periods to show
-num_periods = 5
-total_points = normalized_length * num_periods
+# Calculate data points based on time
+total_data_points = int(TIME_WINDOW_SECONDS * SAMPLING_RATE_HZ)
+print(f"Showing {TIME_WINDOW_SECONDS} seconds of data ({total_data_points} points)")
 
-# Create extended data for multiple periods
-extended_mean_data0 = np.tile(mean_data0, num_periods)
-extended_mean_pred0 = np.tile(mean_pred0, num_periods)
+# Set up the patient data plot (top)
+ax1.set_xlim(0, total_data_points)  # Change to time steps
+ax1.set_ylim(np.min(test[:, pIndex]) - 0.1, np.max(test[:, pIndex]) + 0.1)
+ax1.set_ylabel('Joint Position (Radians)', fontsize=20)
+ax1.set_title('Patient Joint Data', fontsize=20)
+ax1.tick_params(axis='both', labelsize=16)
+ax1.set_xlabel('Time Steps (~3ms)', fontsize=20)
+ax1.grid(True)
 
-# Create x-axis for multiple periods
-x_extended = np.linspace(0, 100 * num_periods, total_points)
+# Set up the prediction plot (bottom)
+ax2.set_xlim(0, total_data_points)  # Change to time steps
+ax2.set_ylim(np.min(therapist_true) - 0.1, np.max(therapist_true) + 0.1)
+ax2.set_ylabel('Joint Position (Radians)', fontsize=20)
+ax2.set_title('Prediction', fontsize=20)
+ax2.tick_params(axis='both', labelsize=16)
+ax2.set_xlabel('Time Steps (~3ms)', fontsize=20)
+ax2.grid(True)
 
-# Animation update function for streaming effect with multiple periods
-def update_streaming_multiple(frame):
-    """Update function for streaming animation of mean data with multiple periods.
+# Initialize empty lines for patient data
+line_patient, = ax1.plot([], [], 'g-', linewidth=2, label=f'Patient Joint {pIndex+1}')
+
+# Initialize empty lines for predictions
+line_pred, = ax2.plot([], [], 'r-', linewidth=2, label='Predicted Therapist Data')
+
+# Prepare the raw data for streaming (no normalization)
+# Use the first total_data_points of each dataset
+patient_data_raw = test[:total_data_points, pIndex]
+
+# For predictions, we need to handle NaN values at the beginning
+pred_data_raw = therapist_pred[:total_data_points, 0]
+
+# Create time step array (not seconds)
+time_steps = np.arange(total_data_points)  # This will be 0, 1, 2, 3, ... total_data_points-1
+
+# Animation update function for both plots
+def update_synchronized(frame):
+    """Update function for synchronized animation of patient data and predictions.
     
     Args:
-        frame (int): Current frame number in the animation.
+        frame (int): Current frame index.
     Returns:
-        tuple: Updated line objects for mean data and predictions.
+        tuple: Updated line objects for patient data and predictions.
     """
     # Calculate how many points to show (growing from left to right)
-    points_to_show = min(frame + 1, total_points)
+    points_to_show = min(frame + 1, total_data_points)
     
     if points_to_show > 0:
-        x_data = x_extended[:points_to_show]
-        y_data_true = extended_mean_data0[:points_to_show]
-        y_data_pred = extended_mean_pred0[:points_to_show]
+        current_time_steps = time_steps[:points_to_show]
         
-        # Update the streaming lines
-        line_mean_data_stream.set_data(x_data, y_data_true)
-        line_mean_pred_stream.set_data(x_data, y_data_pred)
+        # Update patient data plot
+        patient_data = patient_data_raw[:points_to_show]
+        line_patient.set_data(current_time_steps, patient_data)
+        
+        # Update prediction plot
+        pred_data = pred_data_raw[:points_to_show]
+        line_pred.set_data(current_time_steps, pred_data)
     
-    # Update title to show progress
-    current_period = (points_to_show - 1) // normalized_length + 1
-    ax3.set_title(f'Streaming Mean Data - Period {current_period}/{num_periods}')
-    
-    return line_mean_data_stream, line_mean_pred_stream
+    return line_patient, line_pred
 
-# Create streaming animation
-ani_stream = animation.FuncAnimation(
-    fig3, 
-    update_streaming_multiple, 
-    frames=total_points + 20,  # Show all points + some extra frames
-    interval=30,  # Slightly faster for smoother animation
+# Create synchronized animation
+ani_sync = animation.FuncAnimation(
+    fig, 
+    update_synchronized, 
+    frames=total_data_points,
+    interval=ANIMATION_INTERVAL,
     blit=True,
     repeat=True
 )
-
 plt.show()
 
 # ALL PLOTTING HAPPENS BELOW HERE. READ INSTRUCTIONS FOR CREATING BEST PLOTS
