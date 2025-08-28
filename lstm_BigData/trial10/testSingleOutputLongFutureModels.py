@@ -5,7 +5,7 @@ import torch
 import torch.nn as nn
 from scipy.signal import find_peaks
 from scipy.interpolate import interp1d
-from torchrl.modules import NoisyLinear
+import matplotlib.animation as animation
 
 # Set plotting parameters
 plt.rcParams['svg.fonttype'] = 'none'
@@ -152,6 +152,71 @@ print(f'Stacked Pred0 Size: {stacked_pred0.shape}')
 mean_err0 = np.mean(abs(stacked_data0 - stacked_pred0), axis=0)
 std_err0 = np.std(abs(stacked_data0 - stacked_pred0), axis=0)
 
+# Create streaming animation of mean data with multiple iterations
+fig3, ax3 = plt.subplots(figsize=(12, 6))
+ax3.set_xlim(0, 500)  # 5 periods * 100 points each = 500
+ax3.set_ylim(min(np.min(mean_data0), np.min(mean_pred0)) - 0.1, 
+             max(np.max(mean_data0), np.max(mean_pred0)) + 0.1)
+ax3.set_xlabel('Gait Phase % (Multiple Periods)')
+ax3.set_ylabel('Joint Position (Radians)')
+ax3.set_title('Streaming Mean Data - Multiple Periods')
+ax3.grid(True)
+
+# Initialize empty lines
+line_mean_data_stream, = ax3.plot([], [], 'b-', linewidth=2, label='Mean True Data')
+line_mean_pred_stream, = ax3.plot([], [], 'r-', linewidth=2, label='Mean Predicted Data')
+ax3.legend(loc='upper right')
+
+# Number of periods to show
+num_periods = 5
+total_points = normalized_length * num_periods
+
+# Create extended data for multiple periods
+extended_mean_data0 = np.tile(mean_data0, num_periods)
+extended_mean_pred0 = np.tile(mean_pred0, num_periods)
+
+# Create x-axis for multiple periods
+x_extended = np.linspace(0, 100 * num_periods, total_points)
+
+# Animation update function for streaming effect with multiple periods
+def update_streaming_multiple(frame):
+    """Update function for streaming animation of mean data with multiple periods.
+    
+    Args:
+        frame (int): Current frame number in the animation.
+    Returns:
+        tuple: Updated line objects for mean data and predictions.
+    """
+    # Calculate how many points to show (growing from left to right)
+    points_to_show = min(frame + 1, total_points)
+    
+    if points_to_show > 0:
+        x_data = x_extended[:points_to_show]
+        y_data_true = extended_mean_data0[:points_to_show]
+        y_data_pred = extended_mean_pred0[:points_to_show]
+        
+        # Update the streaming lines
+        line_mean_data_stream.set_data(x_data, y_data_true)
+        line_mean_pred_stream.set_data(x_data, y_data_pred)
+    
+    # Update title to show progress
+    current_period = (points_to_show - 1) // normalized_length + 1
+    ax3.set_title(f'Streaming Mean Data - Period {current_period}/{num_periods}')
+    
+    return line_mean_data_stream, line_mean_pred_stream
+
+# Create streaming animation
+ani_stream = animation.FuncAnimation(
+    fig3, 
+    update_streaming_multiple, 
+    frames=total_points + 20,  # Show all points + some extra frames
+    interval=30,  # Slightly faster for smoother animation
+    blit=True,
+    repeat=True
+)
+
+plt.show()
+
 # ALL PLOTTING HAPPENS BELOW HERE. READ INSTRUCTIONS FOR CREATING BEST PLOTS
 # Plot histogram of errors
 # fig = plt.figure(figsize=(12, 6), )
@@ -241,4 +306,4 @@ plt.legend()
 # plt.xlabel('Gait Phase %')
 # plt.legend()
 
-plt.show()
+# plt.show()
