@@ -114,33 +114,56 @@ with torch.no_grad():
     therapist_pred = np.full_like(therapist_true, np.nan)
     therapist_pred[lookback:lookback + len(test_pred)] = test_pred
 
-# # Get mean and std dev of normalized data and pred
-# stacked_data0 = np.vstack(normalized_periodic_data0)
-# stacked_pred0 = np.vstack(normalized_periodic_pred0)
-# mean_data0 = np.mean(stacked_data0, axis=0)
-# mean_pred0 = np.mean(stacked_pred0, axis=0)
-# std_data0 = np.std(stacked_data0, axis=0)
-# std_pred0 = np.std(stacked_pred0, axis=0)
-# print(f'Stacked Data0 Size: {stacked_data0.shape}')
-# print(f'Stacked Pred0 Size: {stacked_pred0.shape}')
+# Find peaks in the data and divide into periodic segments
+data_peaks0, _ = find_peaks(therapist_true[:,0], height=0.4, distance=1000)
+periodic_data0 = [therapist_true[data_peaks0[i]:data_peaks0[i+1],0] for i in range(len(data_peaks0)-1)]
+pred_peaks0, _ = find_peaks(therapist_pred[:,0], height=0.4, distance=1000)
+periodic_pred0 = [therapist_pred[pred_peaks0[i]:pred_peaks0[i+1],0] for i in range(len(pred_peaks0)-1)]
 
-# # # Get errors for periodic data
-# # # Must stay commented out until periodic data is set correctly
-# mean_err0 = np.mean(abs(stacked_data0 - stacked_pred0), axis=0)
-# std_err0 = np.std(abs(stacked_data0 - stacked_pred0), axis=0)
+# Normalize periodic data
+normalized_length = 101
+normalized_periodic_data0 = []
+normalized_periodic_pred0 = []
+for period in periodic_data0:
+    cur_time = np.linspace(0, 1, len(period))
+    new_time = np.linspace(0, 1, normalized_length)
+    interp = interp1d(cur_time, period, kind='linear')
+    norm_period = interp(new_time)
+    normalized_periodic_data0.append(norm_period)
+for period in periodic_pred0:
+    cur_time = np.linspace(0, 1, len(period))
+    new_time = np.linspace(0, 1, normalized_length)
+    interp = interp1d(cur_time, period, kind='linear')
+    norm_period = interp(new_time)
+    normalized_periodic_pred0.append(norm_period)
+
+# Get mean and std dev of normalized data and pred
+stacked_data0 = np.vstack(normalized_periodic_data0)
+stacked_pred0 = np.vstack(normalized_periodic_pred0)
+mean_data0 = np.mean(stacked_data0, axis=0)
+mean_pred0 = np.mean(stacked_pred0, axis=0)
+std_data0 = np.std(stacked_data0, axis=0)
+std_pred0 = np.std(stacked_pred0, axis=0)
+print(f'Stacked Data0 Size: {stacked_data0.shape}')
+print(f'Stacked Pred0 Size: {stacked_pred0.shape}')
+
+# # Get errors for periodic data
+# # Must stay commented out until periodic data is set correctly
+mean_err0 = np.mean(abs(stacked_data0 - stacked_pred0), axis=0)
+std_err0 = np.std(abs(stacked_data0 - stacked_pred0), axis=0)
 
 # ALL PLOTTING HAPPENS BELOW HERE. READ INSTRUCTIONS FOR CREATING BEST PLOTS
 # Plot histogram of errors
-fig = plt.figure(figsize=(12, 6), )
-plt.hist(errors, bins=50, alpha=0.7, color='blue')
-# plt.xlabel('Error (Radians)')
-plt.xlabel('Error (Radians/second)')
-plt.ylabel('# of Occurrences')
-# plt.title(f'Therapist Joint 2 Position Errors, RMSE: {test_rmse:.4f}, Max (abs): {abs(errors).max():.4f}, Std Dev (abs): {abs(errors).std():.4f}, Mean (abs): {abs(errors).mean():.4f}')
-plt.title(f'Therapist Joint 1 Velocity Errors, RMSE: {test_rmse:.4f}, Max (abs): {abs(errors).max():.4f}, Std Dev (abs): {abs(errors).std():.4f}, Mean (abs): {abs(errors).mean():.4f}')
-plt.grid(True)
-# plt.savefig('/home/gis/Documents/SRALabProject/lstm_BigData/plots/trial9/jt3_vel_error_histogram.svg', format='svg', dpi=300, bbox_inches='tight', transparent=True)
-plt.show()
+# fig = plt.figure(figsize=(12, 6), )
+# plt.hist(errors, bins=50, alpha=0.7, color='blue')
+# # plt.xlabel('Error (Radians)')
+# plt.xlabel('Error (Radians/second)')
+# plt.ylabel('# of Occurrences')
+# # plt.title(f'Therapist Joint 2 Position Errors, RMSE: {test_rmse:.4f}, Max (abs): {abs(errors).max():.4f}, Std Dev (abs): {abs(errors).std():.4f}, Mean (abs): {abs(errors).mean():.4f}')
+# plt.title(f'Therapist Joint 1 Velocity Errors, RMSE: {test_rmse:.4f}, Max (abs): {abs(errors).max():.4f}, Std Dev (abs): {abs(errors).std():.4f}, Mean (abs): {abs(errors).mean():.4f}')
+# plt.grid(True)
+# # plt.savefig('/home/gis/Documents/SRALabProject/lstm_BigData/plots/trial9/jt3_vel_error_histogram.svg', format='svg', dpi=300, bbox_inches='tight', transparent=True)
+# plt.show()
 
 # use to determining amplitude for periodic plots
 # fig = plt.figure(figsize=(12, 6))
@@ -155,20 +178,20 @@ plt.show()
 # Plot only testing data with prediction overlay
 # Change xlim for desired time steps
 # Limit to 7500 time steps (~30 seconds) EXCEPT when determining amplitude for periodic plots
-fig = plt.figure(figsize=(12, 6))
-# plt.title(f"Therapist Joint 2 Position Predictions with Patient Joint 4")
-plt.title(f"Therapist Joint 1 Velocity Predictions with Patient Joint 3")
-plt.plot(test[:, pIndex], c='g', label=f'Patient Data') # Set to corresponding patient data index
-plt.plot(therapist_true, c='b', label=f'True Therapist Data')
-plt.plot(therapist_pred, c='r', linestyle='--', label=f'Predicted Therapist Data')
-# plt.scatter(np.arange(len(therapist_pred)), therapist_pred[:, i], c='r', marker='x', label=f'Predicted Therapist Data', alpha=0.5)
-plt.xlim(0, 7500)
-plt.xlabel('Time Steps (~3ms)')
-# plt.ylabel('Joint Positions (Radians)')
-plt.ylabel('Joint Velocities (Radians/second)')
-plt.legend()
-# plt.savefig('/home/gis/Documents/SRALabProject/lstm_BigData/plots/trial9/jt3_vel_predictions.svg', format='svg', dpi=300, bbox_inches='tight', transparent=True)
-plt.show()
+# fig = plt.figure(figsize=(12, 6))
+# # plt.title(f"Therapist Joint 2 Position Predictions with Patient Joint 4")
+# plt.title(f"Therapist Joint 1 Velocity Predictions with Patient Joint 3")
+# plt.plot(test[:, pIndex], c='g', label=f'Patient Data') # Set to corresponding patient data index
+# plt.plot(therapist_true, c='b', label=f'True Therapist Data')
+# plt.plot(therapist_pred, c='r', linestyle='--', label=f'Predicted Therapist Data')
+# # plt.scatter(np.arange(len(therapist_pred)), therapist_pred[:, i], c='r', marker='x', label=f'Predicted Therapist Data', alpha=0.5)
+# plt.xlim(0, 7500)
+# plt.xlabel('Time Steps (~3ms)')
+# # plt.ylabel('Joint Positions (Radians)')
+# plt.ylabel('Joint Velocities (Radians/second)')
+# plt.legend()
+# # plt.savefig('/home/gis/Documents/SRALabProject/lstm_BigData/plots/trial9/jt3_vel_predictions.svg', format='svg', dpi=300, bbox_inches='tight', transparent=True)
+# plt.show()
 
 # # Plot error over time
 # plt.figure(figsize=(12, 6))
@@ -181,7 +204,7 @@ plt.show()
 # plt.show()
 
 # Plot normalized periodic data
-# fig = plt.figure(figsize=(12, 6))
+fig = plt.figure(figsize=(12, 6))
 
 # Plots each period as a separate line. Use to look for outliers in amplitude
 # Missteps can cause outliers where multiple periods will be combined into one. Need to fix height in 'find peaks' above
@@ -192,20 +215,20 @@ plt.show()
 
 # Plot mean and std dev of periodic data and predictions
 # Use after height is set correctly in 'find peaks' above
-# plt.plot(mean_data0, c='b', label='Mean Therapist Data')
-# plt.fill_between(range(normalized_length), 
-#                  mean_data0 - std_data0, 
-#                  mean_data0 + std_data0, 
-#                  color='b', alpha=0.2)
-# plt.plot(mean_pred0, c='r', label='Mean Predicted Therapist Data')
-# plt.fill_between(range(normalized_length), 
-#                  mean_pred0 - std_pred0, 
-#                  mean_pred0 + std_pred0, 
-#                  color='r', alpha=0.2)
-# plt.title("Left Hip")
-# plt.ylabel('Joint Positions (Radians)')
-# plt.xlabel('Gait Phase %')
-# plt.legend()
+plt.plot(mean_data0, c='b', label='Mean Therapist Data')
+plt.fill_between(range(normalized_length), 
+                 mean_data0 - std_data0, 
+                 mean_data0 + std_data0, 
+                 color='b', alpha=0.2)
+plt.plot(mean_pred0, c='r', label='Mean Predicted Therapist Data')
+plt.fill_between(range(normalized_length), 
+                 mean_pred0 - std_pred0, 
+                 mean_pred0 + std_pred0, 
+                 color='r', alpha=0.2)
+plt.title("Left Hip")
+plt.ylabel('Joint Positions (Radians)')
+plt.xlabel('Gait Phase %')
+plt.legend()
 
 # Plot period plot of error using mean and std dev
 # plt.plot(mean_err0, c='r', label='Mean Error')
@@ -218,4 +241,4 @@ plt.show()
 # plt.xlabel('Gait Phase %')
 # plt.legend()
 
-# plt.show()
+plt.show()
