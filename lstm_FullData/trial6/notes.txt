@@ -1,0 +1,16 @@
+This training utilized:
+    - batch size: 256
+    - Adam optimizer: lr 0.00001
+    - input_size: 11 (joint positions and velocities, stance interpolation factor, backpack position and velocity)
+    - hidden_size: 50
+    - num_layers: 4
+    - dropout: 0.4
+    - dense layer: 128 features
+    - batch_first: True
+    - data step: 1
+    - epochs: 150
+    - lookback: 50
+    - Predicts: joint positions
+
+See https://ieeexplore.ieee.org/abstract/document/9727104
+

@@ -15,12 +15,28 @@ print("Data Input Shape:", data_input.shape)
 
 # Model definition
 class JointModel(nn.Module):
+    """A neural network model combining LSTM and linear layers for sequence prediction.
+    
+    This model processes sequential input data using an LSTM layer followed by a linear
+    transformation layer to produce predictions for each timestep.
+    
+    Architecture:
+        - LSTM layer: 1 layer, 50 hidden units, processes sequences with 11 input features
+        - Linear layer: Maps from 50-dimensional LSTM output to 4-dimensional prediction
+    """
     def __init__(self):
+        """Initialize JointModel."""
         super().__init__()
         self.lstm = nn.LSTM(input_size=11, hidden_size=50, num_layers=1, batch_first=True)
         self.linear = nn.Linear(50, 4)
     
     def forward(self, x):
+        """Forward pass through the model.
+        Args:
+            x (torch.Tensor): Input tensor of shape [batch_size, sequence_length, 11]
+        Returns:
+            torch.Tensor: Output tensor of shape [batch_size, sequence_length, 4]
+        """
         x, _ = self.lstm(x)
         return self.linear(x)
 
@@ -53,7 +69,7 @@ def create_dataset(dataset, lookback):
 
 # Load model
 model = JointModel()
-model.load_state_dict(torch.load('/home/gis/Documents/SRALabProject/lstm_BigData/trial5/lstm_model_epoch198.pth'))
+model.load_state_dict(torch.load('/home/gis/Documents/SRALabProject/lstm_FullData/trial5/lstm_model_epoch198.pth'))
 model.eval()
 
 # Generate predictions

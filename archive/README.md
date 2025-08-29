@@ -1,0 +1,1 @@
+These folders contain past work leading to the development of the Synthetic Therapist. It is a variety of training strategies and model structures that were not conducive to the final product, but were beneficial in forming the understanding and direction of the project.

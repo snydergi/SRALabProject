@@ -1,0 +1,12 @@
+This training utilized:
+    - batch size: 256
+    - dropout: 0.2 <<<<< Dropout did nothing because only had one layer in model.
+    - Adam optimizer: lr 0.00001
+    - input_size: 8 (joint positions and velocities)
+    - hidden_size: 50
+    - num_layers: 1
+    - batch_first: True
+    - data step: 1
+    - epochs: 150
+    - lookback: 50
+    - Predicts: joint positions

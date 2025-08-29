@@ -3,8 +3,8 @@ import csv
 import numpy as np
 
 # First Subject-Therapist Pair
-patient1_datapath = '../../lstm_BigData/data/Patient1_X2_SRA_A_07-05-2024_10-39-10.csv'
-therapist1_datapath = '../../lstm_BigData/data/Therapist1_X2_SRA_B_07-05-2024_10-41-46.csv'
+patient1_datapath = '../../lstm_FullData/data/Patient1_X2_SRA_A_07-05-2024_10-39-10.csv'
+therapist1_datapath = '../../lstm_FullData/data/Therapist1_X2_SRA_B_07-05-2024_10-41-46.csv'
 patient1_part1 = pd.read_csv(patient1_datapath, 
                           skiprows=range(1, 229607), 
                           nrows=433021-229607)
@@ -25,8 +25,8 @@ therapist1_part3 = pd.read_csv(therapist1_datapath,
                             nrows=896386-697032)
 
 # Second Subject-Therapist Pair
-patient2_datapath = '../../lstm_BigData/data/Patient2_X2_SRA_A_08-05-2024_14-33-44.csv'
-therapist2_datapath = '../../lstm_BigData/data/Therapist2_X2_SRA_B_08-05-2024_14-33-51.csv'
+patient2_datapath = '../../lstm_FullData/data/Patient2_X2_SRA_A_08-05-2024_14-33-44.csv'
+therapist2_datapath = '../../lstm_FullData/data/Therapist2_X2_SRA_B_08-05-2024_14-33-51.csv'
 patient2_part1 = pd.read_csv(patient2_datapath,
                             skiprows=range(1, 123920),
                             nrows=272301-123920)
@@ -41,8 +41,8 @@ therapist2_part2 = pd.read_csv(therapist2_datapath,
                        nrows=595193-457108)
 
 # Third Subject-Therapist Pair
-patient3_datapath = '../../lstm_BigData/data/Patient3_X2_SRA_A_29-05-2024_13-36-40.csv'
-therapist3_datapath = '../../lstm_BigData/data/Therapist3_X2_SRA_B_29-05-2024_13-41-19.csv'
+patient3_datapath = '../../lstm_FullData/data/Patient3_X2_SRA_A_29-05-2024_13-36-40.csv'
+therapist3_datapath = '../../lstm_FullData/data/Therapist3_X2_SRA_B_29-05-2024_13-41-19.csv'
 patient3_part1 = pd.read_csv(patient3_datapath, 
                           skiprows=range(1, 7694), 
                           nrows=198762-7694)
@@ -63,8 +63,8 @@ therapist3_part3 = pd.read_csv(therapist3_datapath,
                             nrows=606462-417062)
 
 # Fourth Subject-Therapist Pair
-patient4_datapath = '../../lstm_BigData/data/Patient4_X2_SRA_A_31-07-2024_11-25-24.csv'
-therapist4_datapath = '../../lstm_BigData/data/Therapist4_X2_SRA_B_31-07-2024_11-29-20.csv'
+patient4_datapath = '../../lstm_FullData/data/Patient4_X2_SRA_A_31-07-2024_11-25-24.csv'
+therapist4_datapath = '../../lstm_FullData/data/Therapist4_X2_SRA_B_31-07-2024_11-29-20.csv'
 patient4_part1 = pd.read_csv(patient4_datapath, 
                           skiprows=range(1, 85602), 
                           nrows=285867-85602)
@@ -91,8 +91,8 @@ therapist4_part4 = pd.read_csv(therapist4_datapath,
                             nrows=630428-553222)
 
 # Sixth Subject-Therapist Pair
-patient6_datapath = '../../lstm_BigData/data/Patient6_X2_SRA_A_15-08-2024_09-47-25.csv'
-therapist6_datapath = '../../lstm_BigData/data/Therapist6_X2_SRA_B_15-08-2024_09-47-47.csv'
+patient6_datapath = '../../lstm_FullData/data/Patient6_X2_SRA_A_15-08-2024_09-47-25.csv'
+therapist6_datapath = '../../lstm_FullData/data/Therapist6_X2_SRA_B_15-08-2024_09-47-47.csv'
 patient6_part1 = pd.read_csv(patient6_datapath, 
                           skiprows=range(1, 7695), 
                           nrows=205185-7695)
@@ -113,8 +113,8 @@ therapist6_part3 = pd.read_csv(therapist6_datapath,
                             nrows=656732-456313)
 
 # Ninth Subject-Therapist Pair
-patient9_datapath = '../../lstm_BigData/data/Patient9_X2_SRA_A_07-10-2024_14-41-04.csv'
-therapist9_datapath = '../../lstm_BigData/data/Therapist9_X2_SRA_B_07-10-2024_14-41-12.csv'
+patient9_datapath = '../../lstm_FullData/data/Patient9_X2_SRA_A_07-10-2024_14-41-04.csv'
+therapist9_datapath = '../../lstm_FullData/data/Therapist9_X2_SRA_B_07-10-2024_14-41-12.csv'
 patient9_part1 = pd.read_csv(patient9_datapath, 
                           skiprows=range(1, 52347), 
                           nrows=245511-52347)
@@ -135,8 +135,8 @@ therapist9_part3 = pd.read_csv(therapist9_datapath,
                             nrows=912205-726946)
 
 # Eleventh Subject-Therapist Pair
-patient11_datapath = '../../lstm_BigData/data/Patient11_X2_SRA_A_19-09-2024_09-37-01.csv'
-therapist11_datapath = '../../lstm_BigData/data/Therapist11_X2_SRA_B_19-09-2024_09-37-07.csv'
+patient11_datapath = '../../lstm_FullData/data/Patient11_X2_SRA_A_19-09-2024_09-37-01.csv'
+therapist11_datapath = '../../lstm_FullData/data/Therapist11_X2_SRA_B_19-09-2024_09-37-07.csv'
 patient11_part1 = pd.read_csv(patient11_datapath, 
                           skiprows=range(1, 36738), 
                           nrows=97920-36738)
@@ -163,8 +163,8 @@ therapist11_part4 = pd.read_csv(therapist11_datapath,
                             nrows=787871-585102)
 
 # Twelfth Subject-Therapist Pair
-patient12_datapath = '../../lstm_BigData/data/Patient12_X2_SRA_A_21-02-2025_11-08-19.csv'
-therapist12_datapath = '../../lstm_BigData/data/Therapist12_X2_SRA_B_21-02-2025_11-08-26.csv'
+patient12_datapath = '../../lstm_FullData/data/Patient12_X2_SRA_A_21-02-2025_11-08-19.csv'
+therapist12_datapath = '../../lstm_FullData/data/Therapist12_X2_SRA_B_21-02-2025_11-08-26.csv'
 patient12_part1 = pd.read_csv(patient12_datapath, 
                           skiprows=range(1, 28876), 
                           nrows=227029-28876)
@@ -185,8 +185,8 @@ therapist12_part3 = pd.read_csv(therapist12_datapath,
                             nrows=664521-462733)
 
 # Thirteenth Subject-Therapist Pair
-patient13_datapath = '../../lstm_BigData/data/Patient13_X2_SRA_A_06-03-2025_10-44-17.csv'
-therapist13_datapath = '../../lstm_BigData/data/Therapist13_X2_SRA_B_06-03-2025_10-44-29.csv'
+patient13_datapath = '../../lstm_FullData/data/Patient13_X2_SRA_A_06-03-2025_10-44-17.csv'
+therapist13_datapath = '../../lstm_FullData/data/Therapist13_X2_SRA_B_06-03-2025_10-44-29.csv'
 patient13_part1 = pd.read_csv(patient13_datapath, 
                           skiprows=range(1, 24219), 
                           nrows=222139-24219)
@@ -336,33 +336,33 @@ test_1 = np.column_stack((patient1_test, therapist1_test))
 test_2 = np.column_stack((patient2_test, therapist2_test))
 test_3 = np.column_stack((patient3_test, therapist3_test))
 
-with open(f'../../lstm_BigData/data/patient_training_full.csv', 'a', newline='') as f:
+with open(f'../../lstm_FullData/data/patient_training_full.csv', 'a', newline='') as f:
     writer = csv.writer(f)
     writer.writerow(['JointPositions_1', 'JointPositions_2', 'JointPositions_3', 'JointPositions_4',
                      'JointVelocities_1', 'JointVelocities_2', 'JointVelocities_3', 'JointVelocities_4',
                      'StanceInterpolationFactor', 'BackPackAngle', 'BackPackAngularVelocity'])
     pd.DataFrame(patient_data).to_csv(f, header=False, index=False)
 
-with open(f'../../lstm_BigData/data/therapist_training_full.csv', 'a', newline='') as f:
+with open(f'../../lstm_FullData/data/therapist_training_full.csv', 'a', newline='') as f:
     writer = csv.writer(f)
     writer.writerow(['JointPositions_1', 'JointPositions_2', 'JointPositions_3', 'JointPositions_4',
                      'JointVelocities_1', 'JointVelocities_2', 'JointVelocities_3', 'JointVelocities_4'])
     pd.DataFrame(therapist_data).to_csv(f, header=False, index=False)
     
-with open(f'../../lstm_BigData/data/patient_validation_full.csv', 'a', newline='') as f:
+with open(f'../../lstm_FullData/data/patient_validation_full.csv', 'a', newline='') as f:
     writer = csv.writer(f)
     writer.writerow(['JointPositions_1', 'JointPositions_2', 'JointPositions_3', 'JointPositions_4',
                      'JointVelocities_1', 'JointVelocities_2', 'JointVelocities_3', 'JointVelocities_4',
                      'StanceInterpolationFactor', 'BackPackAngle', 'BackPackAngularVelocity'])
     pd.DataFrame(patient_valid).to_csv(f, header=False, index=False)
 
-with open(f'../../lstm_BigData/data/therapist_validation_full.csv', 'a', newline='') as f:
+with open(f'../../lstm_FullData/data/therapist_validation_full.csv', 'a', newline='') as f:
     writer = csv.writer(f)
     writer.writerow(['JointPositions_1', 'JointPositions_2', 'JointPositions_3', 'JointPositions_4',
                      'JointVelocities_1', 'JointVelocities_2', 'JointVelocities_3', 'JointVelocities_4'])
     pd.DataFrame(therapist_valid).to_csv(f, header=False, index=False)
 
-with open(f'../../lstm_BigData/data/test_set_1.csv', 'a', newline='') as f:
+with open(f'../../lstm_FullData/data/test_set_1.csv', 'a', newline='') as f:
     writer = csv.writer(f)
     writer.writerow(['JointPositions_1', 'JointPositions_2', 'JointPositions_3', 'JointPositions_4',
                      'JointVelocities_1', 'JointVelocities_2', 'JointVelocities_3', 'JointVelocities_4',
@@ -371,7 +371,7 @@ with open(f'../../lstm_BigData/data/test_set_1.csv', 'a', newline='') as f:
                      'TjointVelocities_1', 'TjointVelocities_2', 'TjointVelocities_3', 'TjointVelocities_4'])
     pd.DataFrame(test_1).to_csv(f, header=False, index=False)
 
-with open(f'../../lstm_BigData/data/test_set_2.csv', 'a', newline='') as f:
+with open(f'../../lstm_FullData/data/test_set_2.csv', 'a', newline='') as f:
     writer = csv.writer(f)
     writer.writerow(['JointPositions_1', 'JointPositions_2', 'JointPositions_3', 'JointPositions_4',
                      'JointVelocities_1', 'JointVelocities_2', 'JointVelocities_3', 'JointVelocities_4',
@@ -380,7 +380,7 @@ with open(f'../../lstm_BigData/data/test_set_2.csv', 'a', newline='') as f:
                      'TjointVelocities_1', 'TjointVelocities_2', 'TjointVelocities_3', 'TjointVelocities_4'])
     pd.DataFrame(test_2).to_csv(f, header=False, index=False)
 
-with open(f'../../lstm_BigData/data/test_set_3.csv', 'a', newline='') as f:
+with open(f'../../lstm_FullData/data/test_set_3.csv', 'a', newline='') as f:
     writer = csv.writer(f)
     writer.writerow(['JointPositions_1', 'JointPositions_2', 'JointPositions_3', 'JointPositions_4',
                      'JointVelocities_1', 'JointVelocities_2', 'JointVelocities_3', 'JointVelocities_4',

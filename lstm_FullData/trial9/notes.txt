@@ -1,0 +1,13 @@
+This training utilized:
+    - batch size: 256
+    - Adam optimizer: lr 0.00001
+    - input_size: 8 (joint positions and velocities)
+    - hidden_size: 50
+    - num_layers: 1
+    - batch_first: True
+    - data step: 1
+    - epochs: 150
+    - lookback: 50
+    - Predicts: one joint value
+
+Eight of these were trained. One for each joint position and velocity.

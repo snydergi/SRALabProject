@@ -23,12 +23,12 @@ Launch the Synthetic Therapist node with ```rosrun synthetic_therapist model_nod
 Use ```requirements.txt``` for creating your virtual environment.
 
 ## Dataset
-To utilize this repository, first clone it into a fresh folder. The code requires users to have access to patient and therapist gait data in the form of CSVs containing L/R hip joint positions and velocities, L/R knee joint positions and velocities, backpack position and velocity, and timesteps for synchronization. Datasets will not be included in this respository as, though de-identified from any patient information, they are best kept private.
+To utilize this repository, first clone it into a fresh folder. The code requires users to have access to patient and therapist gait data in the form of CSVs containing L/R hip joint positions and velocities, L/R knee joint positions and velocities, backpack position and velocity, and timesteps for synchronization. Datasets will not be included in this respository as, though de-identified from any patient information, they are best kept private. Follow instructions in [```dataset_tools/README.md```](misc/dataset_tools/README.md) for guidance on pruning collected data into usable bits. Place the pruned and conglomerated data into a folder called ```data``` in the ```lstm_FullData``` directory.
 
 ## Models
-Subfolders in this directory represent milestones in the synthetic therapist development. [```lstm_BigData```](lstm_BigData/README.md) contains code used to generate the most up to date iterations of models, and all [five models](synthetic_therapist/models/) that are selectable within the synthetic therapist. 
+The archive in this directory represent milestones in the synthetic therapist development. [```lstm_FullData```](lstm_FullData/README.md) contains code used to generate the most up to date iterations of models, and all [five models](synthetic_therapist/models/) that are selectable within the synthetic therapist's dynamic reconfiguration. 
 
-See each folder's `README.md` for additional information about model structure.
+See the [```README.md```](synthetic_therapist/models/README.md) for additional information about model input and output. See a ```notes.txt``` file in each trial for information about model parameters used.
 
 # About
 This repository contains code written for the Shirley Ryan AbilityLab Pons Lab. 
