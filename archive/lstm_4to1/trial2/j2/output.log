@@ -1,0 +1,4 @@
+/home/gsm0197/sralab_working/lstm_4to1/trial2/j2/lstm.py:120: DeprecationWarning: __array_wrap__ must accept context and return_scalar arguments (positionally) in the future. (Deprecated NumPy 2.0)
+  train_rmse = np.sqrt(loss_fn(y_pred, y_train))
+/home/gsm0197/sralab_working/lstm_4to1/trial2/j2/lstm.py:122: DeprecationWarning: __array_wrap__ must accept context and return_scalar arguments (positionally) in the future. (Deprecated NumPy 2.0)
+  test_rmse = np.sqrt(loss_fn(y_pred, y_test))
