@@ -1,0 +1,16 @@
+For this trial, I used the first two episodes of data collected for Joint 1, which is the left hip, to train. One third of the last data collection episode was used for the testing data.
+
+The csv was read from lines 164041 to 367374 and 454139 to 654139 for training.
+
+The first third of lines 696306 to 894640 were used for testing.
+
+In validation, the last half of lines 696306 to 894640 were used.
+
+Other params:
+Lookback: 50 (~200ms)
+Input Size: 1
+Hidden Size: 50
+Layers: 1
+Learning Rate: 1e-3
+Optimizer: optim.Adam
+Loss Function: nn.MSELoss
