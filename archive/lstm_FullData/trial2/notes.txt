@@ -1,0 +1,1 @@
+This trial maintained all previous hyperparameters, but included patient joint velocities in training dataset.
