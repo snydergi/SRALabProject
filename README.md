@@ -1,5 +1,7 @@
 # Synthetic Therapist with LSTM
 
+https://github.com/snydergi/SRALabProject/issues/2#issue-3365553136
+
 Check out my [portfolio](https://snydergi.github.io/portfolio_featured/synthetic_therapist/) for an overview of the project!
 
 # Synthetic Therapist Setup
