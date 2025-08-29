@@ -1,3 +1,7 @@
+# Synthetic Therapist with LSTM
+
+Check out my [portfolio](https://snydergi.github.io/portfolio_featured/synthetic_therapist/) for an overview of the project!
+
 # Synthetic Therapist Setup
 The Synthetic Therapist has both hardware and software components necessary for function. 
 
