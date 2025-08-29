@@ -1,1 +1,0 @@
-This folder contains code completed as a tutorial on LSTMs from https://machinelearningmastery.com/lstm-for-time-series-prediction-in-pytorch/
