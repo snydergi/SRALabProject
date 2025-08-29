@@ -1,0 +1,2 @@
+This trial was an initial investigation into using the larger dataset. Model parameters and arguments were not changed.
+Only more new data was used for the training and validation.
