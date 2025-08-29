@@ -1,3 +1,5 @@
+# Model configurations for synthetic therapist project
+
 models:
   trial4:
     path: "models/lstm_trial4.pt"

@@ -1,3 +1,5 @@
+"""Used for testing single output LSTM models from trial 9 on full data set."""
+
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd

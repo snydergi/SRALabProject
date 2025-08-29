@@ -1,3 +1,5 @@
+"""Use to clean and prepare the data for saving training, validation, and testing sets."""
+
 import pandas as pd
 import csv
 import numpy as np

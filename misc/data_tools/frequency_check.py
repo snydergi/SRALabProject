@@ -1,3 +1,5 @@
+"""Check the frequency of data collection from a CSV file."""
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np

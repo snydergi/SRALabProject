@@ -1,3 +1,5 @@
+"""Used to help divide data into episodes based on button presses and to help sync patient and therapist data."""
+
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd

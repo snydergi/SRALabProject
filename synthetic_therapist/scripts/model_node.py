@@ -1,3 +1,5 @@
+"""Synthetic Therapist node."""
+
 #!/usr/bin/env python3
 import rospy
 import os

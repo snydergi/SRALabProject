@@ -1,3 +1,4 @@
+"""File that was used to train the LSTM model described in trial5/notes.txt"""
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd

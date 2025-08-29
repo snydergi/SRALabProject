@@ -1,3 +1,5 @@
+"""Use to make trained LSTM model from trial 10 make predictions on test data and visualize results."""
+
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd

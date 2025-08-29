@@ -1,3 +1,5 @@
+"""Attempt to use a Butterworth low-pass filter to clean up velocity data from CSV file."""
+
 from scipy.signal import butter, filtfilt
 import pandas as pd
 import numpy as np
