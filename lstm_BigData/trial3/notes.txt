@@ -1,3 +1,0 @@
-This model was training with patient joint angles and velocities as inputs.
-This model used the Adadelta optimizer instead of Adam as an investigation into that.
-Adadelta defaults did not work to prevent the 'best' training iteration from being the first, but further attempts to use it may occur.

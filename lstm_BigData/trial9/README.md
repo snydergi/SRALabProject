@@ -1,1 +1,0 @@
-This trial is using the newly cleaned up and pre-trimmed data.
