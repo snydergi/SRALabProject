@@ -13,9 +13,9 @@ plt.rcParams['svg.fonttype'] = 'none'
 # DATA ORDER:
 # p_jt_pos1, p_jt_pos2, p_jt_pos3, p_jt_pos4, p_jt_vel1, p_jt_vel2, p_jt_vel3, p_jt_vel4, p_SIF, p_bp_pos, p_bp_vel,
 # t_jt_pos1, t_jt_pos2, t_jt_pos3, t_jt_pos4, t_jt_vel1, t_jt_vel2, t_jt_vel3, t_jt_vel4
-test_1 = pd.read_csv('../../lstm_BigData/data/test_set_1.csv', skiprows=0).values
-test_2 = pd.read_csv('../../lstm_BigData/data/test_set_2.csv', skiprows=0).values
-test_3 = pd.read_csv('../../lstm_BigData/data/test_set_3.csv', skiprows=0).values
+test_1 = pd.read_csv('../../lstm_FullData/data/test_set_1.csv', skiprows=0).values
+test_2 = pd.read_csv('../../lstm_FullData/data/test_set_2.csv', skiprows=0).values
+test_3 = pd.read_csv('../../lstm_FullData/data/test_set_3.csv', skiprows=0).values
 
 def create_dataset(dataset, lookback, step=1):
     """Transform time series data into a prediction dataset.

@@ -11,6 +11,12 @@ raw = pd.read_csv(csv_path,
 full_data = raw['joint_state.velocity'] # Each row contains five velocities
 
 def parse_row(row):
+    """Parse a row of joint velocities from the CSV file.
+    Args:
+        row (str): A string representing a row of joint velocities in the format '[v1, v2, v3, v4, v5]'.
+    Returns:
+        list: A list of floats representing the joint velocities.
+    """
     return [float(x.strip()) for x in row[1:-1].split(',')]
 
 parsed_data = full_data.apply(parse_row)
@@ -28,6 +34,14 @@ t = np.linspace(0, N * dt, N)
 
 # Butterworth low-pass filter
 def butter_lowpass(cutoff, fs, order=5):
+    """Design a Butterworth low-pass filter.
+    Args:
+        cutoff (float): Cutoff frequency of the filter in Hz.
+        fs (float): Sampling frequency in Hz.
+        order (int): Order of the filter. Default is 5.
+    Returns:
+        tuple: Numerator (b) and denominator (a) of the filter's transfer function.
+    """
     nyq = 0.5 * fs  # Nyquist frequency
     normal_cutoff = cutoff / nyq
     b, a = butter(order, normal_cutoff, btype='low', analog=False)
@@ -35,6 +49,15 @@ def butter_lowpass(cutoff, fs, order=5):
 
 # Apply filter to data
 def apply_filter(data, cutoff, fs, order=5):
+    """Apply a Butterworth low-pass filter to the data.
+    Args:
+        data (np.ndarray): Input signal data.
+        cutoff (float): Cutoff frequency of the filter in Hz.
+        fs (float): Sampling frequency in Hz.
+        order (int): Order of the filter. Default is 5.
+    Returns:
+        np.ndarray: Filtered signal data.
+    """
     b, a = butter_lowpass(cutoff, fs, order=order)
     y = filtfilt(b, a, data)  # Zero-phase filtering (no lag)
     return y
