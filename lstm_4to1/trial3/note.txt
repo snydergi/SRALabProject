@@ -1,1 +1,0 @@
-Trial 3 used nn.NoisyLinear instead of nn.Linear
